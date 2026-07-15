@@ -1,0 +1,15 @@
+# Dependency folders
+node_modules/
+
+# Local environment variables containing your secret passwords and AWS keys
+.env
+.env.local
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+.netlify/

@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- These tags change what the link says when shared on WhatsApp/iMessage -->
+    <title>Rent Receipt</title>
+    <meta property="og:title" content="Rent Receipt">
+    <meta property="og:description" content="Official Proof of Rent Payment">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success-color: #16a34a;
+            --text-main: #1f2937;
+            --bg-light: #f3f4f6;
+            --border-color: #d1d5db;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 30px;
+        }
+
+        /* If viewing a shared receipt, stretch it full width and center it */
+        body.view-only-mode .container {
+            grid-template-columns: 1fr;
+            max-width: 800px;
+        }
+        body.view-only-mode .form-section {
+            display: none !important;
+        }
+
+        @media (max-width: 1100px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        .form-section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .account-cta-box {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .account-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .tier-badge {
+            background-color: #475569;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .tier-badge.pro {
+            background-color: #eab308;
+            color: #451a03;
+        }
+
+        .usage-tracker {
+            font-size: 0.8rem;
+            color: #475569;
+            margin-bottom: 15px;
+        }
+
+        .pro-description-text {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #1e3a8a;
+            background-color: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            padding: 8px 12px;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .subscription-btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-tier {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: white;
+        }
+
+        .btn-tier.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .history-list {
+            margin-top: 15px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 15px;
+        }
+
+        .history-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .history-item {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .history-actions button {
+            background: none;
+            border: none;
+            color: #2563eb;
+            cursor: pointer;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #111827;
+            border-bottom: 2px solid var(--bg-light);
+            padding-bottom: 10px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+        label {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: white;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .action-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-print {
+            background-color: var(--success-color);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-action {
+            background-color: #4b5563;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .preview-section {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        /* Printable action block for shared links */
+        .view-actions-bar {
+            display: none;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            justify-content: flex-end;
+        }
+        body.view-only-mode .view-actions-bar {
+            display: flex;
+        }
+
+        .receipt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #374151;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .receipt-title {
+            font-size: 1.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #111827;
+        }
+
+        .receipt-meta { text-align: right; font-size: 0.9rem; }
+
+        .receipt-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 28px;
+        }
+
+        .data-block h4 {
+            font-size: 0.825rem;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .data-block p { 
+            font-size: 1.05rem; 
+            font-weight: 600; 
+            margin-bottom: 6px;
+        }
+        
+        .data-block span { 
+            font-size: 0.85rem; 
+            color: #4b5563; 
+            display: block; 
+            margin-top: 4px;
+        }
+
+        .amount-box {
+            background-color: #f9fafb;
+            border: 2px dashed var(--border-color);
+            padding: 18px;
+            text-align: center;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+
+        .amount-box span {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .legal-declaration {
+            font-size: 0.75rem;
+            color: #4b5563;
+            line-height: 1.4;
+            background: #f9fafb;
+            border-left: 3px solid #9ca3af;
+            padding: 8px 12px;
+            margin-bottom: 20px;
+        }
+
+        .notes-display-box {
+            font-size: 0.825rem;
+            color: #374151;
+            background: #fdfdfd;
+            border: 1px dashed var(--border-color);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+        }
+
+        .signature-area {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+
+        .rtl-layout {
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        .rtl-layout .receipt-meta { text-align: left !important; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .form-section, .account-cta-box, button, .action-row, .view-actions-bar { display: none !important; }
+            .preview-section { box-shadow: none; padding: 0; width: 100%; }
+        }
+    </style>
+    <script>
+        {{DATABASE}}
+
+        const translationMatrix = {
+            en: {
+                receipt: "Rent Receipt", country: "Country", receiptNum: "Receipt #", date: "Date",
+                receivedFrom: "Received From (Tenant)", paidTo: "Paid To (Landlord/Agent)",
+                premises: "Premises Address", totalPaid: "Total Paid Amount", paymentMethod: "Payment Method",
+                status: "Status", cleared: "PAID & CLEARED", signature: "Authorized Signature", thankYou: "Thank you for your payment!",
+                period: "Rental Period", paymentType: "Payment Type", notes: "Notes",
+                declaration: "The landlord hereby acknowledges receiving the payment described above for the specified premises."
+            },
+            es: {
+                receipt: "Recibo de Alquiler", country: "País", receiptNum: "Recibo #", date: "Fecha",
+                receivedFrom: "Recibido de (Inquilino)", paidTo: "Pagado a (Propietario/Agente)",
+                premises: "Dirección de la Propiedad", totalPaid: "Monto Total Pagado", paymentMethod: "Método de Pago",
+                status: "Estado", cleared: "PAGADO Y LIQUIDADO", signature: "Firma Autorizada", thankYou: "¡Gracias por su pago!",
+                period: "Período de Alquiler", paymentType: "Tipo de Pago", notes: "Notas",
+                declaration: "El propietario reconoce haber recibido el pago descrito anteriormente para los locales especificados."
+            },
+            fr: {
+                receipt: "Quittance de Loyer", country: "Pays", receiptNum: "Quittance n°", date: "Date",
+                receivedFrom: "Reçu de (Locataire)", paidTo: "Payé à (Propriétaire/Agent)",
+                premises: "Adresse des Locaux", totalPaid: "Montant Total Payé", paymentMethod: "Mode de Paiement",
+                status: "Statut", cleared: "PAYÉ & ACQUITTÉ", signature: "Signature Autorisée", thankYou: "Merci pour votre paiement!",
+                period: "Période de Loyer", paymentType: "Type de Paiement", notes: "Notes",
+                declaration: "Le propriétaire reconnaît par la presente avoir reçu le paiement décrit ci-dessus choisi pour les locaux spécifiés."
+            },
+            de: {
+                receipt: "Mietquittung", country: "Land", receiptNum: "Quittungsnr.", date: "Datum",
+                receivedFrom: "Erhalten von (Mieter)", paidTo: "Bezahlt an (Vermieter/Agent)",
+                premises: "Mietobjekt Adresse", totalPaid: "Gesamtbetrag Bezahlt", paymentMethod: "Zahlungsmethode",
+                status: "Status", cleared: "BEZAHLT & AUSGEGLICHEN", signature: "Autorisierte Unterschrift", thankYou: "Vielen Dank für Ihre Zahlung!",
+                period: "Mietzeitraum", paymentType: "Zahlungsart", notes: "Notizen",
+                declaration: "Der Vermieter bestätigt hiermit den Erhalt der oben beschriebenen Zahlung für das angegebene Mietobjekt."
+            },
+            it: {
+                receipt: "Ricevuta d'Affitto", country: "Paese", receiptNum: "Ricevuta n.", date: "Data",
+                receivedFrom: "Ricevuto da (Inquilino)", paidTo: "Pagato a (Proprietario/Agente)",
+                premises: "Indirizzo dell'Immobile", totalPaid: "Importo Totale Pagato", paymentMethod: "Metodo di Pagamento",
+                status: "Stato", cleared: "PAGATO & SALDATO", signature: "Firma Autorizzata", thankYou: "Grazie per il vostro pagamento!",
+                period: "Periodo di Locazione", paymentType: "Tipo di Pagamento", notes: "Note",
+                declaration: "Il proprietario con la presente conferma di aver ricevuto il pagamento sopra descritto per l'immobile specificato."
+            },
+            pt: {
+                receipt: "Recibo de Aluguel", country: "País", receiptNum: "Recibo nº", date: "Data",
+                receivedFrom: "Recebido de (Inquilino)", paidTo: "Pago a (Senhorio/Agente)",
+                premises: "Endereço do Imóvel", totalPaid: "Valor Total Pago", paymentMethod: "Método de Pago",
+                status: "Estado", cleared: "PAGO & QUITADO", signature: "Assinatura Autorizada", thankYou: "Obrigado pelo seu pagamento!",
+                period: "Período de Aluguel", paymentType: "Tipo de Pago", notes: "Notas",
+                declaration: "O senhorio reconhece, por este meio, ter recebido o pagamento acima descrito para o imóvel especificado."
+            },
+            sw: {
+                receipt: "Risiti ya Kodi", country: "Nchi", receiptNum: "Risiti #", date: "Tarehe",
+                receivedFrom: "Imepokelewa Kutoka (Mpangaji)", paidTo: "Imelipwa Kwa (Mwenye Nyumba/Wakala)",
+                premises: "Anwani ya Nyumba", totalPaid: "Kiasi Kilicholipwa", paymentMethod: "Njia ya Malipo",
+                status: "Hali", cleared: "IMELIPWA & KUKAMILIKA", signature: "Saini Iliyoidhinishwa", thankYou: "Asante kwa malipo yako!",
+                period: "Muda wa Kodi", paymentType: "Aina ya Malipo", notes: "Maelezo",
+                declaration: "Mwenye nyumba anathibitisha kupokea malipo yaliyotajwa hapo juu kwa ajili ya nyumba iliyotajwa."
+            },
+            ar: {
+                receipt: "إيصال استلام إيجار", country: "البلد", receiptNum: "رقم الإيصال", date: "التاريخ",
+                receivedFrom: "المستلم من (المستأجر)", paidTo: "المدفوع لـ (المالك/الوكيل)",
+                premises: "عنوان العقار", totalPaid: "إجمالي المبلغ المدفوع", paymentMethod: "طريقة الدفع",
+                status: "الحالة", cleared: "تم الدفع والتسوية", signature: "التوقيع المعتمد", thankYou: "شكراً لتعاملكم معنا!",
+                period: "فترة الإيجار", paymentType: "نوع الدفع", notes: "ملاحظات",
+                declaration: "يقر المالك بموجب هذا باستلام الدفعة الموضحة أعلاه للعقار المحدد."
+            },
+            ms: {
+                receipt: "Resit Sewa", country: "Negara", receiptNum: "Resit #", date: "Tarikh",
+                receivedFrom: "Diterima Daripada (Penyewa)", paidTo: "Dibayar Kepada (Tuan Rumah/Ejen)",
+                premises: "Alamat Premis", totalPaid: "Jumlah Keseluruhan Dibayar", paymentMethod: "Cara Pembayaran",
+                status: "Status", cleared: "TELAH DIBAYAR & SELESAI", signature: "Tandatangan Sah", thankYou: "Terima kasih atas pembayaran anda!",
+                period: "Tempoh Sewaan", paymentType: "Jenis Bayaran", notes: "Nota",
+                declaration: "Tuan rumah dengan ini mengakui penerimaan bayaran yang dinyatakan di atas bagi premis yang dinyatakan."
+            },
+            id: {
+                receipt: "Kuitansi Sewa", country: "Negara", receiptNum: "Kuitansi #", date: "Tanggal",
+                receivedFrom: "Diterima Dari (Penyewa)", paidTo: "Dibayarkan Kepada (Pemilik/Agen)",
+                premises: "Alamat Properti", totalPaid: "Jumlah Total Ditransfer", paymentMethod: "Metode Pembayaran",
+                status: "Status", cleared: "LUNAS & SELESAI", signature: "Tanda Tangan Sah", thankYou: "Terima kasih atas pembayaran Anda!",
+                period: "Periode Sewa", paymentType: "Jenis Pembayaran", notes: "Catatan",
+                declaration: "Pemilik dengan ini menyatakan telah menerima pembayaran yang dijelaskan di atas untuk properti yang ditentukan."
+            },
+            hi: {
+                receipt: "किराया रसीद", country: "देश", receiptNum: "रसीद संख्या", date: "दिनांक",
+                receivedFrom: "किराएदार से प्राप्त", paidTo: "मकान मालिक/एजेंट को भुगतान",
+                premises: "संपत्ति का पता", totalPaid: "कुल भुगतान राशि", paymentMethod: "भुगतान का प्रकार",
+                status: "स्थिति", cleared: "भुगतान पूरा हुआ", signature: "अधिकृत हस्ताक्षर", thankYou: "भुगतान के लिए धन्यवाद!",
+                period: "किराए की अवधि", paymentType: "भुगतान का प्रकार", notes: "टिप्पणी",
+                declaration: "मकान मालिक एतद्द्वारा निर्दिष्ट संपत्ति के लिए ऊपर वर्णित भुगतान प्राप्त करना स्वीकार करता है।"
+            },
+            pl: {
+                receipt: "Potwierdzenie Wynajmu", country: "Kraj", receiptNum: "Dowód nr", date: "Data",
+                receivedFrom: "Otrzymano od (Najemca)", paidTo: "Wpłacono do (Właściciel/Agent)",
+                premises: "Adres Lokalu", totalPaid: "Całkowita Kwota", paymentMethod: "Metoda Płatności",
+                status: "Status", cleared: "ZAPŁACONO", signature: "Upoważniony Podpis", thankYou: "Dziękujemy za wpłatę!",
+                period: "Okres Wynajmu", paymentType: "Rodzaj Płatności", notes: "Uwagi",
+                declaration: "Właściciel niniejszym potwierdza otrzymanie wyżej opisanej płatności za określony lokal."
+            },
+            ja: {
+                receipt: "家賃領収書", country: "国名", receiptNum: "領収書番号", date: "発行日",
+                receivedFrom: "お支払者 (借主)", paidTo: "受取人 (貸主/代理人)",
+                premises: "物件所在地", totalPaid: "領収金額", paymentMethod: "お支払方法",
+                status: "状態", cleared: "領収済", signature: "正当な署名", thankYou: "ご利用ありがとうございました。",
+                period: "賃貸期間", paymentType: "支払種別", notes: "備考",
+                declaration: "貸主は、指定された物件に対する上記の支払いの受領をここに認めます。"
+            },
+            sv: {
+                receipt: "Hyreskvitto", country: "Land", receiptNum: "Kvitto nr", date: "Datum",
+                receivedFrom: "Mottaget från (Hyresgäst)", paidTo: "Betalat till (Hyresvärd/Ombud)",
+                premises: "Fastighetsadress", totalPaid: "Totalbelopp Betalat", paymentMethod: "Betalningsmetod",
+                status: "Status", cleared: "BETALD & KLARERAD", signature: "Auktoriserad Signatur", thankYou: "Tack för din betalning!",
+                period: "Hyresperiod", paymentType: "Betalningstyp", notes: "Anteckningar",
+                declaration: "Hyresvärden intygar härmed mottagandet av ovan beskrivna betalning för den angivna fastigheten."
+            },
+            zh: {
+                receipt: "租金收据", country: "国家", receiptNum: "收据编号", date: "日期",
+                receivedFrom: "付款人 (租客)", paidTo: "收款人 (房东/代理人)",
+                premises: "物业地址", totalPaid: "实收总额", paymentMethod: "付款方式",
+                status: "状态", cleared: "款项已结清", signature: "授权签字", thankYou: "感谢您的付款！",
+                period: "租赁周期", paymentType: "款项类型", notes: "备注",
+                declaration: "房东特此确认收到上述针对指定物业的款项。"
+            },
+            vi: {
+                receipt: "Hóa Đơn Thu Tiền Thuê Nhà", country: "Quốc gia", receiptNum: "Hóa đơn số", date: "Ngày phát hành",
+                receivedFrom: "Khách thuê (Người nộp tiền)", paidTo: "Chủ nhà / Đại lý nhận tiền",
+                premises: "Địa chỉ nhà cho thuê", totalPaid: "Tổng số tiền đã nộp", paymentMethod: "Hình thức thanh toán",
+                status: "Trạng thái", cleared: "ĐÃ THANH TOÁN ĐỦ", signature: "Chữ ký người đại diện", thankYou: "Xin chân thành cảm ơn quý khách!",
+                period: "Thời hạn thuê", paymentType: "Khoản thanh toán cho", notes: "Ghi chú",
+                declaration: "Chủ nhà xác nhận đã nhận đủ số tiền được liệt kê ở trên cho phần diện tích nhà thuê được chỉ định."
+            },
+            nl: {
+                receipt: "Huurkwitantie", country: "Land", receiptNum: "Kwitancenummer", date: "Datum",
+                receivedFrom: "Ontvangen van (Huurder)", paidTo: "Betaald aan (Verhuurder/Agent)",
+                premises: "Adres van het Gehuurde", totalPaid: "Totaal Betaald Bedrag", paymentMethod: "Betaalwijze",
+                status: "Status", cleared: "BETAALD & VOLDAAN", signature: "Handtekening Verhuurder", thankYou: "Hartelijk dank voor uw betaling!",
+                period: "Huurperiode", paymentType: "Type Betaling", notes: "Opmerkingen",
+                declaration: "De verhuurder verklaart hierbij de hierboven vermelde betaling te hebben ontvangen voor het betreffende gehuurde."
+            },
+            th: {
+                receipt: "ใบเสร็จรับเงินค่าเช่า", country: "ประเทศ", receiptNum: "เลขที่ใบเสร็จ", date: "วันที่ออกใบเสร็จ",
+                receivedFrom: "ได้รับเงินจาก (ผู้เช่า)", paidTo: "ชำระให้แก่ (ผู้ให้เช่า/ตัวแทน)",
+                premises: "สถานที่เช่า", totalPaid: "จำนวนเงินที่ชำระ", paymentMethod: "วิธีการชำระเงิน",
+                status: "สถานะ", cleared: "ชำระเงินเรียบร้อยแล้ว", signature: "ลายมือชื่อผู้รับเงิน", thankYou: "ขอบคุณสำหรับการชำระเงิน!",
+                period: "ระยะเวลาค่าเช่า", paymentType: "ประเภทการชำระเงิน", notes: "หมายเหตุเพิ่มเติม",
+                declaration: "ผู้ให้เช่าขอรับรองว่าได้รับเงินจำนวนดังกล่าวข้างต้นสำหรับสถานที่เช่าที่ระบุไว้เสร็จสิ้นแล้ว"
+            }
+        };
+
+        const countriesUsingCheque = ['uk', 'au', 'ca', 'nz', 'za', 'ie', 'my', 'sg', 'pk', 'in', 'bd', 'ke', 'ng', 'gh', 'tz'];
+    </script>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="form-section">
+        <h2>Rent Receipt Generator</h2>
+
+        <div class="account-cta-box" id="accountAppBox">
+            <div class="account-header">
+                <span class="account-title" id="tierDisplay">Account Access Level</span>
+                <span class="tier-badge" id="tierBadge">Guests / No sign up</span>
+            </div>
+            
+            <div class="usage-tracker" id="usageDisplay">
+                Free tier cap: <strong style="color:#ef4444;">1 / 3 receipts generated this month</strong>
+            </div>
+
+            <div class="pro-description-text">
+                Unlimited Generation, Complete History, Tenant/Property Records &amp; Quick Duplication active.
+            </div>
+
+            <div class="subscription-btn-group">
+                <button class="btn-tier active" id="btnTierGuest" onclick="setTier('guest')">Guests / No Sign Up</button>
+                <button class="btn-tier" id="btnTierPro" onclick="setTier('pro')">Pro Unlimited ($45/Yr)</button>
+            </div>
+
+            <div class="history-list" id="historyModule">
+                <div class="history-title">Saved Pro Dash (History &amp; Duplicates)</div>
+                <div id="historyEntries"></div>
+            </div>
+        </div>
+        
+        <div class="row" style="background-color: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+            <div class="form-group">
+                <label for="countrySelect" style="color: #1e40af;">Country Profile</label>
+                <select id="countrySelect" onchange="handleCountryChange()">
+                    {{OPTIONS}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="langSelect" style="color: #1e40af;">User Interface Language</label>
+                <select id="langSelect" onchange="handleLanguageChange()">
+                    <option value="en">English</option>
+                    <option value="es">Español (Spanish)</option>
+                    <option value="fr">Français (French)</option>
+                    <option value="de">Deutsch (German)</option>
+                    <option value="it">Italiano (Italian)</option>
+                    <option value="pt">Português (Portuguese)</option>
+                    <option value="sw">Kiswahili (Swahili)</option>
+                    <option value="ar">العربية (Arabic)</option>
+                    <option value="ms">Bahasa Melayu (Malay)</option>
+                    <option value="id">Bahasa Indonesia (Indonesian)</option>
+                    <option value="hi">हिन्दी (Hindi)</option>
+                    <option value="pl">Polski (Polish)</option>
+                    <option value="ja">日本語 (Japanese)</option>
+                    <option value="sv">Svenska (Swedish)</option>
+                    <option value="zh">中文 (Chinese)</option>
+                    <option value="vi">Tiếng Việt (Vietnamese)</option>
+                    <option value="nl">Nederlands (Dutch)</option>
+                    <option value="th">ไทย (Thai)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="form-group">
+                <label for="receiptNum">Receipt Number</label>
+                <input type="text" id="receiptNum" value="REC-1001" oninput="updatePreview()">
+            </div>
+            <div class="form-group">
+                <label for="receiptDate">Date Issued</label>
+                <input type="date" id="receiptDate" onchange="updatePreview()">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="landlordName">Landlord / Agent Name</label>
+                <input type="text" id="landlordName" placeholder="John Doe or Agency LLC" oninput="updatePreview()">
+            </div>
+            <div class="form-group">
+                <label for="landlordPhone">Landlord/Agent Phone</label>
+                <input type="tel" id="landlordPhone" placeholder="Phone Number" oninput="updatePreview()">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="landlordEmail">Landlord/Agent Email</label>
+            <input type="email" id="landlordEmail" placeholder="landlord@email.com" oninput="updatePreview()">
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="tenantName">Tenant Full Name</label>
+                <input type="text" id="tenantName" placeholder="Jane Smith" oninput="updatePreview()">
+            </div>
+            <div class="form-group">
+                <label for="tenantPhone">Tenant Phone Number</label>
+                <input type="tel" id="tenantPhone" placeholder="Phone Number" oninput="updatePreview()">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="tenantEmail">Tenant Email</label>
+            <input type="email" id="tenantEmail" placeholder="tenant@email.com" oninput="updatePreview()">
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="periodStart">Billing Period Start</label>
+                <input type="date" id="periodStart" onchange="updatePreview()">
+            </div>
+            <div class="form-group">
+                <label for="periodEnd">Billing Period End</label>
+                <input type="date" id="periodEnd" onchange="updatePreview()">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="propAddress">Property Street Address</label>
+                <input type="text" id="propAddress" placeholder="Property Location Address" oninput="updatePreview()">
+            </div>
+            <div class="form-group">
+                <label for="unitNum">Unit / Apt / Suite #</label>
+                <input type="text" id="unitNum" placeholder="e.g., Apt 4B" oninput="updatePreview()">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="paymentTypeSelect">Payment Allocation Type</label>
+                <select id="paymentTypeSelect" onchange="updatePreview()">
+                    <option value="Rent">Rent</option>
+                    <option value="Partial Payment">Partial Payment</option>
+                    <option value="Security deposit">Security Deposit</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="paymentMethod">Payment Method</label>
+                <select id="paymentMethod" onchange="updatePreview()">
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group" style="grid-column: span 2;">
+                <label for="rentAmount">Amount Paid</label>
+                <input type="number" id="rentAmount" placeholder="0.00" value="1200" oninput="updatePreview()">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="receiptNotes">Optional Special Notes / Balance Due</label>
+            <textarea id="receiptNotes" rows="2" placeholder="Enter any specific terms, remaining balance, or updates here..." oninput="updatePreview()"></textarea>
+        </div>
+
+        <div class="action-row">
+            <button class="btn-print" onclick="triggerPrintAndCount()">Print / Save PDF</button>
+            <button class="btn-action" onclick="copyShareLink()">🔗 Copy Link</button>
+            <button class="btn-action" onclick="emailReceipt()">✉️ Email</button>
+        </div>
+    </div>
+
+    <!-- Main Receipt Body Wrap -->
+    <div class="preview-wrap">
+        <!-- A simple print button that appears ONLY to the tenant when viewing the link -->
+        <div class="view-actions-bar">
+            <button class="btn-print" style="padding: 8px 16px; font-size: 0.9rem;" onclick="window.print()">Download / Print Receipt</button>
+        </div>
+
+        <div class="preview-section" id="printArea">
+            <div class="receipt-header">
+                <div>
+                    <h1 class="receipt-title" id="lblReceipt">Rent Receipt</h1>
+                    <p style="font-size:0.85rem; color:#6b7280;"><span id="lblCountryTag">Country</span>: <span id="prevCountry">Global</span></p>
+                </div>
+                <div class="receipt-meta">
+                    <p><strong><span id="lblNumTag">Receipt #</span>:</strong> <span id="prevNum">REC-1001</span></p>
+                    <p><strong><span id="lblDateTag">Date</span>:</strong> <span id="prevDate">MM/DD/YYYY</span></p>
+                </div>
+            </div>
+
+            <div class="receipt-grid">
+                <div class="data-block">
+                    <h4 id="lblReceivedFrom">Received From (Tenant)</h4>
+                    <p id="prevTenant">---</p>
+                    <span id="prevTenantEmail"></span>
+                    <span id="prevTenantPhone" style="font-size: 0.85rem; color:#4b5563;"></span>
+                </div>
+                <div class="data-block">
+                    <h4 id="lblPaidTo">Paid To (Landlord/Agent)</h4>
+                    <p id="prevLandlord">---</p>
+                    <span id="prevLandlordEmail"></span>
+                    <span id="prevLandlordPhone" style="font-size: 0.85rem; color:#4b5563;"></span>
+                </div>
+            </div>
+
+            <div class="receipt-grid" style="margin-bottom: 25px;">
+                <div class="data-block">
+                    <h4 id="lblPremises">Premises Address</h4>
+                    <p><span id="prevAddress">---</span><span id="prevUnit" style="display:inline; font-weight: inherit; color: inherit;"></span></p>
+                </div>
+                <div class="data-block">
+                    <h4 id="lblPeriod">Rental Period</h4>
+                    <p><span id="prevPeriodStart">MM/DD/YYYY</span> - <span id="prevPeriodEnd">MM/DD/YYYY</span></p>
+                </div>
+            </div>
+
+            <div class="amount-box">
+                <h4 id="lblTotalPaid">Total Paid Amount</h4>
+                <span><span id="prevSymbol">$</span><span id="prevAmount">1,200.00</span> <span id="prevCurrency">USD</span></span>
+            </div>
+
+            <div class="receipt-grid" style="margin-bottom: 20px;">
+                <div class="data-block">
+                    <h4 id="lblMethodTag">Payment Method</h4>
+                    <p id="prevMethod">---</p>
+                </div>
+                <div class="data-block">
+                    <h4 id="lblPaymentType">Payment Type</h4>
+                    <p id="prevType" style="font-weight: bold; color: var(--primary-color);">Rent</p>
+                </div>
+            </div>
+
+            <div class="notes-display-box" id="notesDisplaySection" style="display: none;">
+                <strong id="lblNotesTag">Notes</strong>: <span id="prevNotes"></span>
+            </div>
+
+            <div class="legal-declaration" id="lblDeclaration">
+                The landlord hereby acknowledges receiving the payment described above for the specified premises.
+            </div>
+
+            <div class="signature-area">
+                <div>
+                    <p><span id="lblSignature">Authorized Signature</span>: _______________________</p>
+                </div>
+                <div>
+                    <p id="lblThankYou">Thank you for your payment!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('receiptDate').valueAsDate = new Date();
+    const start = new Date();
+    start.setDate(1);
+    const end = new Date(start.getFullYear(), start.getMonth() + 1, 0);
+    document.getElementById('periodStart').valueAsDate = start;
+    document.getElementById('periodEnd').valueAsDate = end;
+
+    let currentSymbol = "$";
+    let currentCurrency = "USD";
+    let currentSlug = "us";
+    let activeTier = 'guest';
+    let localReceiptHistory = [];
+
+    if (!localStorage.getItem('receipts_store_v2')) {
+        const initialProMocks = [
+            { id: '1', num: 'REC-2024', tenant: 'Hamisi Juma', amt: 750000, date: '2026-07-01' },
+            { id: '2', num: 'REC-2025', tenant: 'Sarah Jenkins', amt: 1200, date: '2026-07-10' }
+        ];
+        localStorage.setItem('receipts_store_v2', JSON.stringify(initialProMocks));
+    }
+    localReceiptHistory = JSON.parse(localStorage.getItem('receipts_store_v2'));
+
+    function setTier(tier) {
+        activeTier = tier;
+        document.querySelectorAll('.btn-tier').forEach(btn => btn.classList.remove('active'));
+        
+        if (tier === 'guest') {
+            document.getElementById('btnTierGuest').classList.add('active');
+            document.getElementById('tierBadge').className = "tier-badge";
+            document.getElementById('tierBadge').innerText = "Guests / No sign up";
+            document.getElementById('usageDisplay').innerHTML = `Free tier cap: <strong style="color:#ef4444;">1 / 3 receipts generated this month</strong>`;
+            document.getElementById('historyModule').style.display = "none";
+        } else {
+            document.getElementById('btnTierPro').classList.add('active');
+            document.getElementById('tierBadge').className = "tier-badge pro";
+            document.getElementById('tierBadge').innerText = "Pro Account Unlocked";
+            document.getElementById('usageDisplay').innerHTML = `👑 Unlimited Generation, Complete History, Tenant/Property Records &amp; Quick Duplication active.`;
+            document.getElementById('historyModule').style.display = "block";
+            renderHistory();
+        }
+    }
+
+    function renderHistory() {
+        const listDiv = document.getElementById('historyEntries');
+        listDiv.innerHTML = '';
+        localReceiptHistory.forEach(item => {
+            listDiv.innerHTML += `
+                <div class="history-item">
+                    <div><strong>${item.num}</strong> - ${item.tenant}</div>
+                    <div class="history-actions">
+                        <button onclick="editReceipt('${item.id}')">Edit</button>
+                        <button onclick="duplicateReceipt('${item.id}')">Duplicate</button>
+                        <button onclick="deleteReceipt('${item.id}')" style="color:#ef4444;">Delete</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function deleteReceipt(id) {
+        localReceiptHistory = localReceiptHistory.filter(r => r.id !== id);
+        localStorage.setItem('receipts_store_v2', JSON.stringify(localReceiptHistory));
+        renderHistory();
+    }
+
+    function copyShareLink() {
+        const dataArray = [
+            document.getElementById('receiptNum').value,
+            document.getElementById('receiptDate').value,
+            document.getElementById('landlordName').value,
+            document.getElementById('landlordPhone').value,
+            document.getElementById('landlordEmail').value,
+            document.getElementById('tenantName').value,
+            document.getElementById('tenantPhone').value,
+            document.getElementById('tenantEmail').value,
+            document.getElementById('periodStart').value,
+            document.getElementById('periodEnd').value,
+            document.getElementById('propAddress').value,
+            document.getElementById('unitNum').value,
+            document.getElementById('paymentTypeSelect').value,
+            document.getElementById('rentAmount').value,
+            document.getElementById('receiptNotes').value,
+            document.getElementById('countrySelect').value,
+            document.getElementById('langSelect').value,
+            document.getElementById('paymentMethod').value
+        ];
+
+        try {
+            const jsonString = JSON.stringify(dataArray);
+            const compressedCode = btoa(encodeURIComponent(jsonString));
+            const longUrl = `${window.location.origin}${window.location.pathname}?r=${compressedCode}`;
+            
+            fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`)
+                .then(response => response.text())
+                .then(shortUrl => {
+                    navigator.clipboard.writeText(shortUrl).then(() => {
+                        alert(`🔗 Short Link Copied to Clipboard!\n\n${shortUrl}`);
+                    });
+                })
+                .catch(err => {
+                    navigator.clipboard.writeText(longUrl).then(() => {
+                        alert(`🔗 Link Copied! (TinyURL connection timed out, copied full raw structure instead).`);
+                    });
+                    console.error('Error shortening URL: ', err);
+                });
+        } catch(e) {
+            alert("Error constructing shareable URL.");
+            console.error(e);
+        }
+    }
+
+    function duplicateReceipt(id) {
+        const item = localReceiptHistory.find(r => r.id === id);
+        if (item) {
+            const copy = { ...item, id: Date.now().toString(), num: item.num + '-DUP' };
+            localReceiptHistory.push(copy);
+            localStorage.setItem('receipts_store_v2', JSON.stringify(localReceiptHistory));
+            renderHistory();
+        }
+    }
+
+    function editReceipt(id) {
+        const item = localReceiptHistory.find(r => r.id === id);
+        if (item) {
+            document.getElementById('receiptNum').value = item.num;
+            document.getElementById('tenantName').value = item.tenant;
+            document.getElementById('rentAmount').value = item.amt;
+            document.getElementById('receiptDate').value = item.date;
+            updatePreview();
+        }
+    }
+
+    function triggerPrintAndCount() {
+        if (activeTier === 'guest') {
+            alert("Guest session printed receipt. Monthly limit remaining: 2.");
+        }
+        window.print();
+    }
+
+    function emailReceipt() {
+        const tenantEmail = document.getElementById('tenantEmail').value || 'tenant@example.com';
+        const num = document.getElementById('receiptNum').value || 'N/A';
+        window.location.href = `mailto:${tenantEmail}?subject=Rent Receipt ${num}&body=Please find your rent payment receipt generated inside your premium platform profile.`;
+    }
+
+    function handleCountryChange() {
+        currentSlug = document.getElementById('countrySelect').value;
+        const country = countryDatabase.find(c => c.slug === currentSlug);
+        
+        if (country) {
+            currentSymbol = country.symbol;
+            currentCurrency = country.currency;
+            
+            const langMapper = {
+                es: ['es', 'mx', 'ar', 'co'],
+                fr: ['fr', 'be'],
+                de: ['de', 'at'],
+                it: ['it'],
+                pt: ['pt', 'br'],
+                sw: ['tz', 'ke'],
+                ms: ['my', 'sg'],
+                id: ['id'],
+                hi: ['in'],
+                pl: ['pl'],
+                ja: ['jp'],
+                sv: ['se'],
+                zh: ['cn'],
+                vi: ['vn'],
+                nl: ['nl'],
+                th: ['th'],
+                ar: ['ae', 'sa', 'kw', 'qa', 'eg', 'om', 'ye']
+            };
+
+            let autoLang = 'en';
+            for (const [langKey, slugs] of Object.entries(langMapper)) {
+                if (slugs.includes(currentSlug)) {
+                    autoLang = langKey;
+                    break;
+                }
+            }
+            document.getElementById('langSelect').value = autoLang;
+
+            const checkSpelling = countriesUsingCheque.includes(currentSlug) ? 'Cheque' : 'Check';
+            const baseOptions = ['Bank Transfer', 'Cash', checkSpelling, 'Credit Card'];
+            const extraOptions = country.extraPayments || [];
+            
+            const parsedExtras = extraOptions.map(opt => {
+                if(opt.toLowerCase() === 'check' || opt.toLowerCase() === 'cheque') return checkSpelling;
+                return opt;
+            });
+
+            const dropdown = document.getElementById('paymentMethod');
+            dropdown.innerHTML = [...parsedExtras, ...baseOptions]
+                .map(method => `<option value="${method}">${method}</option>`)
+                .join('');
+                
+            document.getElementById('prevCountry').innerText = country.name;
+            handleLanguageChange();
+        }
+    }
+
+    function handleLanguageChange() {
+        const selectedLang = document.getElementById('langSelect').value;
+        const dict = translationMatrix[selectedLang] || translationMatrix.en;
+
+        const previewBlock = document.getElementById('printArea');
+        if (selectedLang === 'ar') {
+            previewBlock.classList.add('rtl-layout');
+        } else {
+            previewBlock.classList.remove('rtl-layout');
+        }
+
+        document.getElementById('lblReceipt').innerText = dict.receipt;
+        document.getElementById('lblCountryTag').innerText = dict.country;
+        document.getElementById('lblNumTag').innerText = dict.receiptNum;
+        document.getElementById('lblDateTag').innerText = dict.date;
+        document.getElementById('lblReceivedFrom').innerText = dict.receivedFrom;
+        document.getElementById('lblPaidTo').innerText = dict.paidTo;
+        document.getElementById('lblPremises').innerText = dict.premises;
+        document.getElementById('lblTotalPaid').innerText = dict.totalPaid;
+        document.getElementById('lblMethodTag').innerText = dict.paymentMethod;
+        document.getElementById('lblPaymentType').innerText = dict.paymentType;
+        document.getElementById('lblNotesTag').innerText = dict.notes;
+        document.getElementById('lblDeclaration').innerText = dict.declaration;
+        document.getElementById('lblSignature').innerText = dict.signature;
+        document.getElementById('lblThankYou').innerText = dict.thankYou;
+        document.getElementById('lblPeriod').innerText = dict.period;
+
+        updatePreview();
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return 'MM/DD/YYYY';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
+    }
+
+    function updatePreview() {
+        document.getElementById('prevNum').innerText = document.getElementById('receiptNum').value || 'N/A';
+        document.getElementById('prevDate').innerText = formatDate(document.getElementById('receiptDate').value);
+
+        document.getElementById('prevLandlord').innerText = document.getElementById('landlordName').value || '---';
+        const landlordEmail = document.getElementById('landlordEmail').value;
+        document.getElementById('prevLandlordEmail').innerText = landlordEmail ? `(${landlordEmail})` : '';
+        const landlordPhone = document.getElementById('landlordPhone').value;
+        document.getElementById('prevLandlordPhone').innerText = landlordPhone ? `☎ ${landlordPhone}` : '';
+
+        document.getElementById('prevTenant').innerText = document.getElementById('tenantName').value || '---';
+        const tenantEmail = document.getElementById('tenantEmail').value;
+        document.getElementById('prevTenantEmail').innerText = tenantEmail ? `(${tenantEmail})` : '';
+        const tenantPhone = document.getElementById('tenantPhone').value;
+        document.getElementById('prevTenantPhone').innerText = tenantPhone ? `☎ ${tenantPhone}` : '';
+
+        const mainAddress = document.getElementById('propAddress').value || '---';
+        const unitDetails = document.getElementById('unitNum').value;
+        document.getElementById('prevAddress').innerText = mainAddress;
+        document.getElementById('prevUnit').innerText = unitDetails ? `, ${unitDetails}` : '';
+        
+        document.getElementById('prevPeriodStart').innerText = formatDate(document.getElementById('periodStart').value);
+        document.getElementById('prevPeriodEnd').innerText = formatDate(document.getElementById('periodEnd').value);
+
+        const amt = parseFloat(document.getElementById('rentAmount').value) || 0;
+        document.getElementById('prevAmount').innerText = amt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        
+        document.getElementById('prevSymbol').innerText = currentSymbol;
+        document.getElementById('prevCurrency').innerText = currentCurrency;
+        document.getElementById('prevMethod').innerText = document.getElementById('paymentMethod').value || '---';
+        document.getElementById('prevType').innerText = document.getElementById('paymentTypeSelect').value;
+
+        const notesValue = document.getElementById('receiptNotes').value;
+        const notesBox = document.getElementById('notesDisplaySection');
+        if (notesValue.trim() !== '') {
+            notesBox.style.display = "block";
+            document.getElementById('prevNotes').innerText = notesValue;
+        } else {
+            notesBox.style.display = "none";
+        }
+    }
+
+    function loadReceiptFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlParams.has('r')) return false;
+
+        try {
+            // Trigger View Only mode setup
+            document.body.classList.add('view-only-mode');
+
+            const compressedCode = urlParams.get('r');
+            const decodedJSON = decodeURIComponent(atob(compressedCode));
+            const data = JSON.parse(decodedJSON);
+
+            document.getElementById('receiptNum').value = data[0] || '';
+            document.getElementById('receiptDate').value = data[1] || '';
+            document.getElementById('landlordName').value = data[2] || '';
+            document.getElementById('landlordPhone').value = data[3] || '';
+            document.getElementById('landlordEmail').value = data[4] || '';
+            document.getElementById('tenantName').value = data[5] || '';
+            document.getElementById('tenantPhone').value = data[6] || '';
+            document.getElementById('tenantEmail').value = data[7] || '';
+            document.getElementById('periodStart').value = data[8] || '';
+            document.getElementById('periodEnd').value = data[9] || '';
+            document.getElementById('propAddress').value = data[10] || '';
+            document.getElementById('unitNum').value = data[11] || '';
+            document.getElementById('paymentTypeSelect').value = data[12] || '';
+            document.getElementById('rentAmount').value = data[13] || '';
+            document.getElementById('receiptNotes').value = data[14] || '';
+            
+            if (data[15]) {
+                document.getElementById('countrySelect').value = data[15];
+                handleCountryChange();
+            }
+            if (data[16]) {
+                document.getElementById('langSelect').value = data[16];
+                handleLanguageChange();
+            }
+            if (data[17]) {
+                const methodSelect = document.getElementById('paymentMethod');
+                const exists = Array.from(methodSelect.options).some(opt => opt.value === data[17]);
+                if (!exists) {
+                    const opt = document.createElement('option');
+                    opt.value = data[17];
+                    opt.text = data[17];
+                    methodSelect.add(opt);
+                }
+                methodSelect.value = data[17];
+            }
+
+            updatePreview();
+            return true;
+        } catch (e) {
+            console.error("Failed to parse compressed URL data", e);
+            return false;
+        }
+    }
+
+    if (typeof countryDatabase !== 'undefined' && countryDatabase.length > 0) {
+        handleCountryChange();
+        loadReceiptFromURL();
+    } else {
+        updatePreview();
+    }
+</script>
+
+</body>
+</html>
