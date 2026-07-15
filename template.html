@@ -394,7 +394,7 @@
                 premises: "Adresse des Locaux", totalPaid: "Montant Total Payé", paymentMethod: "Mode de Paiement",
                 status: "Statut", cleared: "PAYÉ & ACQUITTÉ", signature: "Signature Autorisée", thankYou: "Merci pour votre paiement!",
                 period: "Période de Loyer", paymentType: "Type de Paiement", notes: "Notes",
-                declaration: "Le propriétaire reconnaît par la presente avoir reçu le paiement décrit ci-dessus choisi pour les locaux spécifiés."
+                declaration: "Le propriétaire reconnaît par la presente haber reçu le paiement décrit ci-dessus choisi pour les locaux spécifiés."
             },
             de: {
                 receipt: "Mietquittung", country: "Land", receiptNum: "Quittungsnr.", date: "Datum",
@@ -457,7 +457,7 @@
                 receivedFrom: "किराएदार से प्राप्त", paidTo: "मकान मालिक/एजेंट को भुगतान",
                 premises: "संपत्ति का पता", totalPaid: "कुल भुगतान राशि", paymentMethod: "भुगतान का प्रकार",
                 status: "स्थिति", cleared: "भुगतान पूरा हुआ", signature: "अधिकृत हस्ताक्षर", thankYou: "भुगतान के लिए धन्यवाद!",
-                period: "किราए की अवधि", paymentType: "भुगतान का प्रकार", notes: "टिप्पणी",
+                period: "किराए की अवधि", paymentType: "भुगतान का प्रकार", notes: "टिप्पणी",
                 declaration: "मकान मालिक एतद्द्वारा निर्दिष्ट संपत्ति के लिए ऊपर वर्णित भुगतान प्राप्त करना स्वीकार करता है।"
             },
             pl: {
@@ -506,7 +506,7 @@
                 premises: "Adres van het Gehuurde", totalPaid: "Totaal Betaald Bedrag", paymentMethod: "Betaalwijze",
                 status: "Status", cleared: "BETAALD & VOLDAAN", signature: "Handtekening Verhuurder", thankYou: "Hartelijk dank voor uw betaling!",
                 period: "Huurperiode", paymentType: "Type Betaling", notes: "Opmerkingen",
-                declaration: "De verhuurder verklaart hierbij de hierboven vermelde betaling te hebben ontvangen voor het betreffende gehuurde."
+                declaration: "De verhuurder verklaart hierby de hierboven vermelde betaling te hebben ontvangen voor het betreffende gehuurde."
             },
             th: {
                 receipt: "ใบเสร็จรับเงินค่าเช่า", country: "ประเทศ", receiptNum: "เลขที่ใบเสร็จ", date: "วันที่ออกใบเสร็จ",
@@ -811,12 +811,36 @@
             const methodSelect = document.getElementById('paymentMethod');
             methodSelect.innerHTML = '';
             
-            // SAFE FALLBACK: Checks variation names inside database. If empty, falls back to common methods.
-            const methods = country.methods || 
-                            country.paymentMethods || 
-                            country.payment_methods || 
-                            ['Cash', 'Bank Transfer', 'Cheque', 'Credit/Debit Card', 'Mobile Payment', 'Other'];
+            // Safe fallback check for database schema variations
+            let methods = country.methods || 
+                          country.paymentMethods || 
+                          country.payment_methods || 
+                          ['Cash', 'Bank Transfer', 'Cheque', 'Credit/Debit Card', 'Mobile Payment', 'Other'];
             
+            // Apply strict payment method localized injections based on country select
+            if (slug === 'ke') {
+                // Ensure Kenya has M-Pesa & Airtel Money
+                if (!methods.includes('M-Pesa')) methods = ['M-Pesa', 'Airtel Money', ...methods];
+            } else if (slug === 'ca') {
+                // Ensure Canada has Interac e-Transfer
+                if (!methods.includes('Interac e-Transfer')) methods = ['Interac e-Transfer', ...methods];
+            } else if (slug === 'uk' || slug === 'gb') {
+                // Ensure United Kingdom has Faster Payments and BACS
+                if (!methods.includes('Faster Payments')) methods = ['Faster Payments', 'BACS', ...methods];
+            } else if (slug === 'us') {
+                // Ensure US has Zelle, Venmo, ACH
+                if (!methods.includes('Zelle')) methods = ['Zelle', 'Venmo', 'ACH Transfer', ...methods];
+            } else if (slug === 'au') {
+                // Ensure Australia has PayID
+                if (!methods.includes('PayID')) methods = ['PayID', 'Direct Entry', ...methods];
+            } else if (['de', 'fr', 'it', 'es', 'nl'].includes(slug)) {
+                // Ensure Eurozone has SEPA Transfer
+                if (!methods.includes('SEPA Transfer')) methods = ['SEPA Transfer', ...methods];
+            }
+            
+            // Clean up duplicates if any slipped into the array
+            methods = [...new Set(methods)];
+
             methods.forEach(method => {
                 const opt = document.createElement('option');
                 opt.value = method;
