@@ -49,3 +49,4 @@ app.use(express.static(outDir));
 app.listen(PORT, () => {
     console.log(`Server is running and keeping the app alive on port ${PORT}`);
 });
+// Force trigger update
