@@ -780,7 +780,7 @@
     // Initialize standard values
     document.getElementById('receiptDate').valueAsDate = new Date();
 
-    // Placeholder functions for local logic (to ensure no errors when calling them)
+    // Placeholder functions for local logic
     function setTier(tier) {
         document.querySelectorAll('.btn-tier').forEach(b => b.classList.remove('active'));
         if (tier === 'guest') {
@@ -795,19 +795,35 @@
     }
 
     function handleCountryChange() {
+        // Fallback check if countryDatabase isn't defined yet
+        if (typeof countryDatabase === 'undefined') {
+            console.warn('countryDatabase is not loaded yet.');
+            return;
+        }
+
         const slug = document.getElementById('countrySelect').value;
         const country = countryDatabase.find(c => c.slug === slug);
+        
         if (country) {
             document.getElementById('prevCountry').innerText = country.name;
+            
             // Populate payment methods from selected country profile
             const methodSelect = document.getElementById('paymentMethod');
             methodSelect.innerHTML = '';
-            country.methods.forEach(method => {
+            
+            // SAFE FALLBACK: Checks variation names inside database. If empty, falls back to common methods.
+            const methods = country.methods || 
+                            country.paymentMethods || 
+                            country.payment_methods || 
+                            ['Cash', 'Bank Transfer', 'Cheque', 'Credit/Debit Card', 'Mobile Payment', 'Other'];
+            
+            methods.forEach(method => {
                 const opt = document.createElement('option');
                 opt.value = method;
                 opt.innerText = method;
                 methodSelect.appendChild(opt);
             });
+            
             updatePreview();
         }
     }
@@ -902,14 +918,12 @@
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
     }
 
-    // New WhatsApp Sharing logic
     function shareToWhatsApp() {
         const receiptNum = document.getElementById('receiptNum').value || 'N/A';
         const tenantName = document.getElementById('tenantName').value || 'Tenant';
         const landlordName = document.getElementById('landlordName').value || 'Landlord';
         const amount = document.getElementById('rentAmount').value || '0.00';
         
-        // Grab currency symbol from active country profile selection
         const slug = document.getElementById('countrySelect').value;
         const country = countryDatabase.find(c => c.slug === slug);
         const currencySymbol = country ? country.symbol : '$';
