@@ -29,17 +29,14 @@ fs.mkdirSync(outDir);
 
 let htmlTemplate = fs.readFileSync(templatePath, 'utf-8');
 
-// Inject the complete database directly into a frontend script tag inside the HTML
-// and construct the country selector HTML options string.
-const embeddedDataScript = `
-    const countryDatabase = ${JSON.stringify(countries)};
-`;
+// Inject the complete database directly into the {{DATABASE}} variable in template.html
+const embeddedDataScript = `const countryDatabase = ${JSON.stringify(countries)};`;
 const countryOptionsHTML = generateCountryDropdownOptions();
 
-// Replace templates variables
+// Replace template variables to match template.html perfectly
 let homepageContent = htmlTemplate
-    .replace('<!-- DATA_INJECTION -->', embeddedDataScript)
-    .replace('<!-- COUNTRY_OPTIONS -->', countryOptionsHTML);
+    .replace('{{DATABASE}}', embeddedDataScript)
+    .replace('{{OPTIONS}}', countryOptionsHTML);
 
 fs.writeFileSync(path.join(outDir, 'index.html'), homepageContent);
 console.log(`\n🎉 Generated dynamic interactive selector version inside /dist/index.html!`);
@@ -58,5 +55,3 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running and keeping the app alive on port ${PORT}`);
 });
-
-// Force trigger update
