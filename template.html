@@ -3,171 +3,221 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Global Rent Receipt Generator</title>
+  <title>Premium Rent Receipt Generator</title>
+  <!-- Tailwind CSS for modern, high-end UI -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Inter Font for crisp presentation -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
-    /* Print Styles to ensure the receipt prints beautifully on a single A4 page */
+    
+    /* Dedicated Print CSS styling for clean PDF export */
     @media print {
-      body * { visibility: hidden; }
-      #receipt-preview, #receipt-preview * { visibility: visible; }
-      #receipt-preview {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
+      body { background: white; }
+      .no-print { display: none !important; }
+      #receipt-paper {
         border: none !important;
         box-shadow: none !important;
         padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        position: absolute;
+        left: 0;
+        top: 0;
       }
-      .no-print { display: none !important; }
     }
   </style>
 </head>
 <body class="h-full flex flex-col justify-between">
 
-  <header class="bg-white border-b border-slate-200 no-print">
+  <!-- TOP HEADER -->
+  <header class="bg-white border-b border-slate-200 no-print sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="bg-indigo-600 w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">
+        <div class="bg-slate-900 w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow">
           R
         </div>
-        <span class="font-bold text-xl text-slate-800">ReceiptFlow</span>
+        <span class="font-bold text-lg text-slate-900 tracking-tight">Receipt<span class="text-indigo-600">Engine</span></span>
       </div>
-      <div class="flex items-center gap-4">
-        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Global Edition</span>
+      <div class="flex items-center gap-3">
+        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">Professional Suite</span>
       </div>
     </div>
   </header>
 
+  <!-- MAIN WORKSPACE -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
     
+    <!-- LEFT PANEL: GENERATOR INPUTS -->
     <section class="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm self-start space-y-6 no-print">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">Receipt Details</h2>
-        <p class="text-xs text-slate-500 mt-1">Fill in the fields below to dynamically generate your receipt.</p>
+        <h2 class="text-lg font-bold text-slate-900">Configure Receipt</h2>
+        <p class="text-xs text-slate-500 mt-1">Select your country config and populate the parameters below.</p>
       </div>
 
-      <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4">
-        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Localization Settings</h3>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Select Country</label>
-          <select id="country-select" onchange="updateLocalization()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
-            <option value="US">United States (USD - $)</option>
-            <option value="GB">United Kingdom (GBP - £)</option>
-            <option value="EU">Eurozone (EUR - €)</option>
-            <option value="KE">Kenya (KES - KSh)</option>
-            <option value="IN">India (INR - ₹)</option>
-            <option value="JP">Japan (JPY - ¥)</option>
-            <option value="MX">Mexico (MXN - $)</option>
-            <option value="FR">France (EUR - €)</option>
-          </select>
-        </div>
+      <!-- Localization Config -->
+      <div class="space-y-3">
+        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Localization & Currency</label>
+        <select id="country-select" onchange="updateLocalization()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 font-medium focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer">
+          <option value="US">🇺🇸 United States (USD - $)</option>
+          <option value="GB">🇬🇧 United Kingdom (GBP - £)</option>
+          <option value="EU">🇪🇺 Eurozone (EUR - €)</option>
+          <option value="KE">🇰🇪 Kenya (KES - KSh)</option>
+          <option value="IN">🇮🇳 India (INR - ₹)</option>
+          <option value="JP">🇯🇵 Japan (JPY - ¥)</option>
+          <option value="MX">🇲🇽 Mexico (MXN - $)</option>
+          <option value="FR">🇫🇷 France (EUR - €)</option>
+        </select>
       </div>
 
+      <hr class="border-slate-100">
+
+      <!-- Logo & Landlord Details -->
       <div class="space-y-4">
-        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Landlord Branding</h3>
+        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Branding & Landlord</h3>
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Upload Logo</label>
-          <input type="file" id="logo-input" accept="image/*" onchange="previewLogo(event)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+          <label class="block text-xs font-semibold text-slate-500 mb-1">Landlord Logo</label>
+          <input type="file" id="logo-input" accept="image/*" onchange="previewLogo(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-800 hover:file:bg-slate-200 cursor-pointer">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Landlord Name</label>
-          <input type="text" id="input-landlord" value="Apex Properties Ltd" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+          <label class="block text-xs font-semibold text-slate-500 mb-1">Landlord Name</label>
+          <input type="text" id="input-landlord" value="Apex Properties Ltd" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
       </div>
 
+      <hr class="border-slate-100">
+
+      <!-- Receipt Metadata & Tenancy Details -->
       <div class="space-y-4">
-        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Payment Details</h3>
+        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Payment Metadata</h3>
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Receipt Number</label>
-            <input type="text" id="input-receipt-num" value="REC-2026-001" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Receipt No.</label>
+            <input type="text" id="input-receipt-num" value="REC-2026-8941" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Payment Date</label>
-            <input type="date" id="input-date" value="2026-07-16" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Payment Date</label>
+            <input type="date" id="input-date" value="2026-07-16" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
           </div>
         </div>
+        
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Tenant Name</label>
-            <input type="text" id="input-tenant" value="Sarah Jenkins" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Payment Method</label>
+            <select id="input-method" onchange="syncFields()" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Credit Card">Credit Card</option>
+              <option value="Cash">Cash</option>
+              <option value="Mobile Money">Mobile Money</option>
+            </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Amount Paid</label>
-            <input type="number" id="input-amount" value="1200" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Rent Period (Month)</label>
+            <input type="text" id="input-period" value="July 2026" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. July 2026">
           </div>
         </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Tenant Name</label>
+            <input type="text" id="input-tenant" value="Sarah Jenkins" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1">Amount Paid</label>
+            <input type="number" id="input-amount" value="1200" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+        </div>
+
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Property Address</label>
-          <input type="text" id="input-address" value="452 Oakridge Lane, Apt 4B" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+          <label class="block text-xs font-semibold text-slate-500 mb-1">Rental Property Address</label>
+          <input type="text" id="input-address" value="452 Oakridge Lane, Apt 4B" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
       </div>
 
-      <button onclick="window.print()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl text-sm shadow transition-colors flex items-center justify-center gap-2">
+      <button onclick="window.print()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-xl text-sm shadow-md transition-all flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-        Print / Save to PDF
+        Download / Print Receipt PDF
       </button>
     </section>
 
+    <!-- RIGHT PANEL: PRECISE RECEIPT PREVIEW (Designed to look like professional letterhead paper) -->
     <section class="lg:col-span-7 flex flex-col items-center">
-      <div id="receipt-preview" class="w-full max-w-xl bg-white border border-slate-200 rounded-2xl p-8 md:p-12 shadow-md transition-all duration-300 min-h-[700px] flex flex-col justify-between relative overflow-hidden">
+      <div id="receipt-paper" class="w-full max-w-xl bg-white border border-slate-200 rounded-2xl p-10 md:p-14 shadow-lg transition-all duration-300 min-h-[750px] flex flex-col justify-between relative">
         
-        <div class="absolute -top-16 -right-16 w-44 h-44 bg-slate-50 rounded-full -z-10"></div>
-        
+        <!-- Subtle Document Header Band -->
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-slate-900 rounded-t-2xl no-print"></div>
+
         <div>
-          <div class="flex items-start justify-between border-b border-slate-100 pb-6 mb-6">
-            <div class="space-y-2">
+          <!-- Logo & Brand Header Block -->
+          <div class="flex items-start justify-between border-b border-slate-100 pb-8 mb-8">
+            <div class="space-y-3">
+              <!-- Dynamically uploaded logo -->
               <div id="logo-preview-container" class="hidden">
-                <img id="receipt-logo" src="#" alt="Logo" class="max-h-12 w-auto object-contain">
+                <img id="receipt-logo" src="#" alt="Logo" class="max-h-11 w-auto object-contain">
               </div>
-              <h1 id="receipt-landlord" class="text-xl font-bold text-slate-800">Apex Properties Ltd</h1>
-              <p class="text-xs text-slate-400">Authorized Landlord / Property Manager</p>
+              <div>
+                <h1 id="receipt-landlord" class="text-xl font-extrabold text-slate-900 tracking-tight">Apex Properties Ltd</h1>
+                <p id="lang-role" class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-0.5">Property Management</p>
+              </div>
             </div>
             <div class="text-right">
-              <span id="lang-title" class="text-xs uppercase tracking-widest font-bold text-indigo-600 block">Rent Receipt</span>
-              <span id="receipt-num" class="text-sm font-mono text-slate-600 block mt-1">#REC-2026-001</span>
+              <span id="lang-title" class="text-xs uppercase tracking-widest font-extrabold text-indigo-600 block">Rent Receipt</span>
+              <span id="receipt-num" class="text-xs font-mono text-slate-500 block mt-1">#REC-2026-8941</span>
             </div>
           </div>
 
-          <div class="space-y-6 text-sm text-slate-700">
-            <div class="flex justify-between py-2 border-b border-slate-100">
-              <span id="lang-date" class="text-slate-400">Date Paid</span>
-              <span id="receipt-date" class="font-medium text-slate-800">July 16, 2026</span>
+          <!-- Quick Meta Details Grid -->
+          <div class="grid grid-cols-2 gap-4 pb-6 mb-8 border-b border-slate-100 text-xs">
+            <div>
+              <p id="lang-date" class="text-slate-400 font-medium uppercase tracking-wider text-[10px]">Date Issued</p>
+              <p id="receipt-date" class="font-semibold text-slate-800 mt-0.5">July 16, 2026</p>
             </div>
-            <div class="flex justify-between py-2 border-b border-slate-100">
-              <span id="lang-tenant" class="text-slate-400">Received From (Tenant)</span>
-              <span id="receipt-tenant" class="font-semibold text-slate-800">Sarah Jenkins</span>
+            <div>
+              <p id="lang-method" class="text-slate-400 font-medium uppercase tracking-wider text-[10px]">Payment Method</p>
+              <p id="receipt-method" class="font-semibold text-slate-800 mt-0.5">Bank Transfer</p>
             </div>
-            <div class="flex justify-between py-2 border-b border-slate-100">
-              <span id="lang-address" class="text-slate-400">For Rental Address</span>
+          </div>
+
+          <!-- Descriptive Billing Rows -->
+          <div class="space-y-4">
+            <div class="flex justify-between items-baseline py-2 border-b border-slate-100 text-sm">
+              <span id="lang-tenant" class="text-slate-400">Received From</span>
+              <span id="receipt-tenant" class="font-bold text-slate-900">Sarah Jenkins</span>
+            </div>
+            <div class="flex justify-between items-baseline py-2 border-b border-slate-100 text-sm">
+              <span id="lang-address" class="text-slate-400">Rental Location</span>
               <span id="receipt-address" class="font-medium text-slate-800 text-right max-w-xs">452 Oakridge Lane, Apt 4B</span>
             </div>
+            <div class="flex justify-between items-baseline py-2 border-b border-slate-100 text-sm">
+              <span id="lang-period" class="text-slate-400">For Rent Period</span>
+              <span id="receipt-period" class="font-semibold text-slate-800">July 2026</span>
+            </div>
           </div>
 
-          <div class="bg-indigo-50/50 border border-indigo-100/50 rounded-xl p-6 mt-8 flex justify-between items-center">
-            <div class="space-y-1">
-              <span id="lang-total" class="text-xs uppercase font-bold text-indigo-800 tracking-wider">Total Amount Paid</span>
-              <span class="block text-xs text-slate-400">Payment processed successfully.</span>
+          <!-- Large Invoice Accent Block -->
+          <div class="bg-slate-50 border border-slate-150 rounded-xl p-6 mt-10 flex justify-between items-center">
+            <div class="space-y-0.5">
+              <span id="lang-total" class="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Total Rent Received</span>
+              <span class="block text-xs text-slate-400">Account status balanced.</span>
             </div>
             <div class="text-right">
-              <span id="receipt-amount" class="text-3xl font-extrabold text-indigo-950">$1,200.00</span>
+              <span id="receipt-amount" class="text-3xl font-extrabold text-slate-900 tracking-tight">$1,200.00</span>
             </div>
           </div>
         </div>
 
+        <!-- Authorized Signature Area -->
         <div class="border-t border-slate-100 pt-8 mt-12 flex justify-between items-end">
           <div class="space-y-1">
-            <p class="text-[10px] text-slate-400 uppercase tracking-wider">System Status</p>
-            <p class="text-xs font-semibold text-emerald-600 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Verified Paid
+            <p class="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Transaction Status</p>
+            <p class="text-xs font-semibold text-emerald-600 flex items-center gap-1.5">
+              <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Verified Receipt
             </p>
           </div>
-          <div class="text-center w-40">
-            <div class="border-b border-slate-200 h-10 w-full mb-1.5"></div>
-            <span id="lang-sig" class="text-[10px] text-slate-400 uppercase tracking-wider">Authorized Signature</span>
+          <div class="text-center w-44">
+            <div class="border-b border-slate-200 h-10 w-full mb-1"></div>
+            <span id="lang-sig" class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Authorized Signature</span>
           </div>
         </div>
 
@@ -176,25 +226,28 @@
 
   </main>
 
-  <footer class="bg-white border-t border-slate-200 no-print py-4">
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 no-print py-6 mt-12">
     <div class="max-w-7xl mx-auto px-4 text-center">
-      <p class="text-xs text-slate-400">&copy; 2026 ReceiptFlow SaaS.</p>
+      <p class="text-xs text-slate-400">&copy; 2026 ReceiptEngine. Internal administrative utilities.</p>
     </div>
   </footer>
 
+  <!-- CONTROLLER LOGIC -->
   <script>
-    // Internationalization Mapping Dictionary
+    // Config mappings for localization, formatting and language translations
     const locales = {
-      US: { currency: '$', lang: 'en-US', title: 'Rent Receipt', date: 'Date Paid', tenant: 'Received From (Tenant)', address: 'For Rental Address', total: 'Total Amount Paid', sig: 'Authorized Signature' },
-      GB: { currency: '£', lang: 'en-GB', title: 'Rent Receipt', date: 'Date Paid', tenant: 'Received From (Tenant)', address: 'For Rental Address', total: 'Total Amount Paid', sig: 'Authorized Signature' },
-      EU: { currency: '€', lang: 'de-DE', title: 'Mietquittung', date: 'Zahlungsdatum', tenant: 'Erhalten Von (Mieter)', address: 'Für Mietadresse', total: 'Gesamtbetrag Bezahlt', sig: 'Autorisierte Unterschrift' },
-      KE: { currency: 'KSh', lang: 'en-KE', title: 'Rent Receipt', date: 'Date Paid', tenant: 'Received From (Tenant)', address: 'For Rental Address', total: 'Total Amount Paid', sig: 'Authorized Signature' },
-      IN: { currency: '₹', lang: 'en-IN', title: 'Rent Receipt', date: 'Date Paid', tenant: 'Received From (Tenant)', address: 'For Rental Address', total: 'Total Amount Paid', sig: 'Authorized Signature' },
-      JP: { currency: '¥', lang: 'ja-JP', title: '家賃領収書', date: '支払日', tenant: '受取人 (店借人)', address: '賃貸物件の住所', total: '受領金額合計', sig: '承認の署名' },
-      MX: { currency: '$', lang: 'es-MX', title: 'Recibo de Alquiler', date: 'Fecha de Pago', tenant: 'Recibido de (Inquilino)', address: 'Dirección de la Propiedad', total: 'Monto Total Pagado', sig: 'Firma Autorizada' },
-      FR: { currency: '€', lang: 'fr-FR', title: 'Quittance de Loyer', date: 'Date de Paiement', tenant: 'Reçu de (Locataire)', address: 'Adresse de Location', total: 'Montant Total Payé', sig: 'Signature Autorisée' }
+      US: { currency: '$', code: 'USD', lang: 'en-US', title: 'Rent Receipt', date: 'Date Issued', tenant: 'Received From', address: 'Rental Location', period: 'For Rent Period', total: 'Total Rent Received', sig: 'Authorized Signature', method: 'Payment Method', role: 'Property Management' },
+      GB: { currency: '£', code: 'GBP', lang: 'en-GB', title: 'Rent Receipt', date: 'Date Issued', tenant: 'Received From', address: 'Rental Location', period: 'For Rent Period', total: 'Total Rent Received', sig: 'Authorized Signature', method: 'Payment Method', role: 'Property Management' },
+      EU: { currency: '€', code: 'EUR', lang: 'de-DE', title: 'Mietquittung', date: 'Ausstellungsdatum', tenant: 'Erhalten Von', address: 'Mietadresse', period: 'Für Mietzeitraum', total: 'Gesamtbetrag Erhalten', sig: 'Autorisierte Unterschrift', method: 'Zahlungsart', role: 'Hausverwaltung' },
+      KE: { currency: 'KSh', code: 'KES', lang: 'en-KE', title: 'Rent Receipt', date: 'Date Issued', tenant: 'Received From', address: 'Rental Location', period: 'For Rent Period', total: 'Total Rent Received', sig: 'Authorized Signature', method: 'Payment Method', role: 'Property Management' },
+      IN: { currency: '₹', code: 'INR', lang: 'en-IN', title: 'Rent Receipt', date: 'Date Issued', tenant: 'Received From', address: 'Rental Location', period: 'For Rent Period', total: 'Total Rent Received', sig: 'Authorized Signature', method: 'Payment Method', role: 'Property Management' },
+      JP: { currency: '¥', code: 'JPY', lang: 'ja-JP', title: '家賃領収書', date: '発行日', tenant: '受取人 (店借人)', address: '賃貸物件の住所', period: '賃貸対象期間', total: '受領金額合計', sig: '承認の署名', method: '支払手段', role: '不動産管理' },
+      MX: { currency: '$', code: 'MXN', lang: 'es-MX', title: 'Recibo de Renta', date: 'Fecha de Emisión', tenant: 'Recibido de (Inquilino)', address: 'Dirección de Alquiler', period: 'Período de Renta', total: 'Total de Renta Recibida', sig: 'Firma Autorizada', method: 'Método de Pago', role: 'Gestión de Propiedades' },
+      FR: { currency: '€', code: 'EUR', lang: 'fr-FR', title: 'Quittance de Loyer', date: 'Date d\'Émission', tenant: 'Reçu de', address: 'Adresse de Location', period: 'Pour la Période', total: 'Total Loyer Perçu', sig: 'Signature Autorisée', method: 'Mode de Paiement', role: 'Gestion Immobilière' }
     };
 
+    // Client-side image parser for branding upload
     function previewLogo(event) {
       const reader = new FileReader();
       reader.onload = function(){
@@ -206,40 +259,47 @@
       reader.readAsDataURL(event.target.files[0]);
     }
 
+    // Swaps core translation parameters in document elements
     function updateLocalization() {
       const countryCode = document.getElementById('country-select').value;
       const conf = locales[countryCode] || locales['US'];
 
-      // Update Native Translation Labels
       document.getElementById('lang-title').textContent = conf.title;
       document.getElementById('lang-date').textContent = conf.date;
       document.getElementById('lang-tenant').textContent = conf.tenant;
       document.getElementById('lang-address').textContent = conf.address;
+      document.getElementById('lang-period').textContent = conf.period;
       document.getElementById('lang-total').textContent = conf.total;
       document.getElementById('lang-sig').textContent = conf.sig;
+      document.getElementById('lang-method').textContent = conf.method;
+      document.getElementById('lang-role').textContent = conf.role;
 
-      syncFields(); // Recalculate values with new currency rules
+      syncFields();
     }
 
+    // Calculates inputs, shapes raw currency figures and reformats calendar dates
     function syncFields() {
       const countryCode = document.getElementById('country-select').value;
       const conf = locales[countryCode] || locales['US'];
 
-      // Gather Inputs
       const landlord = document.getElementById('input-landlord').value || 'Landlord Name';
       const receiptNum = document.getElementById('input-receipt-num').value || '000';
       const dateVal = document.getElementById('input-date').value;
       const tenant = document.getElementById('input-tenant').value || 'Tenant Name';
       const address = document.getElementById('input-address').value || 'Property Address';
+      const method = document.getElementById('input-method').value;
+      const period = document.getElementById('input-period').value || 'Rent Month';
       const rawAmount = parseFloat(document.getElementById('input-amount').value) || 0;
 
-      // Sync Plain Text
+      // Update Plain Text Nodes
       document.getElementById('receipt-landlord').textContent = landlord;
       document.getElementById('receipt-num').textContent = `#${receiptNum}`;
       document.getElementById('receipt-tenant').textContent = tenant;
       document.getElementById('receipt-address').textContent = address;
+      document.getElementById('receipt-method').textContent = method;
+      document.getElementById('receipt-period').textContent = period;
 
-      // Date Formatting
+      // Strict Calendar Date Formatting
       if (dateVal) {
         const dateObj = new Date(dateVal);
         document.getElementById('receipt-date').textContent = dateObj.toLocaleDateString(conf.lang, { 
@@ -251,21 +311,16 @@
         document.getElementById('receipt-date').textContent = '—';
       }
 
-      // Currency Formatting
+      // Strict ISO Currency Formatting
       const formattedAmount = new Intl.NumberFormat(conf.lang, { 
         style: 'currency', 
-        currency: getCurrencyCode(countryCode) 
+        currency: conf.code 
       }).format(rawAmount);
 
       document.getElementById('receipt-amount').textContent = formattedAmount;
     }
 
-    function getCurrencyCode(country) {
-      const mapping = { US: 'USD', GB: 'GBP', EU: 'EUR', KE: 'KES', IN: 'INR', JP: 'JPY', MX: 'MXN', FR: 'EUR' };
-      return mapping[country] || 'USD';
-    }
-
-    // Initialize layout on load
+    // Initialize UI on startup
     window.onload = updateLocalization;
   </script>
 </body>
