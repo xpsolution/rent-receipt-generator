@@ -3,268 +3,270 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TenantPortal - Live Customizer</title>
-  <!-- Tailwind CSS for sleek, professional UI -->
+  <title>Global Rent Receipt Generator</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Inter Font for modern typography -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
-    /* Dynamic CSS Variables for Real-Time Branding */
-    :root {
-      --primary-color: #4f46e5; /* Default Indigo */
-      --primary-hover: #4338ca;
+    /* Print Styles to ensure the receipt prints beautifully on a single A4 page */
+    @media print {
+      body * { visibility: hidden; }
+      #receipt-preview, #receipt-preview * { visibility: visible; }
+      #receipt-preview {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      .no-print { display: none !important; }
     }
-    .custom-bg { background-color: var(--primary-color); }
-    .custom-bg-hover:hover { background-color: var(--primary-hover); }
-    .custom-text { color: var(--primary-color); }
-    .custom-border { border-color: var(--primary-color); }
   </style>
 </head>
 <body class="h-full flex flex-col justify-between">
 
-  <!-- TOP HEADER -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+  <header class="bg-white border-b border-slate-200 no-print">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <!-- Dynamic Logo -->
-        <div id="logo-icon-container" class="custom-bg w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm transition-colors duration-300">
-          <span id="logo-letter">A</span>
+        <div class="bg-indigo-600 w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">
+          R
         </div>
-        <span id="brand-name" class="font-bold text-xl text-slate-800 transition-all duration-300">Apex Rentals</span>
+        <span class="font-bold text-xl text-slate-800">ReceiptFlow</span>
       </div>
       <div class="flex items-center gap-4">
-        <span class="text-sm font-medium text-slate-500">Tenant Portal</span>
-        <span id="tier-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">Pro Preview</span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Global Edition</span>
       </div>
     </div>
   </header>
 
-  <!-- MAIN BODY SPLIT GRID -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
     
-    <!-- LEFT COLUMN: INTERACTIVE BRAND CUSTOMIZER (SaaS Admin Control Panel Demo) -->
-    <section class="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm self-start">
-      <div class="mb-5">
-        <span class="text-xs uppercase tracking-wider font-semibold custom-text">Admin Controls</span>
-        <h2 class="text-xl font-bold text-slate-900 mt-1">Branding Configurator</h2>
-        <p class="text-xs text-slate-500 mt-1">Test how the portal adapts to a landlord's custom branding in real-time.</p>
+    <section class="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm self-start space-y-6 no-print">
+      <div>
+        <h2 class="text-xl font-bold text-slate-900">Receipt Details</h2>
+        <p class="text-xs text-slate-500 mt-1">Fill in the fields below to dynamically generate your receipt.</p>
       </div>
 
-      <div class="space-y-5">
-        <!-- Landlord Name Input -->
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4">
+        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Localization Settings</h3>
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Landlord / Business Name</label>
-          <input type="text" id="input-name" value="Apex Rentals" 
-                 class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
-        </div>
-
-        <!-- Brand Primary Color Picker -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Brand Theme Color</label>
-          <div class="flex gap-2.5 items-center">
-            <input type="color" id="input-color" value="#4f46e5" class="w-10 h-10 border-0 rounded-lg cursor-pointer bg-transparent">
-            <span id="hex-label" class="text-xs font-mono text-slate-600 bg-slate-100 px-2 py-1.5 rounded-md">#4f46e5</span>
-          </div>
-        </div>
-
-        <!-- Upload Mock Logo -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Mock Logo Letter</label>
-          <input type="text" id="input-logo-letter" maxlength="1" value="A" 
-                 class="w-16 px-3 py-2 text-center border border-slate-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-indigo-500 outline-none">
-        </div>
-
-        <hr class="border-slate-100 my-4">
-
-        <!-- Simulation Subscription Tier Selector -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wide">Simulate Subscription Tier</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button id="btn-tier-free" onclick="setTier('Free')" class="py-2 text-xs font-semibold rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors">Free Tier</button>
-            <button id="btn-tier-pro" onclick="setTier('Pro')" class="py-2 text-xs font-semibold rounded-lg border-2 custom-border custom-text bg-indigo-50/50 transition-colors">Pro Tier</button>
-          </div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Select Country</label>
+          <select id="country-select" onchange="updateLocalization()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+            <option value="US">United States (USD - $)</option>
+            <option value="GB">United Kingdom (GBP - £)</option>
+            <option value="EU">Eurozone (EUR - €)</option>
+            <option value="KE">Kenya (KES - KSh)</option>
+            <option value="IN">India (INR - ₹)</option>
+            <option value="JP">Japan (JPY - ¥)</option>
+            <option value="MX">Mexico (MXN - $)</option>
+            <option value="FR">France (EUR - €)</option>
+          </select>
         </div>
       </div>
-    </section>
 
-    <!-- RIGHT COLUMN: THE PORTAL LIVE PREVIEW -->
-    <section class="lg:col-span-8 flex flex-col gap-6">
-      
-      <!-- LANDLORD BANNER PREVIEW -->
-      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-          <div id="preview-logo-container" class="custom-bg w-16 h-16 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-sm transition-colors duration-300">
-            <span id="preview-logo-letter">A</span>
+      <div class="space-y-4">
+        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Landlord Branding</h3>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Upload Logo</label>
+          <input type="file" id="logo-input" accept="image/*" onchange="previewLogo(event)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Landlord Name</label>
+          <input type="text" id="input-landlord" value="Apex Properties Ltd" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Payment Details</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Receipt Number</label>
+            <input type="text" id="input-receipt-num" value="REC-2026-001" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
           </div>
           <div>
-            <h1 id="preview-title" class="text-2xl font-bold text-slate-800">Welcome to Apex Rentals</h1>
-            <p class="text-sm text-slate-500">Pay your rent, request maintenance, and check documents below.</p>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Payment Date</label>
+            <input type="date" id="input-date" value="2026-07-16" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
           </div>
         </div>
-        <button class="custom-bg custom-bg-hover text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm transition-all duration-300">
-          Contact Landlord
-        </button>
-      </div>
-
-      <!-- PORTAL TABS / QUICK ACTIONS -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Pay Rent Card -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-slate-300 transition-colors">
-          <div class="bg-emerald-50 text-emerald-700 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Tenant Name</label>
+            <input type="text" id="input-tenant" value="Sarah Jenkins" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
           </div>
-          <h3 class="text-lg font-semibold text-slate-800">Pay Rent Online</h3>
-          <p class="text-xs text-slate-500 mt-1">Make direct secure payments with card, bank account, or mobile wallets.</p>
-          <button class="mt-4 text-xs font-semibold custom-text hover:underline flex items-center gap-1">Make a payment &rarr;</button>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Amount Paid</label>
+            <input type="number" id="input-amount" value="1200" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
         </div>
-
-        <!-- Request Maintenance Card -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-slate-300 transition-colors">
-          <div class="bg-orange-50 text-orange-700 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-          </div>
-          <h3 class="text-lg font-semibold text-slate-800">Support & Repairs</h3>
-          <p class="text-xs text-slate-500 mt-1">Submit visual work orders directly to your landlord for plumbing, electric, and more.</p>
-          <button class="mt-4 text-xs font-semibold custom-text hover:underline flex items-center gap-1">Open ticket &rarr;</button>
-        </div>
-
-        <!-- Custom Document Hub (PRO EXCLUSIVE) -->
-        <div id="pro-card" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-slate-300 transition-colors relative overflow-hidden">
-          <!-- Pro Feature Badge Overlays -->
-          <div id="pro-badge" class="absolute top-3 right-3 bg-indigo-600 text-[10px] uppercase font-bold text-white px-2 py-0.5 rounded-full tracking-wider">Pro Feature</div>
-          
-          <div class="bg-indigo-50 text-indigo-700 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v12m0 0l-4-4m4 4l4-4m0 6V4m0 12h8m0 0l-4-4m4 4l4-4"></path></svg>
-          </div>
-          <h3 class="text-lg font-semibold text-slate-800">Custom Document Hub</h3>
-          <p class="text-xs text-slate-500 mt-1">Direct access to tenancy contracts, lease agreements, and custom receipts.</p>
-          <button class="mt-4 text-xs font-semibold custom-text hover:underline flex items-center gap-1">Browse documents &rarr;</button>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Property Address</label>
+          <input type="text" id="input-address" value="452 Oakridge Lane, Apt 4B" oninput="syncFields()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
       </div>
 
-      <!-- UPGRADE OR SUBSCRIBER BANNER (Simulated Call To Action) -->
-      <div id="upgrade-panel" class="bg-indigo-950 text-white rounded-2xl p-8 shadow-md relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
-        <div class="absolute -top-12 -right-12 w-44 h-44 bg-indigo-800/30 rounded-full blur-2xl"></div>
-        <div class="relative z-10 space-y-2">
-          <span class="text-xs font-bold text-indigo-300 uppercase tracking-widest">Pricing & Subscriptions</span>
-          <h2 class="text-2xl font-bold">Unchain your brand identity</h2>
-          <p class="text-sm text-indigo-200 max-w-md">Upgrade this landlord profile to Pro to unlock custom colors, logos, documents, and standard PayPal processing keys.</p>
-        </div>
-        <div class="relative z-10 w-full sm:w-auto text-center shrink-0">
-          <div class="bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-xl shadow-inner text-white">
-            <span class="block text-xs uppercase tracking-wider text-indigo-200">PRO MEMBERSHIP</span>
-            <span class="block text-3xl font-extrabold mt-1">$19 <span class="text-xs font-normal text-indigo-300">/ month</span></span>
-            <hr class="border-white/10 my-3">
-            <button class="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-2.5 px-6 rounded-lg text-sm shadow transition-colors flex items-center justify-center gap-2">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.007 11.697c.503-3.155.084-5.061-1.468-6.613C16.924 3.469 13.921 3 10.324 3c-4.482 0-8.293 1.93-9.531 6.557l-.337 1.258c-.144.538.163 1.096.702 1.24a.972.972 0 00.269.038c.421 0 .8-.271.916-.704l.337-1.258C4.062 6.5 6.945 4.939 10.324 4.939c3.092 0 5.485.395 6.786 1.697 1.134 1.133 1.341 2.68 1.042 4.549H12.63c-.538 0-.974.437-.974.975s.436.975.974.975h5.185l-1.071 6.721c-.347 2.174-2.148 3.205-4.416 3.205-2.923 0-4.858-1.572-5.45-4.43l-.261-1.257a.975.975 0 00-1.15-.75.978.978 0 00-.75 1.149l.261 1.257C6.082 21.368 8.91 23 12.148 23c3.272 0 6.002-1.637 6.516-4.856l1.343-8.447z"/></svg>
-              Subscribe with PayPal
-            </button>
+      <button onclick="window.print()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl text-sm shadow transition-colors flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+        Print / Save to PDF
+      </button>
+    </section>
+
+    <section class="lg:col-span-7 flex flex-col items-center">
+      <div id="receipt-preview" class="w-full max-w-xl bg-white border border-slate-200 rounded-2xl p-8 md:p-12 shadow-md transition-all duration-300 min-h-[700px] flex flex-col justify-between relative overflow-hidden">
+        
+        <div class="absolute -top-16 -right-16 w-44 h-44 bg-slate-50 rounded-full -z-10"></div>
+        
+        <div>
+          <div class="flex items-start justify-between border-b border-slate-100 pb-6 mb-6">
+            <div class="space-y-2">
+              <div id="logo-preview-container" class="hidden">
+                <img id="receipt-logo" src="#" alt="Logo" class="max-h-12 w-auto object-contain">
+              </div>
+              <h1 id="receipt-landlord" class="text-xl font-bold text-slate-800">Apex Properties Ltd</h1>
+              <p class="text-xs text-slate-400">Authorized Landlord / Property Manager</p>
+            </div>
+            <div class="text-right">
+              <span id="lang-title" class="text-xs uppercase tracking-widest font-bold text-indigo-600 block">Rent Receipt</span>
+              <span id="receipt-num" class="text-sm font-mono text-slate-600 block mt-1">#REC-2026-001</span>
+            </div>
+          </div>
+
+          <div class="space-y-6 text-sm text-slate-700">
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span id="lang-date" class="text-slate-400">Date Paid</span>
+              <span id="receipt-date" class="font-medium text-slate-800">July 16, 2026</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span id="lang-tenant" class="text-slate-400">Received From (Tenant)</span>
+              <span id="receipt-tenant" class="font-semibold text-slate-800">Sarah Jenkins</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span id="lang-address" class="text-slate-400">For Rental Address</span>
+              <span id="receipt-address" class="font-medium text-slate-800 text-right max-w-xs">452 Oakridge Lane, Apt 4B</span>
+            </div>
+          </div>
+
+          <div class="bg-indigo-50/50 border border-indigo-100/50 rounded-xl p-6 mt-8 flex justify-between items-center">
+            <div class="space-y-1">
+              <span id="lang-total" class="text-xs uppercase font-bold text-indigo-800 tracking-wider">Total Amount Paid</span>
+              <span class="block text-xs text-slate-400">Payment processed successfully.</span>
+            </div>
+            <div class="text-right">
+              <span id="receipt-amount" class="text-3xl font-extrabold text-indigo-950">$1,200.00</span>
+            </div>
           </div>
         </div>
-      </div>
 
+        <div class="border-t border-slate-100 pt-8 mt-12 flex justify-between items-end">
+          <div class="space-y-1">
+            <p class="text-[10px] text-slate-400 uppercase tracking-wider">System Status</p>
+            <p class="text-xs font-semibold text-emerald-600 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Verified Paid
+            </p>
+          </div>
+          <div class="text-center w-40">
+            <div class="border-b border-slate-200 h-10 w-full mb-1.5"></div>
+            <span id="lang-sig" class="text-[10px] text-slate-400 uppercase tracking-wider">Authorized Signature</span>
+          </div>
+        </div>
+
+      </div>
     </section>
 
   </main>
 
-  <!-- FOOTER -->
-  <footer class="bg-white border-t border-slate-200 mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-      <p class="text-xs text-slate-400">&copy; 2026 TenantPortal SaaS. All rights reserved.</p>
-      <div class="flex gap-4 text-xs text-slate-500">
-        <a href="#" class="hover:text-slate-800 transition-colors">Privacy Policy</a>
-        <a href="#" class="hover:text-slate-800 transition-colors">Terms of Service</a>
-      </div>
+  <footer class="bg-white border-t border-slate-200 no-print py-4">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-xs text-slate-400">&copy; 2026 ReceiptFlow SaaS.</p>
     </div>
   </footer>
 
-  <!-- FRONTEND LOGIC CUSTOMIZER -->
   <script>
-    const inputName = document.getElementById('input-name');
-    const inputColor = document.getElementById('input-color');
-    const inputLogoLetter = document.getElementById('input-logo-letter');
-    const hexLabel = document.getElementById('hex-label');
+    // Internationalization Mapping Dictionary
+    const locales = {
+      US: { currency: '$', lang: 'en-US', title: 'Rent Receipt', date: 'Date Paid', tenant: 'Received From (Tenant)', address: 'For Rental Address', total: 'Total Amount Paid', sig: 'Authorized Signature' },
+      GB: { currency: '£', lang: 'en-GB', title: 'Rent Receipt', date: 'Date Paid', tenant: 'Received From (Tenant)', address: 'For Rental Address', total: 'Total Amount Paid', sig: 'Authorized Signature' },
+      EU: { currency: '€', lang: 'de-DE', title: 'Mietquittung', date: 'Zahlungsdatum', tenant: 'Erhalten Von (Mieter)', address: 'Für Mietadresse', total: 'Gesamtbetrag Bezahlt', sig: 'Autorisierte Unterschrift' },
+      KE: { currency: 'KSh', lang: 'en-KE', title: 'Rent Receipt', date: 'Date Paid', tenant: 'Received From (Tenant)', address: 'For Rental Address', total: 'Total Amount Paid', sig: 'Authorized Signature' },
+      IN: { currency: '₹', lang: 'en-IN', title: 'Rent Receipt', date: 'Date Paid', tenant: 'Received From (Tenant)', address: 'For Rental Address', total: 'Total Amount Paid', sig: 'Authorized Signature' },
+      JP: { currency: '¥', lang: 'ja-JP', title: '家賃領収書', date: '支払日', tenant: '受取人 (店借人)', address: '賃貸物件の住所', total: '受領金額合計', sig: '承認の署名' },
+      MX: { currency: '$', lang: 'es-MX', title: 'Recibo de Alquiler', date: 'Fecha de Pago', tenant: 'Recibido de (Inquilino)', address: 'Dirección de la Propiedad', total: 'Monto Total Pagado', sig: 'Firma Autorizada' },
+      FR: { currency: '€', lang: 'fr-FR', title: 'Quittance de Loyer', date: 'Date de Paiement', tenant: 'Reçu de (Locataire)', address: 'Adresse de Location', total: 'Montant Total Payé', sig: 'Signature Autorisée' }
+    };
 
-    const brandName = document.getElementById('brand-name');
-    const previewTitle = document.getElementById('preview-title');
-    const logoLetter = document.getElementById('logo-letter');
-    const previewLogoLetter = document.getElementById('preview-logo-letter');
-
-    // Live sync landlord name
-    inputName.addEventListener('input', (e) => {
-      const name = e.target.value.trim() || 'My Rentals';
-      brandName.textContent = name;
-      previewTitle.textContent = `Welcome to ${name}`;
-    });
-
-    // Live sync brand color variables
-    inputColor.addEventListener('input', (e) => {
-      const color = e.target.value;
-      hexLabel.textContent = color;
-      
-      // Calculate a hover color (simulated with CSS filter or light hex shift)
-      document.documentElement.style.setProperty('--primary-color', color);
-      document.documentElement.style.setProperty('--primary-hover', adjustColor(color, -20));
-    });
-
-    // Live sync mock logo letter
-    inputLogoLetter.addEventListener('input', (e) => {
-      const letter = e.target.value.toUpperCase() || 'A';
-      logoLetter.textContent = letter;
-      previewLogoLetter.textContent = letter;
-    });
-
-    // Simple function to darken hex colors for button hover states
-    function adjustColor(hex, percent) {
-      let num = parseInt(hex.replace("#",""), 16),
-      amt = Math.round(2.55 * percent),
-      R = (num >> 16) + amt,
-      G = (num >> 8 & 0x00FF) + amt,
-      B = (num & 0x0000FF) + amt;
-      return "#" + (0x1000000 + (R<255?R<0?0:R:255)*0x10000 + (G<255?G<0?0:G:255)*0x100 + (B<255?B<0?0:B:255)).toString(16).slice(1);
+    function previewLogo(event) {
+      const reader = new FileReader();
+      reader.onload = function(){
+        const output = document.getElementById('receipt-logo');
+        const container = document.getElementById('logo-preview-container');
+        output.src = reader.result;
+        container.classList.remove('hidden');
+      };
+      reader.readAsDataURL(event.target.files[0]);
     }
 
-    // Toggle simulated Free vs Pro Tier
-    function setTier(tier) {
-      const badge = document.getElementById('tier-badge');
-      const proCard = document.getElementById('pro-card');
-      const proBadge = document.getElementById('pro-badge');
-      const upgradePanel = document.getElementById('upgrade-panel');
-      
-      const btnFree = document.getElementById('btn-tier-free');
-      const btnPro = document.getElementById('btn-tier-pro');
+    function updateLocalization() {
+      const countryCode = document.getElementById('country-select').value;
+      const conf = locales[countryCode] || locales['US'];
 
-      if (tier === 'Free') {
-        badge.textContent = 'Free Preview';
-        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-300';
-        
-        // Greyscale and lock out Pro features
-        proCard.classList.add('opacity-40', 'pointer-events-none');
-        proBadge.textContent = 'Locked (Upgrade)';
-        proBadge.className = 'absolute top-3 right-3 bg-rose-600 text-[10px] uppercase font-bold text-white px-2 py-0.5 rounded-full tracking-wider';
-        
-        // Show payment/upgrade prompt
-        upgradePanel.classList.remove('hidden');
+      // Update Native Translation Labels
+      document.getElementById('lang-title').textContent = conf.title;
+      document.getElementById('lang-date').textContent = conf.date;
+      document.getElementById('lang-tenant').textContent = conf.tenant;
+      document.getElementById('lang-address').textContent = conf.address;
+      document.getElementById('lang-total').textContent = conf.total;
+      document.getElementById('lang-sig').textContent = conf.sig;
 
-        btnFree.className = "py-2 text-xs font-semibold rounded-lg border-2 custom-border custom-text bg-indigo-50/50 transition-colors";
-        btnPro.className = "py-2 text-xs font-semibold rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors";
+      syncFields(); // Recalculate values with new currency rules
+    }
+
+    function syncFields() {
+      const countryCode = document.getElementById('country-select').value;
+      const conf = locales[countryCode] || locales['US'];
+
+      // Gather Inputs
+      const landlord = document.getElementById('input-landlord').value || 'Landlord Name';
+      const receiptNum = document.getElementById('input-receipt-num').value || '000';
+      const dateVal = document.getElementById('input-date').value;
+      const tenant = document.getElementById('input-tenant').value || 'Tenant Name';
+      const address = document.getElementById('input-address').value || 'Property Address';
+      const rawAmount = parseFloat(document.getElementById('input-amount').value) || 0;
+
+      // Sync Plain Text
+      document.getElementById('receipt-landlord').textContent = landlord;
+      document.getElementById('receipt-num').textContent = `#${receiptNum}`;
+      document.getElementById('receipt-tenant').textContent = tenant;
+      document.getElementById('receipt-address').textContent = address;
+
+      // Date Formatting
+      if (dateVal) {
+        const dateObj = new Date(dateVal);
+        document.getElementById('receipt-date').textContent = dateObj.toLocaleDateString(conf.lang, { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
       } else {
-        badge.textContent = 'Pro Preview';
-        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200';
-        
-        // Restore Pro features
-        proCard.classList.remove('opacity-40', 'pointer-events-none');
-        proBadge.textContent = 'Pro Feature';
-        proBadge.className = 'absolute top-3 right-3 bg-indigo-600 text-[10px] uppercase font-bold text-white px-2 py-0.5 rounded-full tracking-wider';
-        
-        // Hide payment/upgrade prompt since they are simulated as Pro
-        upgradePanel.classList.add('hidden');
-
-        btnPro.className = "py-2 text-xs font-semibold rounded-lg border-2 custom-border custom-text bg-indigo-50/50 transition-colors";
-        btnFree.className = "py-2 text-xs font-semibold rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors";
+        document.getElementById('receipt-date').textContent = '—';
       }
+
+      // Currency Formatting
+      const formattedAmount = new Intl.NumberFormat(conf.lang, { 
+        style: 'currency', 
+        currency: getCurrencyCode(countryCode) 
+      }).format(rawAmount);
+
+      document.getElementById('receipt-amount').textContent = formattedAmount;
     }
+
+    function getCurrencyCode(country) {
+      const mapping = { US: 'USD', GB: 'GBP', EU: 'EUR', KE: 'KES', IN: 'INR', JP: 'JPY', MX: 'MXN', FR: 'EUR' };
+      return mapping[country] || 'USD';
+    }
+
+    // Initialize layout on load
+    window.onload = updateLocalization;
   </script>
 </body>
 </html>
