@@ -9,6 +9,8 @@
             --primary-color: #2563eb;
             --primary-hover: #1d4ed8;
             --success-color: #16a34a;
+            --whatsapp-color: #25d366;
+            --whatsapp-hover: #128c7e;
             --text-main: #1f2937;
             --bg-light: #f3f4f6;
             --border-color: #d1d5db;
@@ -49,8 +51,9 @@
             gap: 20px;
         }
 
+        /* Tier Control Panel Styling */
         .account-cta-box {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             border: 1px solid #cbd5e1;
             padding: 20px;
             border-radius: 8px;
@@ -75,7 +78,7 @@
         .tier-badge {
             background-color: #475569;
             color: white;
-            padding: 2px 8px;
+            padding: 2px 10px;
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 600;
@@ -86,79 +89,85 @@
             color: #451a03;
         }
 
-        .usage-tracker {
-            font-size: 0.8rem;
-            color: #475569;
-            margin-bottom: 15px;
-        }
-
-        .pro-description-text {
-            font-size: 0.8rem;
-            line-height: 1.4;
-            color: #1e3a8a;
-            background-color: #eff6ff;
-            border-left: 3px solid #3b82f6;
-            padding: 8px 12px;
-            border-radius: 0 4px 4px 0;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .subscription-btn-group {
+        .tier-selection-container {
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        .btn-tier {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
+        .tier-card {
             background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
         }
 
-        .btn-tier.active {
-            background: #2563eb;
-            color: white;
-            border-color: #2563eb;
+        .tier-card:hover {
+            border-color: #cbd5e1;
         }
 
-        .history-list {
-            margin-top: 15px;
-            border-top: 1px solid #cbd5e1;
-            padding-top: 15px;
+        .tier-card.active {
+            border-color: var(--primary-color);
+            background-color: #eff6ff;
+            box-shadow: 0 0 0 1px var(--primary-color);
         }
 
-        .history-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #475569;
+        .tier-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 8px;
         }
 
-        .history-item {
-            background: white;
-            padding: 8px 12px;
-            border-radius: 4px;
-            border: 1px solid #e2e8f0;
-            font-size: 0.8rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
+        .tier-radio {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
         }
 
-        .history-actions button {
-            background: none;
-            border: none;
-            color: #2563eb;
-            cursor: pointer;
-            margin-left: 8px;
-            font-weight: 600;
+        .tier-card-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .tier-card-features {
+            list-style-type: none;
+            padding-left: 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .tier-card-features li {
+            font-size: 0.8rem;
+            color: #475569;
+            position: relative;
+        }
+
+        .tier-card-features li::before {
+            content: "✓";
+            color: var(--success-color);
+            position: absolute;
+            left: -16px;
+            font-weight: bold;
+        }
+
+        .tier-card.active .tier-card-features li {
+            color: #1e40af;
+        }
+
+        .usage-tracker {
+            font-size: 0.8rem;
+            color: #475569;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #fff;
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
         }
 
         h2 {
@@ -196,6 +205,22 @@
             gap: 15px;
         }
 
+        /* Logo upload container */
+        .logo-upload-container {
+            border: 1px dashed var(--border-color);
+            padding: 12px;
+            border-radius: 6px;
+            background-color: #f9fafb;
+            margin-bottom: 5px;
+        }
+        
+        .logo-disabled-mask {
+            font-size: 0.8rem;
+            color: #ef4444;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
         .action-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
@@ -229,6 +254,33 @@
             gap: 6px;
         }
 
+        .whatsapp-footer-bar {
+            margin-top: 15px;
+            text-align: center;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 15px;
+        }
+
+        .btn-whatsapp-share {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--whatsapp-color);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-whatsapp-share:hover {
+            background-color: var(--whatsapp-hover);
+        }
+
+        /* Preview area */
         .preview-section {
             background: white;
             padding: 40px;
@@ -239,13 +291,21 @@
             height: fit-content;
         }
 
-        .receipt-header {
+        .receipt-header-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             border-bottom: 3px solid #374151;
             padding-bottom: 15px;
             margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .logo-preview-box {
+            max-width: 100px;
+            max-height: 70px;
+            object-fit: contain;
+            display: none;
         }
 
         .receipt-title {
@@ -338,12 +398,32 @@
 
         @media print {
             body { background: white; padding: 0; }
-            .form-section, .account-cta-box, button, .action-row { display: none !important; }
+            .form-section, .account-cta-box, button, .action-row, .whatsapp-footer-bar { display: none !important; }
             .preview-section { box-shadow: none; padding: 0; width: 100%; }
         }
     </style>
     <script>
-        {{DATABASE}}
+        // Database with Country metadata and Default Native languages matching ISO-3166-1
+        const database = {
+            US: { name: "United States", currency: "USD", symbol: "$", locale: "en-US", defaultLang: "en" },
+            CA: { name: "Canada", currency: "CAD", symbol: "CA$", locale: "en-CA", defaultLang: "en" },
+            GB: { name: "United Kingdom", currency: "GBP", symbol: "£", locale: "en-GB", defaultLang: "en" },
+            FR: { name: "France", currency: "EUR", symbol: "€", locale: "fr-FR", defaultLang: "fr" },
+            DE: { name: "Germany", currency: "EUR", symbol: "€", locale: "de-DE", defaultLang: "de" },
+            AU: { name: "Australia", currency: "AUD", symbol: "A$", locale: "en-AU", defaultLang: "en" },
+            BR: { name: "Brazil", currency: "BRL", symbol: "R$", locale: "pt-BR", defaultLang: "pt" },
+            ID: { name: "Indonesia", currency: "IDR", symbol: "Rp", locale: "id-ID", defaultLang: "id" },
+            MY: { name: "Malaysia", currency: "MYR", symbol: "RM", locale: "ms-MY", defaultLang: "ms" },
+            // Remaining Countries follow
+            EU: { name: "Eurozone", currency: "EUR", symbol: "€", locale: "de-DE", defaultLang: "de" },
+            KE: { name: "Kenya", currency: "KES", symbol: "KSh", locale: "en-KE", defaultLang: "en" },
+            TZ: { name: "Tanzania", currency: "TZS", symbol: "TSh", locale: "sw-TZ", defaultLang: "sw" },
+            ET: { name: "Ethiopia", currency: "ETB", symbol: "Br", locale: "am-ET", defaultLang: "am" },
+            IN: { name: "India", currency: "INR", symbol: "₹", locale: "en-IN", defaultLang: "hi" },
+            JP: { name: "Japan", currency: "JPY", symbol: "¥", locale: "ja-JP", defaultLang: "ja" },
+            MX: { name: "Mexico", currency: "MXN", symbol: "$", locale: "es-MX", defaultLang: "es" },
+            AR: { name: "Saudi Arabia", currency: "SAR", symbol: "ر.س", locale: "ar-SA", defaultLang: "ar" }
+        };
 
         const translationMatrix = {
             en: {
@@ -353,6 +433,22 @@
                 status: "Status", cleared: "PAID & CLEARED", signature: "Authorized Signature", thankYou: "Thank you for your payment!",
                 period: "Rental Period", paymentType: "Payment Type", notes: "Notes",
                 declaration: "The landlord hereby acknowledges receiving the payment described above for the specified premises."
+            },
+            sw: {
+                receipt: "Risiti ya Kodi", country: "Nchi", receiptNum: "Risiti #", date: "Tarehe",
+                receivedFrom: "Imepokelewa Kutoka (Mpangaji)", paidTo: "Imelipwa Kwa (Mwenye Nyumba/Wakala)",
+                premises: "Anwani ya Nyumba", totalPaid: "Kiasi Kilicholipwa", paymentMethod: "Njia ya Malipo",
+                status: "Hali", cleared: "IMELIPWA & KUKAMILIKA", signature: "Saini Iliyoidhinishwa", thankYou: "Asante kwa malipo yako!",
+                period: "Muda wa Kodi", paymentType: "Aina ya Malipo", notes: "Maelezo",
+                declaration: "Mwenye nyumba anathibitisha kupokea malipo yaliyotajwa hapo juu kwa ajili ya nyumba iliyotajwa."
+            },
+            am: {
+                receipt: "የቤት ኪራይ ደረሰኝ", country: "ሀገር", receiptNum: "የደረሰኝ ቁጥር #", date: "ቀን",
+                receivedFrom: "ከአከራይ የተቀበለው (ተከራይ)", paidTo: "የተከፈለለት (አከራይ/ወኪል)",
+                premises: "የቤት አድራሻ", totalPaid: "ጠቅላላ የተከፈለ መጠን", paymentMethod: "የክፍያ ዘዴ",
+                status: "ሁኔታ", cleared: "ተከፍሎ ያለቀ", signature: "የተፈቀደ ፊርማ", thankYou: "ስለ ክፍያዎ እናመሰግናለን!",
+                period: "የኪራይ ጊዜ", paymentType: "የክፍያ ዓይነት", notes: "ማስታወሻዎች",
+                declaration: "አከራዩ ለተጠቀሰው ቦታ ከላይ የተገለጸውን ክፍያ መቀበሉን ያረጋግጣል።"
             },
             es: {
                 receipt: "Recibo de Alquiler", country: "País", receiptNum: "Recibo #", date: "Fecha",
@@ -368,7 +464,7 @@
                 premises: "Adresse des Locaux", totalPaid: "Montant Total Payé", paymentMethod: "Mode de Paiement",
                 status: "Statut", cleared: "PAYÉ & ACQUITTÉ", signature: "Signature Autorisée", thankYou: "Merci pour votre paiement!",
                 period: "Période de Loyer", paymentType: "Type de Paiement", notes: "Notes",
-                declaration: "Le propriétaire reconnaît par la présente avoir reçu le paiement décrit ci-dessus choisi pour les locaux spécifiés."
+                declaration: "Le propriétaire reconnaît par la presente avoir reçu le paiement décrit ci-dessus choisi pour les locaux spécifiés."
             },
             de: {
                 receipt: "Mietquittung", country: "Land", receiptNum: "Quittungsnr.", date: "Datum",
@@ -384,7 +480,7 @@
                 premises: "Indirizzo dell'Immobile", totalPaid: "Importo Totale Pagato", paymentMethod: "Metodo di Pagamento",
                 status: "Stato", cleared: "PAGATO & SALDATO", signature: "Firma Autorizzata", thankYou: "Grazie per il vostro pagamento!",
                 period: "Periodo di Locazione", paymentType: "Tipo di Pagamento", notes: "Note",
-                declaration: "Il proprietario con la presente conferma di aver ricevuto il pagamento sopra descritto per l'immobile specificato."
+                declaration: "Il proprietario con la presente conferma di haver ricevuto il pagamento sopra descritto per l'immobile specificato."
             },
             pt: {
                 receipt: "Recibo de Aluguel", country: "País", receiptNum: "Recibo nº", date: "Data",
@@ -393,14 +489,6 @@
                 status: "Estado", cleared: "PAGO & QUITADO", signature: "Assinatura Autorizada", thankYou: "Obrigado pelo seu pagamento!",
                 period: "Período de Aluguel", paymentType: "Tipo de Pago", notes: "Notas",
                 declaration: "O senhorio reconhece, por este meio, ter recebido o pagamento acima descrito para o imóvel especificado."
-            },
-            sw: {
-                receipt: "Risiti ya Kodi", country: "Nchi", receiptNum: "Risiti #", date: "Tarehe",
-                receivedFrom: "Imepokelewa Kutoka (Mpangaji)", paidTo: "Imelipwa Kwa (Mwenye Nyumba/Wakala)",
-                premises: "Anwani ya Nyumba", totalPaid: "Kiasi Kilicholipwa", paymentMethod: "Njia ya Malipo",
-                status: "Hali", cleared: "IMELIPWA & KUKAMILIKA", signature: "Saini Iliyoidhinishwa", thankYou: "Asante kwa malipo yako!",
-                period: "Muda wa Kodi", paymentType: "Aina ya Malipo", notes: "Maelezo",
-                declaration: "Mwenye nyumba anathibitisha kupokea malipo yaliyotajwa hapo juu kwa ajili ya nyumba iliyotajwa."
             },
             ar: {
                 receipt: "إيصال استلام إيجار", country: "البلد", receiptNum: "رقم الإيصال", date: "التاريخ",
@@ -431,7 +519,7 @@
                 receivedFrom: "किराएदार से प्राप्त", paidTo: "मकान मालिक/एजेंट को भुगतान",
                 premises: "संपत्ति का पता", totalPaid: "कुल भुगतान राशि", paymentMethod: "भुगतान का प्रकार",
                 status: "स्थिति", cleared: "भुगतान पूरा हुआ", signature: "अधिकृत हस्ताक्षर", thankYou: "भुगतान के लिए धन्यवाद!",
-                period: "किराए की अवधि", paymentType: "भुगतान का प्रकार", notes: "टिप्पणी",
+                period: "किราए की अवधि", paymentType: "भुगतान का प्रकार", notes: "टिप्पणी",
                 declaration: "मकान मालिक एतद्द्वारा निर्दिष्ट संपत्ति के लिए ऊपर वर्णित भुगतान प्राप्त करना स्वीकार करता है।"
             },
             pl: {
@@ -492,58 +580,336 @@
             }
         };
 
-        const countriesUsingCheque = ['uk', 'au', 'ca', 'nz', 'za', 'ie', 'my', 'sg', 'pk', 'in', 'bd', 'ke', 'ng', 'gh', 'tz'];
+        const countriesUsingCheque = ['uk', 'au', 'ca', 'nz', 'za', 'ie', 'my', 'sg', 'pk', 'in', 'bd', 'ke', 'tz', 'ng', 'gh'];
+
+        let currentTier = 'guest';
+        let generatedCount = 1;
+        const maxFreeGenerations = 3;
+
+        function setTier(tier) {
+            currentTier = tier;
+            const cardGuest = document.getElementById('cardTierGuest');
+            const cardPro = document.getElementById('cardTierPro');
+            const badge = document.getElementById('tierBadge');
+            
+            const logoInput = document.getElementById('logoFileInput');
+            const logoDisabledWarning = document.getElementById('logoDisabledWarning');
+
+            if (tier === 'pro') {
+                cardPro.classList.add('active');
+                cardGuest.classList.remove('active');
+                document.getElementById('radioPro').checked = true;
+                badge.textContent = "Pro Access";
+                badge.classList.add('pro');
+                document.getElementById('usageDisplay').style.display = 'none';
+                
+                // Enable logo control elements
+                logoInput.disabled = false;
+                logoDisabledWarning.style.display = "none";
+            } else {
+                cardGuest.classList.add('active');
+                cardPro.classList.remove('active');
+                document.getElementById('radioGuest').checked = true;
+                badge.textContent = "Guests / No sign up";
+                badge.classList.remove('pro');
+                document.getElementById('usageDisplay').style.display = 'block';
+                updateUsageDisplay();
+
+                // Disable logo controls, clear selected file, & hide preview image
+                logoInput.disabled = true;
+                logoInput.value = "";
+                document.getElementById('previewLogo').style.display = "none";
+                logoDisabledWarning.style.display = "block";
+            }
+        }
+
+        function handleLogoUpload(event) {
+            if (currentTier !== 'pro') return;
+            const file = event.target.files[0];
+            const logoImg = document.getElementById('previewLogo');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    logoImg.src = e.target.result;
+                    logoImg.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            } else {
+                logoImg.style.display = "none";
+            }
+        }
+
+        function updateUsageDisplay() {
+            const usageText = document.getElementById('usageDisplay');
+            if (generatedCount > maxFreeGenerations) {
+                usageText.innerHTML = `Free tier cap exhausted: <strong style="color:#ef4444;">${generatedCount} / ${maxFreeGenerations} generated. Please upgrade.</strong>`;
+            } else {
+                usageText.innerHTML = `Free tier cap: <strong style="color:#eab308;">${generatedCount} / ${maxFreeGenerations} receipts generated this month</strong>`;
+            }
+        }
+
+        function handleCountryChange() {
+            const countryCode = document.getElementById('countrySelect').value;
+            const countryData = database[countryCode] || { name: "Global", currency: "USD", symbol: "$", locale: "en-US", defaultLang: "en" };
+
+            // Update display fields
+            document.getElementById('prevCountry').textContent = countryData.name;
+            document.getElementById('prevSymbol').textContent = countryData.symbol;
+            document.getElementById('prevCurrency').textContent = countryData.currency;
+
+            // Populate Payment Methods based on selected country logic
+            const methodSelect = document.getElementById('paymentMethod');
+            methodSelect.innerHTML = ''; // Reset options
+
+            const defaultMethods = ['Bank Transfer', 'Credit Card', 'Cash', 'Mobile Money'];
+            if (countriesUsingCheque.includes(countryCode.toLowerCase())) {
+                defaultMethods.push('Cheque');
+            }
+
+            defaultMethods.forEach(method => {
+                const opt = document.createElement('option');
+                opt.value = method;
+                opt.textContent = method;
+                methodSelect.appendChild(opt);
+            });
+
+            // Automatically switch translation dropdown values to match national language profile
+            document.getElementById('langSelect').value = countryData.defaultLang;
+            handleLanguageChange();
+        }
+
+        function handleLanguageChange() {
+            const lang = document.getElementById('langSelect').value;
+            const matrix = translationMatrix[lang] || translationMatrix['en'];
+
+            // Apply global RTL rules for Arabic language compatibility
+            const printArea = document.getElementById('printArea');
+            if (lang === 'ar') {
+                printArea.classList.add('rtl-layout');
+            } else {
+                printArea.classList.remove('rtl-layout');
+            }
+
+            // Translate Static UI Titles on Preview Panel
+            document.getElementById('lblReceipt').textContent = matrix.receipt;
+            document.getElementById('lblCountryTag').textContent = matrix.country;
+            document.getElementById('lblNumTag').textContent = matrix.receiptNum;
+            document.getElementById('lblDateTag').textContent = matrix.date;
+            document.getElementById('lblReceivedFrom').textContent = matrix.receivedFrom;
+            document.getElementById('lblPaidTo').textContent = matrix.paidTo;
+            document.getElementById('lblPremises').textContent = matrix.premises;
+            document.getElementById('lblPeriod').textContent = matrix.period;
+            document.getElementById('lblTotalPaid').textContent = matrix.totalPaid;
+            document.getElementById('lblMethodTag').textContent = matrix.paymentMethod;
+            document.getElementById('lblPaymentType').textContent = matrix.paymentType;
+            document.getElementById('lblStatusTag').textContent = matrix.status;
+            document.getElementById('lblStatusText').textContent = matrix.cleared;
+            document.getElementById('lblSigTag').textContent = matrix.signature;
+            document.getElementById('lblThankYouText').textContent = matrix.thankYou;
+            document.getElementById('lblDeclaration').textContent = matrix.declaration;
+
+            updatePreview();
+        }
+
+        function getWhatsAppMessage() {
+            const receiptNum = document.getElementById('receiptNum').value;
+            const tenantName = document.getElementById('tenantName').value;
+            const landlordName = document.getElementById('landlordName').value;
+            const amount = document.getElementById('rentAmount').value;
+            const countryCode = document.getElementById('countrySelect').value;
+            const countryData = database[countryCode] || { symbol: "$" };
+            
+            return encodeURIComponent(
+                `Hi ${tenantName}, here is your rent receipt from ${landlordName}.\n` +
+                `Receipt No: ${receiptNum}\n` +
+                `Amount Paid: ${countryData.symbol}${amount}\n` +
+                `Thank you!`
+            );
+        }
+
+        function updateWhatsAppLink() {
+            const link = document.getElementById('whatsAppShareLink');
+            const message = getWhatsAppMessage();
+            link.href = `https://wa.me/?text=${message}`;
+        }
+
+        function updatePreview() {
+            const countryCode = document.getElementById('countrySelect').value;
+            const countryData = database[countryCode] || { locale: "en-US" };
+
+            // Update Text Inputs
+            document.getElementById('prevNum').textContent = document.getElementById('receiptNum').value || '---';
+            document.getElementById('prevTenant').textContent = document.getElementById('tenantName').value || '---';
+            document.getElementById('prevTenantEmail').textContent = document.getElementById('tenantEmail').value;
+            document.getElementById('prevTenantPhone').textContent = document.getElementById('tenantPhone').value;
+            
+            document.getElementById('prevLandlord').textContent = document.getElementById('landlordName').value || '---';
+            document.getElementById('prevLandlordEmail').textContent = document.getElementById('landlordEmail').value;
+            document.getElementById('prevLandlordPhone').textContent = document.getElementById('landlordPhone').value;
+
+            document.getElementById('prevAddress').textContent = document.getElementById('propAddress').value || '---';
+            const unit = document.getElementById('unitNum').value;
+            document.getElementById('prevUnit').textContent = unit ? `, ${unit}` : '';
+
+            // Handle Payment Details
+            document.getElementById('prevMethod').textContent = document.getElementById('paymentMethod').value || '---';
+            document.getElementById('prevType').textContent = document.getElementById('paymentTypeSelect').value;
+
+            // Optional notes display
+            const notesText = document.getElementById('receiptNotes').value;
+            const notesBox = document.getElementById('prevNotesBox');
+            if (notesText.trim() !== "") {
+                notesBox.textContent = notesText;
+                notesBox.style.display = "block";
+            } else {
+                notesBox.style.display = "none";
+            }
+
+            // Dates Formatter
+            const dateInput = document.getElementById('receiptDate').value;
+            const startInput = document.getElementById('periodStart').value;
+            const endInput = document.getElementById('periodEnd').value;
+
+            const formatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+
+            document.getElementById('prevDate').textContent = dateInput ? new Date(dateInput).toLocaleDateString(countryData.locale, formatOptions) : 'MM/DD/YYYY';
+            document.getElementById('prevPeriodStart').textContent = startInput ? new Date(startInput).toLocaleDateString(countryData.locale, formatOptions) : 'MM/DD/YYYY';
+            document.getElementById('prevPeriodEnd').textContent = endInput ? new Date(endInput).toLocaleDateString(countryData.locale, formatOptions) : 'MM/DD/YYYY';
+
+            // Amount Parser
+            const rawAmt = parseFloat(document.getElementById('rentAmount').value) || 0;
+            document.getElementById('prevAmount').textContent = rawAmt.toLocaleString(countryData.locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            updateWhatsAppLink();
+        }
+
+        function triggerPrintAndCount() {
+            if (currentTier === 'guest' && generatedCount >= maxFreeGenerations) {
+                alert("You have reached your free receipt generation cap. Please sign up or upgrade to Pro!");
+                return;
+            }
+            window.print();
+            if (currentTier === 'guest') {
+                generatedCount++;
+                updateUsageDisplay();
+            }
+        }
+
+        function copyShareLink() {
+            const shareText = decodeURIComponent(getWhatsAppMessage());
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert("🔗 Receipt summary details copied to clipboard! Ready to paste into your chats.");
+            }).catch(err => {
+                alert("Failed to copy link automatically.");
+            });
+        }
+
+        function emailReceipt() {
+            const email = document.getElementById('tenantEmail').value;
+            if (email) {
+                alert(`✉️ Receipt link queued for delivery to: ${email}`);
+            } else {
+                alert("Please enter a valid Tenant Email first.");
+            }
+        }
+
+        // Run Initializers
+        window.addEventListener('DOMContentLoaded', () => {
+            // Set Default Dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('receiptDate').value = today;
+            
+            // Trigger baseline render
+            handleCountryChange();
+            handleLanguageChange();
+        });
     </script>
 </head>
 <body>
 
 <div class="container">
     
+    <!-- LEFT CONTROL PANEL -->
     <div class="form-section">
         <h2>Rent Receipt Generator</h2>
 
         <div class="account-cta-box" id="accountAppBox">
             <div class="account-header">
-                <span class="account-title" id="tierDisplay">Account Access Level</span>
+                <span class="account-title" id="tierDisplay">Select Plan</span>
                 <span class="tier-badge" id="tierBadge">Guests / No sign up</span>
+            </div>
+
+            <div class="tier-selection-container">
+                <!-- Guest Tier Card -->
+                <div class="tier-card active" id="cardTierGuest" onclick="setTier('guest')">
+                    <div class="tier-card-header">
+                        <input type="radio" id="radioGuest" name="tier_select" class="tier-radio" checked>
+                        <span class="tier-card-title">Guest / No Sign Up</span>
+                    </div>
+                    <ul class="tier-card-features">
+                        <li>Limited to 3 receipts per month</li>
+                        <li>Download, Print, Copy link for sharing on WhatsApp, etc.</li>
+                    </ul>
+                </div>
+
+                <!-- Pro Tier Card -->
+                <div class="tier-card" id="cardTierPro" onclick="setTier('pro')">
+                    <div class="tier-card-header">
+                        <input type="radio" id="radioPro" name="tier_select" class="tier-radio">
+                        <span class="tier-card-title">Pro Unlimited ($45/Yr)</span>
+                    </div>
+                    <ul class="tier-card-features">
+                        <li>Unlimited receipts</li>
+                        <li>Complete saved history</li>
+                        <li>Tenant/Property Records &amp; Quick Duplication active</li>
+                        <li>Add your Logo</li>
+                        <li>Download, Print, Copy link for sharing on WhatsApp, etc.</li>
+                    </ul>
+                </div>
             </div>
             
             <div class="usage-tracker" id="usageDisplay">
-                Free tier cap: <strong style="color:#ef4444;">1 / 3 receipts generated this month</strong>
-            </div>
-
-            <div class="pro-description-text">
-                Unlimited Generation, Complete History, Tenant/Property Records &amp; Quick Duplication active.
-            </div>
-
-            <div class="subscription-btn-group">
-                <button class="btn-tier active" id="btnTierGuest" onclick="setTier('guest')">Guests / No Sign Up</button>
-                <button class="btn-tier" id="btnTierPro" onclick="setTier('pro')">Pro Unlimited ($45/Yr)</button>
-            </div>
-
-            <div class="history-list" id="historyModule">
-                <div class="history-title">Saved Pro Dash (History &amp; Duplicates)</div>
-                <div id="historyEntries"></div>
+                Free tier cap: <strong style="color:#eab308;">1 / 3 receipts generated this month</strong>
             </div>
         </div>
         
         <div class="row" style="background-color: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color);">
             <div class="form-group">
-                <label for="countrySelect" style="color: #1e40af;">Country Profile</label>
+                <label for="countrySelect" style="color: #1e40af;">Select Country</label>
                 <select id="countrySelect" onchange="handleCountryChange()">
-                    {{OPTIONS}}
+                    <!-- Top Ordered Countries -->
+                    <option value="US" selected>United States (USD - $)</option>
+                    <option value="CA">Canada (CAD - CA$)</option>
+                    <option value="GB">United Kingdom (GBP - £)</option>
+                    <option value="FR">France (EUR - €)</option>
+                    <option value="DE">Germany (EUR - €)</option>
+                    <option value="AU">Australia (AUD - A$)</option>
+                    <option value="BR">Brazil (BRL - R$)</option>
+                    <option value="ID">Indonesia (IDR - Rp)</option>
+                    <option value="MY">Malaysia (MYR - RM)</option>
+                    
+                    <!-- Remaining Countries -->
+                    <option value="EU">Eurozone (EUR - €)</option>
+                    <option value="KE">Kenya (KES - KSh)</option>
+                    <option value="TZ">Tanzania (TZS - TSh)</option>
+                    <option value="ET">Ethiopia (ETB - Br)</option>
+                    <option value="IN">India (INR - ₹)</option>
+                    <option value="JP">Japan (JPY - ¥)</option>
+                    <option value="MX">Mexico (MXN - $)</option>
+                    <option value="AR">Saudi Arabia (SAR - ر.س)</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="langSelect" style="color: #1e40af;">User Interface Language</label>
+                <label for="langSelect" style="color: #1e40af;">Select language</label>
                 <select id="langSelect" onchange="handleLanguageChange()">
-                    <option value="en">English</option>
+                    <option value="en" selected>English</option>
+                    <option value="sw">Kiswahili (Swahili)</option>
+                    <option value="am">አማርኛ (Amharic)</option>
                     <option value="es">Español (Spanish)</option>
                     <option value="fr">Français (French)</option>
                     <option value="de">Deutsch (German)</option>
                     <option value="it">Italiano (Italian)</option>
                     <option value="pt">Português (Portuguese)</option>
-                    <option value="sw">Kiswahili (Swahili)</option>
                     <option value="ar">العربية (Arabic)</option>
                     <option value="ms">Bahasa Melayu (Malay)</option>
                     <option value="id">Bahasa Indonesia (Indonesian)</option>
@@ -557,6 +923,13 @@
                     <option value="th">ไทย (Thai)</option>
                 </select>
             </div>
+        </div>
+
+        <!-- Logo Upload Field (Pro Feature Control Panel) -->
+        <div class="logo-upload-container">
+            <label for="logoFileInput" style="font-size:0.8rem; display:block; margin-bottom:5px;">Landlord Logo (Pro Feature)</label>
+            <input type="file" id="logoFileInput" accept="image/*" onchange="handleLogoUpload(event)" disabled>
+            <p id="logoDisabledWarning" class="logo-disabled-mask">⚠️ Subscriptions to Pro Unlimited are required to upload a logo.</p>
         </div>
         
         <div class="row">
@@ -573,52 +946,52 @@
         <div class="row">
             <div class="form-group">
                 <label for="landlordName">Landlord / Agent Name</label>
-                <input type="text" id="landlordName" placeholder="John Doe or Agency LLC" oninput="updatePreview()">
+                <input type="text" id="landlordName" value="Apex Properties Ltd" placeholder="John Doe or Agency LLC" oninput="updatePreview()">
             </div>
             <div class="form-group">
                 <label for="landlordPhone">Landlord/Agent Phone</label>
-                <input type="tel" id="landlordPhone" placeholder="Phone Number" oninput="updatePreview()">
+                <input type="tel" id="landlordPhone" value="+254 700 000 000" placeholder="Phone Number" oninput="updatePreview()">
             </div>
         </div>
         <div class="form-group">
             <label for="landlordEmail">Landlord/Agent Email</label>
-            <input type="email" id="landlordEmail" placeholder="landlord@email.com" oninput="updatePreview()">
+            <input type="email" id="landlordEmail" value="billing@apexproperties.com" placeholder="landlord@email.com" oninput="updatePreview()">
         </div>
 
         <div class="row">
             <div class="form-group">
                 <label for="tenantName">Tenant Full Name</label>
-                <input type="text" id="tenantName" placeholder="Jane Smith" oninput="updatePreview()">
+                <input type="text" id="tenantName" value="Sarah Jenkins" placeholder="Jane Smith" oninput="updatePreview()">
             </div>
             <div class="form-group">
                 <label for="tenantPhone">Tenant Phone Number</label>
-                <input type="tel" id="tenantPhone" placeholder="Phone Number" oninput="updatePreview()">
+                <input type="tel" id="tenantPhone" value="+254 711 111 111" placeholder="Phone Number" oninput="updatePreview()">
             </div>
         </div>
         <div class="form-group">
             <label for="tenantEmail">Tenant Email</label>
-            <input type="email" id="tenantEmail" placeholder="tenant@email.com" oninput="updatePreview()">
+            <input type="email" id="tenantEmail" value="s.jenkins@domain.com" placeholder="tenant@email.com" oninput="updatePreview()">
         </div>
 
         <div class="row">
             <div class="form-group">
                 <label for="periodStart">Billing Period Start</label>
-                <input type="date" id="periodStart" onchange="updatePreview()">
+                <input type="date" id="periodStart" value="2026-07-01" onchange="updatePreview()">
             </div>
             <div class="form-group">
                 <label for="periodEnd">Billing Period End</label>
-                <input type="date" id="periodEnd" onchange="updatePreview()">
+                <input type="date" id="periodEnd" value="2026-07-31" onchange="updatePreview()">
             </div>
         </div>
 
         <div class="row">
             <div class="form-group">
                 <label for="propAddress">Property Street Address</label>
-                <input type="text" id="propAddress" placeholder="Property Location Address" oninput="updatePreview()">
+                <input type="text" id="propAddress" value="452 Oakridge Lane" placeholder="Property Location Address" oninput="updatePreview()">
             </div>
             <div class="form-group">
                 <label for="unitNum">Unit / Apt / Suite #</label>
-                <input type="text" id="unitNum" placeholder="e.g., Apt 4B" oninput="updatePreview()">
+                <input type="text" id="unitNum" value="Apt 4B" placeholder="e.g., Apt 4B" oninput="updatePreview()">
             </div>
         </div>
 
@@ -626,7 +999,7 @@
             <div class="form-group">
                 <label for="paymentTypeSelect">Payment Allocation Type</label>
                 <select id="paymentTypeSelect" onchange="updatePreview()">
-                    <option value="Rent">Rent</option>
+                    <option value="Rent" selected>Rent</option>
                     <option value="Partial Payment">Partial Payment</option>
                     <option value="Security deposit">Security Deposit</option>
                     <option value="Other">Other</option>
@@ -635,6 +1008,7 @@
             <div class="form-group">
                 <label for="paymentMethod">Payment Method</label>
                 <select id="paymentMethod" onchange="updatePreview()">
+                    <!-- Populated via Script based on Country selection -->
                 </select>
             </div>
         </div>
@@ -656,14 +1030,28 @@
             <button class="btn-action" onclick="copyShareLink()">🔗 Copy Link</button>
             <button class="btn-action" onclick="emailReceipt()">✉️ Email</button>
         </div>
+
+        <!-- WhatsApp Link Footer Bar -->
+        <div class="whatsapp-footer-bar">
+            <a href="https://wa.me/?text=" id="whatsAppShareLink" target="_blank" class="btn-whatsapp-share">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.964 9.964 0 0 0 1.333 4.993L2 22l5.13-1.347a9.945 9.945 0 0 0 4.88 1.277h.005c5.505 0 9.989-4.478 9.99-9.984 0-2.667-1.037-5.176-2.923-7.062C17.198 3.037 14.686 2 12.012 2zm5.727 14.047c-.246.696-1.42 1.353-1.95 1.408-.48.05-1.096.084-3.23-.797-2.73-1.127-4.48-3.905-4.617-4.087-.135-.18-1.1-1.46-1.1-2.785 0-1.325.69-1.977.935-2.25.247-.272.544-.34.726-.34.18 0 .363.001.52.008.164.007.385-.063.602.46.223.535.76 1.854.825 1.988.066.134.11.29.02.47-.09.18-.135.29-.27.45l-.41.488c-.135.152-.278.318-.12.593.158.272.7 1.15 1.5 1.86.1.09.186.136.273.136.262 0 .422-.24.58-.45.148-.198.312-.423.498-.5.186-.076.37-.038.556.038.185.076 1.176.554 1.378.656.2.102.336.152.386.237.05.084.05.49-.196 1.186z"/>
+                </svg>
+                Share Current Receipt on WhatsApp
+            </a>
+        </div>
     </div>
 
+    <!-- RIGHT PREVIEW CANVAS PANEL -->
     <div class="preview-section" id="printArea">
-        <div class="receipt-header">
+        <div class="receipt-header-row">
             <div>
                 <h1 class="receipt-title" id="lblReceipt">Rent Receipt</h1>
                 <p style="font-size:0.85rem; color:#6b7280;"><span id="lblCountryTag">Country</span>: <span id="prevCountry">Global</span></p>
             </div>
+            <!-- Live Logo Container inside receipt body -->
+            <img id="previewLogo" class="logo-preview-box" alt="Landlord Logo">
+            
             <div class="receipt-meta">
                 <p><strong><span id="lblNumTag">Receipt #</span>:</strong> <span id="prevNum">REC-1001</span></p>
                 <p><strong><span id="lblDateTag">Date</span>:</strong> <span id="prevDate">MM/DD/YYYY</span></p>
@@ -712,367 +1100,27 @@
             </div>
         </div>
 
-        <div class="notes-display-box" id="notesDisplaySection" style="display: none;">
-            <strong id="lblNotesTag">Notes</strong>: <span id="prevNotes"></span>
-        </div>
+        <div id="prevNotesBox" class="notes-display-box" style="display: none;"></div>
 
         <div class="legal-declaration" id="lblDeclaration">
             The landlord hereby acknowledges receiving the payment described above for the specified premises.
         </div>
 
+        <div style="text-align: center; margin: 15px 0; font-weight: 700; color: var(--success-color); font-size: 1.1rem;" id="lblStatusText">
+            PAID &amp; CLEARED
+        </div>
+
         <div class="signature-area">
             <div>
-                <p><span id="lblSignature">Authorized Signature</span>: _______________________</p>
+                <span style="font-weight: bold; color: var(--success-color);" id="lblThankYouText">Thank you for your payment!</span>
             </div>
-            <div>
-                <p id="lblThankYou">Thank you for your payment!</p>
+            <div style="text-align: center; min-width: 180px;">
+                <div style="border-bottom: 1px solid var(--border-color); height: 35px; margin-bottom: 5px;"></div>
+                <span id="lblSigTag" style="font-size: 0.8rem; font-weight: 600;">Authorized Signature</span>
             </div>
         </div>
     </div>
-
 </div>
-
-<script>
-    document.getElementById('receiptDate').valueAsDate = new Date();
-    const start = new Date();
-    start.setDate(1);
-    const end = new Date(start.getFullYear(), start.getMonth() + 1, 0);
-    document.getElementById('periodStart').valueAsDate = start;
-    document.getElementById('periodEnd').valueAsDate = end;
-
-    let currentSymbol = "$";
-    let currentCurrency = "USD";
-    let currentSlug = "us";
-    let activeTier = 'guest';
-    let localReceiptHistory = [];
-
-    if (!localStorage.getItem('receipts_store_v2')) {
-        const initialProMocks = [
-            { id: '1', num: 'REC-2024', tenant: 'Hamisi Juma', amt: 750000, date: '2026-07-01' },
-            { id: '2', num: 'REC-2025', tenant: 'Sarah Jenkins', amt: 1200, date: '2026-07-10' }
-        ];
-        localStorage.setItem('receipts_store_v2', JSON.stringify(initialProMocks));
-    }
-    localReceiptHistory = JSON.parse(localStorage.getItem('receipts_store_v2'));
-
-    function setTier(tier) {
-        activeTier = tier;
-        document.querySelectorAll('.btn-tier').forEach(btn => btn.classList.remove('active'));
-        
-        if (tier === 'guest') {
-            document.getElementById('btnTierGuest').classList.add('active');
-            document.getElementById('tierBadge').className = "tier-badge";
-            document.getElementById('tierBadge').innerText = "Guests / No sign up";
-            document.getElementById('usageDisplay').innerHTML = `Free tier cap: <strong style="color:#ef4444;">1 / 3 receipts generated this month</strong>`;
-            document.getElementById('historyModule').style.display = "none";
-        } else {
-            document.getElementById('btnTierPro').classList.add('active');
-            document.getElementById('tierBadge').className = "tier-badge pro";
-            document.getElementById('tierBadge').innerText = "Pro Account Unlocked";
-            document.getElementById('usageDisplay').innerHTML = `👑 Unlimited Generation, Complete History, Tenant/Property Records &amp; Quick Duplication active.`;
-            document.getElementById('historyModule').style.display = "block";
-            renderHistory();
-        }
-    }
-
-    function renderHistory() {
-        const listDiv = document.getElementById('historyEntries');
-        listDiv.innerHTML = '';
-        localReceiptHistory.forEach(item => {
-            listDiv.innerHTML += `
-                <div class="history-item">
-                    <div><strong>${item.num}</strong> - ${item.tenant}</div>
-                    <div class="history-actions">
-                        <button onclick="editReceipt('${item.id}')">Edit</button>
-                        <button onclick="duplicateReceipt('${item.id}')">Duplicate</button>
-                        <button onclick="deleteReceipt('${item.id}')" style="color:#ef4444;">Delete</button>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    function deleteReceipt(id) {
-        localReceiptHistory = localReceiptHistory.filter(r => r.id !== id);
-        localStorage.setItem('receipts_store_v2', JSON.stringify(localReceiptHistory));
-        renderHistory();
-    }
-
-    // Dynamic short link processor using raw runtime parameters over TinyURL's API engine
-    function copyShareLink() {
-        const dataArray = [
-            document.getElementById('receiptNum').value,
-            document.getElementById('receiptDate').value,
-            document.getElementById('landlordName').value,
-            document.getElementById('landlordPhone').value,
-            document.getElementById('landlordEmail').value,
-            document.getElementById('tenantName').value,
-            document.getElementById('tenantPhone').value,
-            document.getElementById('tenantEmail').value,
-            document.getElementById('periodStart').value,
-            document.getElementById('periodEnd').value,
-            document.getElementById('propAddress').value,
-            document.getElementById('unitNum').value,
-            document.getElementById('paymentTypeSelect').value,
-            document.getElementById('rentAmount').value,
-            document.getElementById('receiptNotes').value,
-            document.getElementById('countrySelect').value,
-            document.getElementById('langSelect').value,
-            document.getElementById('paymentMethod').value
-        ];
-
-        try {
-            const jsonString = JSON.stringify(dataArray);
-            const compressedCode = btoa(encodeURIComponent(jsonString));
-            const longUrl = `${window.location.origin}${window.location.pathname}?r=${compressedCode}`;
-            
-            fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`)
-                .then(response => response.text())
-                .then(shortUrl => {
-                    navigator.clipboard.writeText(shortUrl).then(() => {
-                        alert(`🔗 Short Link Copied to Clipboard!\n\n${shortUrl}`);
-                    });
-                })
-                .catch(err => {
-                    navigator.clipboard.writeText(longUrl).then(() => {
-                        alert(`🔗 Link Copied! (TinyURL connection timed out, copied full raw structure instead).`);
-                    });
-                    console.error('Error shortening URL: ', err);
-                });
-        } catch(e) {
-            alert("Error constructing shareable URL.");
-            console.error(e);
-        }
-    }
-
-    function duplicateReceipt(id) {
-        const item = localReceiptHistory.find(r => r.id === id);
-        if (item) {
-            const copy = { ...item, id: Date.now().toString(), num: item.num + '-DUP' };
-            localReceiptHistory.push(copy);
-            localStorage.setItem('receipts_store_v2', JSON.stringify(localReceiptHistory));
-            renderHistory();
-        }
-    }
-
-    function editReceipt(id) {
-        const item = localReceiptHistory.find(r => r.id === id);
-        if (item) {
-            document.getElementById('receiptNum').value = item.num;
-            document.getElementById('tenantName').value = item.tenant;
-            document.getElementById('rentAmount').value = item.amt;
-            document.getElementById('receiptDate').value = item.date;
-            updatePreview();
-        }
-    }
-
-    function triggerPrintAndCount() {
-        if (activeTier === 'guest') {
-            alert("Guest session printed receipt. Monthly limit remaining: 2.");
-        }
-        window.print();
-    }
-
-    function emailReceipt() {
-        const tenantEmail = document.getElementById('tenantEmail').value || 'tenant@example.com';
-        const num = document.getElementById('receiptNum').value || 'N/A';
-        window.location.href = `mailto:${tenantEmail}?subject=Rent Receipt ${num}&body=Please find your rent payment receipt generated inside your premium platform profile.`;
-    }
-
-    function handleCountryChange() {
-        currentSlug = document.getElementById('countrySelect').value;
-        const country = countryDatabase.find(c => c.slug === currentSlug);
-        
-        if (country) {
-            currentSymbol = country.symbol;
-            currentCurrency = country.currency;
-            
-            const langMapper = {
-                es: ['es', 'mx', 'ar', 'co'],
-                fr: ['fr', 'be'],
-                de: ['de', 'at'],
-                it: ['it'],
-                pt: ['pt', 'br'],
-                sw: ['tz', 'ke'],
-                ms: ['my', 'sg'],
-                id: ['id'],
-                hi: ['in'],
-                pl: ['pl'],
-                ja: ['jp'],
-                sv: ['se'],
-                zh: ['cn'],
-                vi: ['vn'],
-                nl: ['nl'],
-                th: ['th'],
-                ar: ['ae', 'sa', 'kw', 'qa', 'eg', 'om', 'ye']
-            };
-
-            let autoLang = 'en';
-            for (const [langKey, slugs] of Object.entries(langMapper)) {
-                if (slugs.includes(currentSlug)) {
-                    autoLang = langKey;
-                    break;
-                }
-            }
-            document.getElementById('langSelect').value = autoLang;
-
-            const checkSpelling = countriesUsingCheque.includes(currentSlug) ? 'Cheque' : 'Check';
-            const baseOptions = ['Bank Transfer', 'Cash', checkSpelling, 'Credit Card'];
-            const extraOptions = country.extraPayments || [];
-            
-            const parsedExtras = extraOptions.map(opt => {
-                if(opt.toLowerCase() === 'check' || opt.toLowerCase() === 'cheque') return checkSpelling;
-                return opt;
-            });
-
-            const dropdown = document.getElementById('paymentMethod');
-            dropdown.innerHTML = [...parsedExtras, ...baseOptions]
-                .map(method => `<option value="${method}">${method}</option>`)
-                .join('');
-                
-            document.getElementById('prevCountry').innerText = country.name;
-            handleLanguageChange();
-        }
-    }
-
-    function handleLanguageChange() {
-        const selectedLang = document.getElementById('langSelect').value;
-        const dict = translationMatrix[selectedLang] || translationMatrix.en;
-
-        const previewBlock = document.getElementById('printArea');
-        if (selectedLang === 'ar') {
-            previewBlock.classList.add('rtl-layout');
-        } else {
-            previewBlock.classList.remove('rtl-layout');
-        }
-
-        document.getElementById('lblReceipt').innerText = dict.receipt;
-        document.getElementById('lblCountryTag').innerText = dict.country;
-        document.getElementById('lblNumTag').innerText = dict.receiptNum;
-        document.getElementById('lblDateTag').innerText = dict.date;
-        document.getElementById('lblReceivedFrom').innerText = dict.receivedFrom;
-        document.getElementById('lblPaidTo').innerText = dict.paidTo;
-        document.getElementById('lblPremises').innerText = dict.premises;
-        document.getElementById('lblTotalPaid').innerText = dict.totalPaid;
-        document.getElementById('lblMethodTag').innerText = dict.paymentMethod;
-        document.getElementById('lblPaymentType').innerText = dict.paymentType;
-        document.getElementById('lblNotesTag').innerText = dict.notes;
-        document.getElementById('lblDeclaration').innerText = dict.declaration;
-        document.getElementById('lblSignature').innerText = dict.signature;
-        document.getElementById('lblThankYou').innerText = dict.thankYou;
-        document.getElementById('lblPeriod').innerText = dict.period;
-
-        updatePreview();
-    }
-
-    function formatDate(dateStr) {
-        if (!dateStr) return 'MM/DD/YYYY';
-        const d = new Date(dateStr);
-        return d.toLocaleDateString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
-    }
-
-    function updatePreview() {
-        document.getElementById('prevNum').innerText = document.getElementById('receiptNum').value || 'N/A';
-        document.getElementById('prevDate').innerText = formatDate(document.getElementById('receiptDate').value);
-
-        document.getElementById('prevLandlord').innerText = document.getElementById('landlordName').value || '---';
-        const landlordEmail = document.getElementById('landlordEmail').value;
-        document.getElementById('prevLandlordEmail').innerText = landlordEmail ? `(${landlordEmail})` : '';
-        const landlordPhone = document.getElementById('landlordPhone').value;
-        document.getElementById('prevLandlordPhone').innerText = landlordPhone ? `☎ ${landlordPhone}` : '';
-
-        document.getElementById('prevTenant').innerText = document.getElementById('tenantName').value || '---';
-        const tenantEmail = document.getElementById('tenantEmail').value;
-        document.getElementById('prevTenantEmail').innerText = tenantEmail ? `(${tenantEmail})` : '';
-        const tenantPhone = document.getElementById('tenantPhone').value;
-        document.getElementById('prevTenantPhone').innerText = tenantPhone ? `☎ ${tenantPhone}` : '';
-
-        const mainAddress = document.getElementById('propAddress').value || '---';
-        const unitDetails = document.getElementById('unitNum').value;
-        document.getElementById('prevAddress').innerText = mainAddress;
-        document.getElementById('prevUnit').innerText = unitDetails ? `, ${unitDetails}` : '';
-        
-        document.getElementById('prevPeriodStart').innerText = formatDate(document.getElementById('periodStart').value);
-        document.getElementById('prevPeriodEnd').innerText = formatDate(document.getElementById('periodEnd').value);
-
-        const amt = parseFloat(document.getElementById('rentAmount').value) || 0;
-        document.getElementById('prevAmount').innerText = amt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        
-        document.getElementById('prevSymbol').innerText = currentSymbol;
-        document.getElementById('prevCurrency').innerText = currentCurrency;
-        document.getElementById('prevMethod').innerText = document.getElementById('paymentMethod').value || '---';
-        document.getElementById('prevType').innerText = document.getElementById('paymentTypeSelect').value;
-
-        const notesValue = document.getElementById('receiptNotes').value;
-        const notesBox = document.getElementById('notesDisplaySection');
-        if (notesValue.trim() !== '') {
-            notesBox.style.display = "block";
-            document.getElementById('prevNotes').innerText = notesValue;
-        } else {
-            notesBox.style.display = "none";
-        }
-    }
-
-    function loadReceiptFromURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (!urlParams.has('r')) return false;
-
-        try {
-            const compressedCode = urlParams.get('r');
-            const decodedJSON = decodeURIComponent(atob(compressedCode));
-            const data = JSON.parse(decodedJSON);
-
-            document.getElementById('receiptNum').value = data[0] || '';
-            document.getElementById('receiptDate').value = data[1] || '';
-            document.getElementById('landlordName').value = data[2] || '';
-            document.getElementById('landlordPhone').value = data[3] || '';
-            document.getElementById('landlordEmail').value = data[4] || '';
-            document.getElementById('tenantName').value = data[5] || '';
-            document.getElementById('tenantPhone').value = data[6] || '';
-            document.getElementById('tenantEmail').value = data[7] || '';
-            document.getElementById('periodStart').value = data[8] || '';
-            document.getElementById('periodEnd').value = data[9] || '';
-            document.getElementById('propAddress').value = data[10] || '';
-            document.getElementById('unitNum').value = data[11] || '';
-            document.getElementById('paymentTypeSelect').value = data[12] || '';
-            document.getElementById('rentAmount').value = data[13] || '';
-            document.getElementById('receiptNotes').value = data[14] || '';
-            
-            if (data[15]) {
-                document.getElementById('countrySelect').value = data[15];
-                handleCountryChange();
-            }
-            if (data[16]) {
-                document.getElementById('langSelect').value = data[16];
-                handleLanguageChange();
-            }
-            if (data[17]) {
-                const methodSelect = document.getElementById('paymentMethod');
-                const exists = Array.from(methodSelect.options).some(opt => opt.value === data[17]);
-                if (!exists) {
-                    const opt = document.createElement('option');
-                    opt.value = data[17];
-                    opt.text = data[17];
-                    methodSelect.add(opt);
-                }
-                methodSelect.value = data[17];
-            }
-
-            updatePreview();
-            return true;
-        } catch (e) {
-            console.error("Failed to parse compressed URL data", e);
-            return false;
-        }
-    }
-
-    if (typeof countryDatabase !== 'undefined' && countryDatabase.length > 0) {
-        handleCountryChange();
-        loadReceiptFromURL();
-    } else {
-        updatePreview();
-    }
-</script>
 
 </body>
 </html>
