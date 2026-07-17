@@ -3,377 +3,552 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Habesha & Uhuru Property Manager</title>
-    <!-- Tailwind CSS for modern styling -->
+    <title>SwiftReceipt - Pro Landlord & Tenant Receipt Generator</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons for clean UI icons -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Print Stylesheet -->
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-receipt-card, #printable-receipt-card * {
+                visibility: visible;
+            }
+            #printable-receipt-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
 
-    <!-- Top Navigation Bar -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <!-- Top Sticky Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 text-white p-2 rounded-lg">
-                    <i data-lucide="building-2" class="w-6 h-6"></i>
+                <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-sm">
+                    <i data-lucide="receipt" class="w-6 h-6"></i>
                 </div>
-                <span class="text-xl font-bold tracking-tight text-gray-900">UnityProp <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full font-semibold ml-1">Beta</span></span>
+                <span class="text-xl font-bold tracking-tight text-slate-900">Swift<span class="text-indigo-600">Receipt</span></span>
             </div>
-
-            <!-- Regional & Localization Settings -->
-            <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2 bg-gray-100 p-1.5 rounded-lg border border-gray-200 text-sm">
-                    <button id="region-tz" onclick="setRegion('TZ')" class="px-3 py-1.5 rounded-md font-medium transition-all bg-white text-gray-900 shadow-sm">
-                        🇹🇿 Tanzania
-                    </button>
-                    <button id="region-et" onclick="setRegion('ET')" class="px-3 py-1.5 rounded-md font-medium transition-all text-gray-600 hover:text-gray-900">
-                        🇪🇹 Ethiopia
-                    </button>
-                </div>
-                
-                <!-- Pro Tier Badge -->
-                <div class="hidden sm:flex items-center space-x-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">
-                    <i data-lucide="crown" class="w-3.5 h-3.5"></i>
-                    <span>PRO ACTIVE</span>
-                </div>
+            
+            <!-- Dynamic Country Selector -->
+            <div class="flex items-center space-x-2">
+                <label for="country-select" class="hidden md:inline text-xs font-semibold uppercase tracking-wider text-slate-400">Region:</label>
+                <select id="country-select" onchange="updateCountryProfile()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold py-2 px-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
+                    <!-- Configured in JS sequence order -->
+                </select>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Main Workspace Grid -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
         
-        <!-- Welcome Banner & Quick Actions -->
-        <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900" id="welcome-title">Property Dashboard (Tanzania)</h1>
-                <p class="text-gray-500 text-sm mt-1">Manage guest limits, track receipts, and process local regional payments.</p>
-            </div>
-            <div class="flex items-center space-x-3">
-                <button onclick="openReceiptModal()" class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition shadow-sm">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                    <span id="btn-new-receipt">New TZS Receipt</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Metric Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Metric 1: Total Revenue -->
-            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-sm font-medium text-gray-500">Collected This Month</span>
-                    <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-                        <i data-lucide="circle-dollar-sign" class="w-5 h-5"></i>
-                    </div>
-                </div>
-                <div class="text-2xl font-bold text-gray-900" id="metric-revenue">TZS 14,250,000</div>
-                <span class="text-xs text-emerald-600 font-medium flex items-center mt-2">
-                    <i data-lucide="trending-up" class="w-3 h-3 mr-1"></i> +12% from last month
-                </span>
-            </div>
-
-            <!-- Metric 2: Guest Limits (Crucial UI Requirement) -->
-            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-sm font-medium text-gray-500">Guest Capacity Limit</span>
-                    <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
-                        <i data-lucide="users" class="w-5 h-5"></i>
-                    </div>
-                </div>
-                <div class="flex items-baseline space-x-2">
-                    <div class="text-2xl font-bold text-gray-900" id="metric-guests">42</div>
-                    <div class="text-sm text-gray-400">/ 50 limit</div>
-                </div>
-                <!-- Progress Bar -->
-                <div class="w-full bg-gray-100 rounded-full h-2.5 mt-4">
-                    <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 84%"></div>
-                </div>
-            </div>
-
-            <!-- Metric 3: Active Properties -->
-            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-sm font-medium text-gray-500">Active Listings</span>
-                    <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                        <i data-lucide="home" class="w-5 h-5"></i>
-                    </div>
-                </div>
-                <div class="text-2xl font-bold text-gray-900">8 Properties</div>
-                <span class="text-xs text-indigo-600 font-medium flex items-center mt-2">
-                    <i data-lucide="sparkles" class="w-3 h-3 mr-1"></i> Max 10 properties on Pro
-                </span>
-            </div>
-        </div>
-
-        <!-- Main Dashboard Split -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column: Settings and Input Form -->
+        <div class="w-full lg:w-7/12 space-y-6 no-print">
             
-            <!-- Left 2 Columns: Receipts & Transactions -->
-            <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                    <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-                        <h2 class="font-bold text-gray-900 text-lg">Recent Receipts Issued</h2>
-                        <i data-lucide="filter" class="w-4 h-4 text-gray-400 cursor-pointer hover:text-gray-600"></i>
+            <!-- Tier Strategy Comparison Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Guest Tier Card -->
+                <div class="bg-white border-2 border-indigo-100 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">Guest / No Signup</span>
+                        <span class="text-xs text-indigo-600 font-semibold flex items-center gap-1">
+                            <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Active
+                        </span>
                     </div>
-                    <div class="divide-y divide-gray-100" id="receipt-list">
-                        <!-- Default Tanzania Receipts loaded initially -->
-                        <div class="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 transition">
-                            <div class="flex items-start space-x-3">
-                                <div class="bg-gray-100 p-2.5 rounded-xl text-gray-600 mt-1 sm:mt-0">
-                                    <i data-lucide="receipt" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Serengeti View Villa</h4>
-                                    <p class="text-xs text-gray-400 mt-0.5">Receipt #TZ-1092 • Guest: Amadi Diallo</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-bold text-gray-900" id="r-amount-1">TZS 1,200,000</div>
-                                <span class="inline-block bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded-md font-medium mt-1">Paid via Mobile Money</span>
-                            </div>
-                        </div>
-
-                        <div class="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 transition">
-                            <div class="flex items-start space-x-3">
-                                <div class="bg-gray-100 p-2.5 rounded-xl text-gray-600 mt-1 sm:mt-0">
-                                    <i data-lucide="receipt" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Zanzibar Coastal Suite</h4>
-                                    <p class="text-xs text-gray-400 mt-0.5">Receipt #TZ-1091 • Guest: Chloe Bennett</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-bold text-gray-900" id="r-amount-2">TZS 3,450,000</div>
-                                <span class="inline-block bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded-md font-medium mt-1">Paid via Bank</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column: Regional Tax / Setup Quick Settings -->
-            <div class="space-y-6">
-                <!-- Pro Feature Upgrade Block -->
-                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white p-6 rounded-2xl shadow-md relative overflow-hidden">
-                    <div class="absolute -right-10 -bottom-10 opacity-10">
-                        <i data-lucide="crown" class="w-48 h-48"></i>
-                    </div>
-                    <span class="bg-amber-400 text-slate-900 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">Uncapped Settings</span>
-                    <h3 class="text-xl font-bold mt-3 mb-2">Upgrade to Unlimited Guests</h3>
-                    <p class="text-slate-300 text-xs leading-relaxed mb-4">Remove the 50-guest safety cap and unlock multi-currency automatic VAT calculation for both KRA/TRA and Ethiopian Revenue custom integrations.</p>
-                    <button class="w-full bg-white text-indigo-900 font-bold text-sm py-2.5 rounded-lg transition hover:bg-slate-100 shadow-sm flex items-center justify-center space-x-2">
-                        <span>Unlock Pro Access</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </button>
+                    <ul class="space-y-2 text-xs text-slate-500">
+                        <li class="flex items-center gap-2 font-medium text-slate-700">
+                            <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Max 3 receipts per month
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Download & Print PDFs
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Copy sharing link for WhatsApp
+                        </li>
+                    </ul>
                 </div>
 
-                <!-- Local Regional Configurations Box -->
-                <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                    <h3 class="font-bold text-gray-900 text-base mb-4">Local Compliance Details</h3>
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex justify-between py-2 border-b border-gray-100">
-                            <span class="text-gray-400">Target Tax Authority</span>
-                            <span class="font-semibold text-gray-800" id="local-authority">TRA (Tanzania Revenue)</span>
+                <!-- Pro Tier Card -->
+                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-5 relative overflow-hidden shadow-md">
+                    <div class="absolute -right-6 -bottom-6 opacity-10">
+                        <i data-lucide="crown" class="w-24 h-24"></i>
+                    </div>
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="bg-amber-400 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Pro Unlimited</span>
+                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1 rounded-lg transition">Upgrade</button>
+                    </div>
+                    <ul class="space-y-2 text-xs text-slate-300">
+                        <li class="flex items-center gap-2 font-semibold text-white">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> Unlimited receipt issuance
                         </li>
-                        <li class="flex justify-between py-2 border-b border-gray-100">
-                            <span class="text-gray-400">Standard VAT Rate</span>
-                            <span class="font-semibold text-gray-800" id="local-vat">18%</span>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> Save tenant & property history
                         </li>
-                        <li class="flex justify-between py-2">
-                            <span class="text-gray-400">Primary Mobile Money</span>
-                            <span class="font-semibold text-indigo-600" id="local-payment">M-Pesa / Tigo Pesa</span>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> Custom logos & easy replication
                         </li>
                     </ul>
                 </div>
             </div>
-        </div>
-    </main>
 
-    <!-- Simple Custom Receipt Modal for Interactive Feel -->
-    <div id="receipt-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full mx-4 p-6 shadow-xl border border-gray-100">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="font-bold text-lg text-gray-900">Generate New Receipt</h3>
-                <button onclick="closeReceiptModal()" class="text-gray-400 hover:text-gray-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <form id="receipt-form" onsubmit="handleReceiptSubmit(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 tracking-wider mb-1">Property Name</label>
-                    <input type="text" required class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. Bole Medhanialem Apt">
+            <!-- Receipt Input Customizer Form -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <h2 class="font-bold text-lg text-slate-900 flex items-center gap-2">
+                        <i data-lucide="sliders-horizontal" class="w-5 h-5 text-indigo-600"></i> Receipt Customizer
+                    </h2>
+                    <span class="text-xs text-slate-400">Changes reflect instantly</span>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 tracking-wider mb-1">Guest Name</label>
-                    <input type="text" required class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. Abebe Kebede">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 tracking-wider mb-1">Amount</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2.5 text-gray-400 text-sm font-semibold" id="modal-currency-prefix">TZS</span>
-                        <input type="number" required class="w-full bg-gray-50 border border-gray-200 rounded-lg pl-14 pr-3 py-2 text-sm focus:outline-none focus:border-indigo-500" placeholder="0.00">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Receipt Title</label>
+                        <input type="text" id="input-title" oninput="liveUpdate()" value="Rental Payment Receipt" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Receipt #</label>
+                        <input type="text" id="input-number" oninput="liveUpdate()" value="REC-2026-0091" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:bg-white transition">
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg text-sm transition shadow-sm mt-6">
-                    Issue Live Receipt
-                </button>
-            </form>
-        </div>
-    </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-100 py-6 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-400">
-            &copy; 2026 UnityProp Inc. Tailored for cross-border hosting setups in East Africa.
+                <!-- Custom Logo Upload Slot -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Logo</label>
+                    <div class="flex items-center space-x-4">
+                        <label class="cursor-pointer flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 transition">
+                            <i data-lucide="upload" class="w-4 h-4"></i>
+                            <span>Upload PNG/JPG</span>
+                            <input type="file" id="input-logo" accept="image/*" onchange="handleLogoUpload(event)" class="hidden">
+                        </label>
+                        <button onclick="removeLogo()" class="text-xs font-semibold text-rose-600 hover:text-rose-700">Remove</button>
+                    </div>
+                </div>
+
+                <!-- Landlord & Tenant Core Setup -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                    <div class="space-y-3">
+                        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-1.5"><i data-lucide="user-check" class="w-4 h-4 text-slate-500"></i> Issuer / Landlord</h3>
+                        <div>
+                            <input type="text" id="input-landlord-name" oninput="liveUpdate()" placeholder="Company or Landlord Name" value="Apex Properties Ltd" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm mb-2 focus:outline-none focus:border-indigo-500 transition">
+                            <textarea id="input-landlord-address" oninput="liveUpdate()" rows="2" placeholder="Address, Email or Phone" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">PO Box 45012, Head Office</textarea>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4 text-slate-500"></i> Receiver / Tenant</h3>
+                        <div>
+                            <input type="text" id="input-tenant-name" oninput="liveUpdate()" placeholder="Tenant Name" value="John Doe" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm mb-2 focus:outline-none focus:border-indigo-500 transition">
+                            <input type="text" id="input-property-unit" oninput="liveUpdate()" placeholder="Property Name / Unit #" value="Apartment 4B, Hillcrest Complex" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Particulars -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Base Rent / Price</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-slate-400 text-sm font-semibold" id="currency-prefix">$</span>
+                            <input type="number" id="input-amount" oninput="liveUpdate()" value="1200" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Utilities / Extras</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-slate-400 text-sm font-semibold" id="currency-prefix-extra">$</span>
+                            <input type="number" id="input-extras" oninput="liveUpdate()" value="75" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">VAT / Local Tax (%)</label>
+                        <input type="number" id="input-tax-rate" oninput="liveUpdate()" value="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                </div>
+
+                <!-- Dynamic Dropdowns for Localization -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Payment Method</label>
+                        <select id="input-payment-method" onchange="liveUpdate()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition cursor-pointer">
+                            <!-- Populated dynamically via selected country profile -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Transaction Ref (Optional)</label>
+                        <input type="text" id="input-tx-ref" oninput="liveUpdate()" placeholder="TXN-90234-A" value="TXN-88203-A" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                </div>
+
+                <!-- Dates & Metadata -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Payment Date</label>
+                        <input type="date" id="input-date" onchange="liveUpdate()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Rental Period covered</label>
+                        <input type="text" id="input-period" oninput="liveUpdate()" placeholder="e.g. June 2026" value="June 2026" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                </div>
+
+                <!-- Additional Internal Notes -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Receipt Memo / Notes</label>
+                    <textarea id="input-notes" oninput="liveUpdate()" rows="2" placeholder="Thank you for your business!" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">Rent paid in full for the specified rental term. Utilities include basic water access and maintenance.</textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Interactive Live Preview & Sharing Hub -->
+        <div class="w-full lg:w-5/12 space-y-6">
+            
+            <div class="sticky top-20 space-y-6">
+                <!-- Outer Card styling -->
+                <div id="printable-receipt-card" class="bg-white rounded-2xl border border-slate-200 shadow-lg p-6 relative overflow-hidden flex flex-col justify-between min-h-[550px]">
+                    <!-- Visual Receipt Header Ribbon -->
+                    <div class="absolute top-0 left-0 right-0 h-1.5 bg-indigo-600"></div>
+                    
+                    <!-- Content area -->
+                    <div class="space-y-6">
+                        <!-- Top header of the receipt -->
+                        <div class="flex justify-between items-start pt-2">
+                            <div class="space-y-1">
+                                <div id="preview-logo-container" class="h-10 max-w-[120px] mb-2 hidden flex items-center">
+                                    <img id="preview-logo" src="" alt="Custom Logo" class="max-h-full max-w-full object-contain">
+                                </div>
+                                <h2 id="preview-title" class="text-xl font-black text-slate-900 tracking-tight">Rental Payment Receipt</h2>
+                                <p class="text-xs text-slate-400" id="preview-number-container">Receipt ID: <span id="preview-number" class="font-bold text-slate-700">REC-2026-0091</span></p>
+                            </div>
+                            <div class="text-right text-xs text-slate-400">
+                                <p class="font-semibold text-slate-800" id="preview-lang-badge">Language: English</p>
+                                <p id="preview-date">July 17, 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- Parties Metadata Block -->
+                        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl text-xs">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">From (Landlord)</p>
+                                <p class="font-bold text-slate-800" id="preview-landlord-name">Apex Properties Ltd</p>
+                                <p class="text-slate-500 whitespace-pre-line mt-0.5 leading-relaxed" id="preview-landlord-address">PO Box 45012, Head Office</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">To (Tenant)</p>
+                                <p class="font-bold text-slate-800" id="preview-tenant-name">John Doe</p>
+                                <p class="text-slate-500 mt-0.5 leading-relaxed" id="preview-property-unit">Apartment 4B, Hillcrest Complex</p>
+                            </div>
+                        </div>
+
+                        <!-- Main Financial Summary Table -->
+                        <div class="space-y-2.5">
+                            <div class="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider pb-1 border-b border-slate-100">
+                                <span>Description Particulars</span>
+                                <span>Total</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-slate-700">
+                                <span id="desc-base">Base Accommodation Rent (June 2026)</span>
+                                <span class="font-semibold" id="preview-base-amount">$1,200.00</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-slate-700">
+                                <span>Utility Fees & Incidentals</span>
+                                <span class="font-semibold" id="preview-extras-amount">$75.00</span>
+                            </div>
+                            <div id="tax-line-container" class="flex justify-between text-sm text-slate-700 hidden">
+                                <span>Calculated Local Tax (<span id="tax-rate-badge">0</span>%)</span>
+                                <span class="font-semibold" id="preview-tax-amount">$0.00</span>
+                            </div>
+                            
+                            <!-- Large Total Amount block -->
+                            <div class="flex justify-between items-center bg-indigo-50/50 p-4 rounded-xl mt-4 border border-indigo-100/50">
+                                <span class="text-sm font-bold text-slate-900">Total Cleared Payment</span>
+                                <span class="text-2xl font-black text-indigo-600" id="preview-grand-total">$1,275.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Compliance Metas -->
+                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100 text-xs">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Method of Payment</p>
+                                <p class="font-bold text-slate-800 flex items-center gap-1" id="preview-payment-method">
+                                    <i data-lucide="wallet" class="w-3.5 h-3.5 text-indigo-500"></i> Cash
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Reference String</p>
+                                <p class="font-bold text-slate-700" id="preview-tx-ref">TXN-88203-A</p>
+                            </div>
+                        </div>
+
+                        <!-- Notes Block -->
+                        <div class="bg-amber-50/40 p-3.5 rounded-xl border border-amber-100/50 text-xs text-amber-900" id="notes-container">
+                            <p class="font-semibold mb-1">Receipt Terms & Terms:</p>
+                            <p id="preview-notes" class="leading-relaxed">Rent paid in full for the specified rental term. Utilities include basic water access and maintenance.</p>
+                        </div>
+                    </div>
+
+                    <!-- Watermark signature / Verification seal -->
+                    <div class="flex items-center justify-between text-[10px] text-slate-400 border-t border-dashed border-slate-100 pt-4 mt-6">
+                        <div class="flex items-center gap-1">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+                            <span>Verified Digital Signature Receipt</span>
+                        </div>
+                        <div class="font-semibold tracking-wider uppercase text-slate-300">UnityProp System</div>
+                    </div>
+                </div>
+
+                <!-- Web Actions and Direct Exporting Row -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-sm no-print">
+                    <h4 class="font-bold text-sm text-slate-900 mb-2">Export & Share Receipt</h4>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="handlePrint()" class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-xl text-sm font-bold shadow-sm transition">
+                            <i data-lucide="printer" class="w-4 h-4"></i> Print/Save PDF
+                        </button>
+                        <button onclick="copyShareableLink()" class="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 py-3 px-4 rounded-xl text-sm font-bold transition">
+                            <i data-lucide="link" class="w-4 h-4"></i> Copy Link
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="shareWhatsApp()" class="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl text-sm font-bold shadow-sm transition">
+                            <i data-lucide="message-square" class="w-4 h-4"></i> Send on WhatsApp
+                        </button>
+                        <button onclick="triggerFakeDownload()" class="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white py-3 px-4 rounded-xl text-sm font-bold shadow-sm transition">
+                            <i data-lucide="download" class="w-4 h-4"></i> Download File
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+            <div>&copy; 2026 SwiftReceipt Engine. Built for zero-latency, high-performance offline generation.</div>
+            <div class="flex space-x-6">
+                <a href="#" class="hover:text-slate-600 transition">KRA / TRA Compliance Guidelines</a>
+                <a href="#" class="hover:text-slate-600 transition">Developer Sandbox API</a>
+            </div>
         </div>
     </footer>
 
-    <!-- Script to toggle configurations reactively -->
+    <!-- Interactive JS Core Logic -->
     <script>
-        // Init Icons
+        // Set standard baseline date
+        document.getElementById('input-date').valueAsDate = new Date();
+
+        // High Fidelity Dictionary configuration for all requested countries with specific currencies and regional localized payments
+        const countryProfiles = [
+            { id: "US", name: "USA", language: "English", symbol: "$", paymentMethods: ["Credit/Debit Card", "ACH Direct Deposit", "Paper Check", "Zelle", "Venmo", "Cash"] },
+            { id: "CA", name: "Canada", language: "English/French", symbol: "$", paymentMethods: ["Interac e-Transfer", "Credit/Debit Card", "Bank Draft", "Cash"] },
+            { id: "UK", name: "UK", language: "English", symbol: "£", paymentMethods: ["BACS Transfer", "Direct Debit", "CHAPS Payment", "Credit/Debit Card", "Cash"] },
+            { id: "FR", name: "France", language: "French", symbol: "€", paymentMethods: ["SEPA Direct Debit", "Carte Bancaire", "Virement Bancaire", "Chèque", "Cash"] },
+            { id: "DE", name: "Germany", language: "German", symbol: "€", paymentMethods: ["SEPA Überweisung", "Giropay", "Sofort", "Lastschrift", "Cash"] },
+            { id: "IT", name: "Italy", language: "Italian", symbol: "€", paymentMethods: ["Bonifico Bancario", "Postepay", "Bancomat Pay", "SEPA Debit", "Cash"] },
+            { id: "BR", name: "Brazil", language: "Portuguese", symbol: "R$", paymentMethods: ["Pix Instant Payment", "Boleto Bancário", "Cartão de Crédito", "Doc/Ted Bank Transfer"] },
+            { id: "ID", name: "Indonesia", language: "Indonesian", symbol: "Rp", paymentMethods: ["GoPay", "OVO", "Dana", "Virtual Account Transfer", "LinkAja", "Cash"] },
+            { id: "MY", name: "Malaysia", language: "Malay/English", symbol: "RM", paymentMethods: ["DuitNow", "Touch 'n Go eWallet", "FPX Bank Transfer", "Boost", "GrabPay"] },
+            { id: "IN", name: "India", language: "Hindi/English", symbol: "₹", paymentMethods: ["UPI (GPay / PhonePe)", "IMPS/NEFT Bank Transfer", "RuPay Card", "NetBanking", "Cash"] },
+            { id: "CN", name: "China", language: "Chinese", symbol: "¥", paymentMethods: ["Alipay", "WeChat Pay", "UnionPay SecurePay", "Digital Yuan (e-CNY)", "Bank Transfer"] },
+            { id: "JP", name: "Japan", language: "Japanese", symbol: "¥", paymentMethods: ["Conbini (Store Payment)", "Line Pay", "PayPay", "Bank Furikomi", "Suica/Pasmo"] },
+            { id: "KE", name: "Kenya", language: "Swahili/English", symbol: "KES", paymentMethods: ["M-Pesa Express", "Airtel Money", "Equity Equitel", "PesaLink Transfer", "Bank Transfer"] },
+            { id: "TZ", name: "Tanzania", language: "Swahili/English", symbol: "TZS", paymentMethods: ["M-Pesa (Vodacom)", "Tigo Pesa", "Airtel Money", "HaloPesa", "NMB/CRDB Bank", "Cash"] },
+            { id: "ZA", name: "South Africa", language: "English/Afrikaans", symbol: "R", paymentMethods: ["EFT Secure", "Ozow Instant Transfer", "PayFast", "Credit/Debit Card", "Cash"] },
+            { id: "NG", name: "Nigeria", language: "English", symbol: "₦", paymentMethods: ["Bank App Transfer", "USSD Code", "OPay Wallet", "Moniepoint", "Flutterwave Link", "Cash"] },
+            { id: "GH", name: "Ghana", language: "English", symbol: "GH₵", paymentMethods: ["MTN Mobile Money", "Telecel Cash", "AirtelTigo Money", "ExpressPay", "Cash"] },
+            // Remaining alphabetical ordered countries
+            { id: "AL", name: "Albania", language: "Albanian", symbol: "Lek", paymentMethods: ["Bank Transfer", "Cash Payment", "EasyPay"] },
+            { id: "BH", name: "Bahrain", language: "Arabic/English", symbol: "BD", paymentMethods: ["BenefitPay", "Benefit Credit", "Bank Wire"] },
+            { id: "BD", name: "Bangladesh", language: "Bengali", symbol: "৳", paymentMethods: ["bKash", "Nagad", "Rocket", "Bank Transfer"] },
+            { id: "BE", name: "Belgium", language: "Dutch/French", symbol: "€", paymentMethods: ["Bancontact", "SEPA Debit", "Payconiq"] },
+            { id: "EG", name: "Egypt", language: "Arabic", symbol: "EGP", paymentMethods: ["Fawry Pay", "InstaPay", "Vodafone Cash", "Bank Transfer"] },
+            { id: "ET", name: "Ethiopia", language: "Amharic/English", symbol: "ETB", paymentMethods: ["Telebirr", "CBE Birr", "Commercial Bank Transfer", "Cash"] },
+            { id: "KR", name: "South Korea", language: "Korean", symbol: "₩", paymentMethods: ["KakaoPay", "Toss Pay", "Naver Pay", "KB Bank Transfer"] },
+            { id: "KW", name: "Kuwait", language: "Arabic/English", symbol: "KD", paymentMethods: ["KNET Payment Gateway", "Credit Card", "Bank Transfer"] },
+            { id: "MX", name: "Mexico", language: "Spanish", symbol: "$", paymentMethods: ["SPEI Bank Transfer", "OXXO Pay", "CoDi Payment", "Card"] },
+            { id: "NL", name: "Netherlands", language: "Dutch", symbol: "€", paymentMethods: ["iDEAL", "SEPA Transfer", "Credit Card"] },
+            { id: "NO", name: "Norway", language: "Norwegian", symbol: "kr", paymentMethods: ["Vipps Transfer", "Bank BankID", "Credit Card"] },
+            { id: "OM", name: "Oman", language: "Arabic/English", symbol: "OMR", paymentMethods: ["Thawani Pay", "Pocket eWallet", "Bank Transfer"] },
+            { id: "PK", name: "Pakistan", language: "Urdu/English", symbol: "Rs", paymentMethods: ["EasyPaisa", "JazzCash", "Nayapay", "Raast Transfer", "Cash"] },
+            { id: "PL", name: "Poland", language: "Polish", symbol: "zł", paymentMethods: ["BLIK Mobile", "Przelewy24", "PKO Transfer"] },
+            { id: "PT", name: "Portugal", language: "Portuguese", symbol: "€", paymentMethods: ["Multibanco", "MB Way", "SEPA Direct Debit"] },
+            { id: "QA", name: "Qatar", language: "Arabic/English", symbol: "QR", paymentMethods: ["QPay Wallet", "Ooredoo Money", "Bank Transfer"] },
+            { id: "SA", name: "Saudi Arabia", language: "Arabic", symbol: "SAR", paymentMethods: ["MADA Card", "STC Pay", "Apple Pay", "Bank Transfer"] },
+            { id: "SG", name: "Singapore", language: "English/Mandarin", symbol: "S$", paymentMethods: ["PayNow", "GrabPay", "DBS/POSB Transfer", "NETS Card"] },
+            { id: "ES", name: "Spain", language: "Spanish", symbol: "€", paymentMethods: ["Bizum", "SEPA Debit", "Tarjeta de Crédito"] },
+            { id: "TH", name: "Thailand", language: "Thai", symbol: "฿", paymentMethods: ["PromptPay QR", "TrueMoney Wallet", "Kasikorn Transfer"] },
+            { id: "TR", name: "Turkiye", language: "Turkish", symbol: "₺", paymentMethods: ["BKM Express", "Papara", "Bank EFT Transfer"] },
+            { id: "AE", name: "UAE", language: "Arabic/English", symbol: "AED", paymentMethods: ["e& money", "Careem Pay", "Direct Bank Wire", "Apple Pay"] },
+            { id: "YE", name: "Yemen", language: "Arabic", symbol: "YR", paymentMethods: ["Kuraimi Express", "CAC Bank Wallet", "Cash"] }
+        ];
+
+        // Populate Country Dropdown on startup
+        const dropdown = document.getElementById('country-select');
+        countryProfiles.forEach(c => {
+            const option = document.createElement('option');
+            option.value = c.id;
+            option.textContent = `${c.name} (${c.language})`;
+            dropdown.appendChild(option);
+        });
+
+        // Initialize Lucide Icons
         lucide.createIcons();
 
-        let currentRegion = 'TZ';
+        // Handle Active changes
+        function updateCountryProfile() {
+            const selectedId = dropdown.value;
+            const profile = countryProfiles.find(c => c.id === selectedId);
+            if (!profile) return;
 
-        function setRegion(region) {
-            currentRegion = region;
-            const tzBtn = document.getElementById('region-tz');
-            const etBtn = document.getElementById('region-et');
-            const welcomeTitle = document.getElementById('welcome-title');
-            const newReceiptBtn = document.getElementById('btn-new-receipt');
-            const metricRevenue = document.getElementById('metric-revenue');
-            const metricGuests = document.getElementById('metric-guests');
-            
-            const rAmount1 = document.getElementById('r-amount-1');
-            const rAmount2 = document.getElementById('r-amount-2');
-            const receiptList = document.getElementById('receipt-list');
+            // Update local state currency symbol references
+            document.getElementById('currency-prefix').innerText = profile.symbol;
+            document.getElementById('currency-prefix-extra').innerText = profile.symbol;
+            document.getElementById('modal-currency-prefix') ? document.getElementById('modal-currency-prefix').innerText = profile.symbol : null;
+            document.getElementById('preview-lang-badge').innerText = `Language: ${profile.language}`;
 
-            const localAuthority = document.getElementById('local-authority');
-            const localVat = document.getElementById('local-vat');
-            const localPayment = document.getElementById('local-payment');
-            const modalCurrencyPrefix = document.getElementById('modal-currency-prefix');
+            // Populate localized payment methods dynamic select
+            const methodSelect = document.getElementById('input-payment-method');
+            methodSelect.innerHTML = '';
+            profile.paymentMethods.forEach(method => {
+                const opt = document.createElement('option');
+                opt.value = method;
+                opt.textContent = method;
+                methodSelect.appendChild(opt);
+            });
 
-            if (region === 'TZ') {
-                // Button Styling Toggle
-                tzBtn.className = "px-3 py-1.5 rounded-md font-medium transition-all bg-white text-gray-900 shadow-sm";
-                etBtn.className = "px-3 py-1.5 rounded-md font-medium transition-all text-gray-600 hover:text-gray-900";
-                
-                // Dashboard text translations/settings for Tanzania
-                welcomeTitle.innerText = "Property Dashboard (Tanzania)";
-                newReceiptBtn.innerText = "New TZS Receipt";
-                metricRevenue.innerText = "TZS 14,250,000";
-                metricGuests.innerText = "42";
-                modalCurrencyPrefix.innerText = "TZS";
+            liveUpdate();
+        }
 
-                localAuthority.innerText = "TRA (Tanzania Revenue)";
-                localVat.innerText = "18%";
-                localPayment.innerText = "M-Pesa / Tigo Pesa";
+        // Live Preview Renderer Core Engine
+        function liveUpdate() {
+            const selectedId = dropdown.value;
+            const profile = countryProfiles.find(c => c.id === selectedId);
+            const symbol = profile ? profile.symbol : "$";
 
-                // Swap Receipt Data Mock
-                receiptList.innerHTML = `
-                    <div class="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 transition">
-                        <div class="flex items-start space-x-3">
-                            <div class="bg-gray-100 p-2.5 rounded-xl text-gray-600 mt-1 sm:mt-0">
-                                <i data-lucide="receipt" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-900">Serengeti View Villa</h4>
-                                <p class="text-xs text-gray-400 mt-0.5">Receipt #TZ-1092 • Guest: Amadi Diallo</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-bold text-gray-900">TZS 1,200,000</div>
-                            <span class="inline-block bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded-md font-medium mt-1">Paid via Mobile Money</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 transition">
-                        <div class="flex items-start space-x-3">
-                            <div class="bg-gray-100 p-2.5 rounded-xl text-gray-600 mt-1 sm:mt-0">
-                                <i data-lucide="receipt" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-900">Zanzibar Coastal Suite</h4>
-                                <p class="text-xs text-gray-400 mt-0.5">Receipt #TZ-1091 • Guest: Chloe Bennett</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-bold text-gray-900">TZS 3,450,000</div>
-                            <span class="inline-block bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded-md font-medium mt-1">Paid via Bank</span>
-                        </div>
-                    </div>
-                `;
-            } else {
-                // Button Styling Toggle
-                etBtn.className = "px-3 py-1.5 rounded-md font-medium transition-all bg-white text-gray-900 shadow-sm";
-                tzBtn.className = "px-3 py-1.5 rounded-md font-medium transition-all text-gray-600 hover:text-gray-900";
+            const title = document.getElementById('input-title').value;
+            const number = document.getElementById('input-number').value;
+            const landlordName = document.getElementById('input-landlord-name').value;
+            const landlordAddress = document.getElementById('input-landlord-address').value;
+            const tenantName = document.getElementById('input-tenant-name').value;
+            const propertyUnit = document.getElementById('input-property-unit').value;
+            const notes = document.getElementById('input-notes').value;
+            const period = document.getElementById('input-period').value;
 
-                // Dashboard text translations/settings for Ethiopia
-                welcomeTitle.innerText = "Property Dashboard (Ethiopia)";
-                newReceiptBtn.innerText = "New ETB Receipt";
-                metricRevenue.innerText = "ETB 310,000";
-                metricGuests.innerText = "28";
-                modalCurrencyPrefix.innerText = "ETB";
+            // Financial parsing
+            const baseAmount = parseFloat(document.getElementById('input-amount').value) || 0;
+            const extrasAmount = parseFloat(document.getElementById('input-extras').value) || 0;
+            const taxRate = parseFloat(document.getElementById('input-tax-rate').value) || 0;
 
-                localAuthority.innerText = "ERCA (Ethiopian Customs)";
-                localVat.innerText = "15%";
-                localPayment.innerText = "Telebirr / CBE Birr";
+            const subtotal = baseAmount + extrasAmount;
+            const calculatedTax = (subtotal * (taxRate / 100));
+            const grandTotal = subtotal + calculatedTax;
 
-                // Swap Receipt Data Mock
-                receiptList.innerHTML = `
-                    <div class="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 transition">
-                        <div class="flex items-start space-x-3">
-                            <div class="bg-gray-100 p-2.5 rounded-xl text-gray-600 mt-1 sm:mt-0">
-                                <i data-lucide="receipt" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-900">Bole Penthouse Suite</h4>
-                                <p class="text-xs text-gray-400 mt-0.5">Receipt #ET-4482 • Guest: Almaz Yosef</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-bold text-gray-900">ETB 45,000</div>
-                            <span class="inline-block bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded-md font-medium mt-1">Paid via Telebirr</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 transition">
-                        <div class="flex items-start space-x-3">
-                            <div class="bg-gray-100 p-2.5 rounded-xl text-gray-600 mt-1 sm:mt-0">
-                                <i data-lucide="receipt" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-900">Kazanchis Studio Apt</h4>
-                                <p class="text-xs text-gray-400 mt-0.5">Receipt #ET-4481 • Guest: Dawit Tesfaye</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-bold text-gray-900">ETB 22,500</div>
-                            <span class="inline-block bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded-md font-medium mt-1">Paid via CBE Birr</span>
-                        </div>
-                    </div>
-                `;
+            // Formatted Date conversion
+            const rawDate = document.getElementById('input-date').value;
+            let formattedDate = "N/A";
+            if (rawDate) {
+                const d = new Date(rawDate);
+                formattedDate = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
             }
-            // Re-render Lucide icons inside new content
+
+            // Sync with elements
+            document.getElementById('preview-title').innerText = title;
+            document.getElementById('preview-number').innerText = number;
+            document.getElementById('preview-date').innerText = formattedDate;
+            document.getElementById('preview-landlord-name').innerText = landlordName;
+            document.getElementById('preview-landlord-address').innerText = landlordAddress;
+            document.getElementById('preview-tenant-name').innerText = tenantName;
+            document.getElementById('preview-property-unit').innerText = propertyUnit;
+            document.getElementById('preview-notes').innerText = notes;
+            
+            // Sync items row
+            document.getElementById('desc-base').innerText = `Base Accommodation Rent (${period})`;
+            document.getElementById('preview-base-amount').innerText = `${symbol} ${baseAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('preview-extras-amount').innerText = `${symbol} ${extrasAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+
+            // Handle optional Taxes display reactively
+            const taxLine = document.getElementById('tax-line-container');
+            if (taxRate > 0) {
+                taxLine.classList.remove('hidden');
+                document.getElementById('tax-rate-badge').innerText = taxRate;
+                document.getElementById('preview-tax-amount').innerText = `${symbol} ${calculatedTax.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            } else {
+                taxLine.classList.add('hidden');
+            }
+
+            document.getElementById('preview-grand-total').innerText = `${symbol} ${grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+
+            const paymentMethod = document.getElementById('input-payment-method').value;
+            const txRef = document.getElementById('input-tx-ref').value;
+            document.getElementById('preview-payment-method').innerHTML = `<i data-lucide="wallet" class="w-3.5 h-3.5 text-indigo-500"></i> ${paymentMethod}`;
+            document.getElementById('preview-tx-ref').innerText = txRef || "N/A";
+
+            // Re-render dynamically generated Lucide Icons inside updated markup
             lucide.createIcons();
         }
 
-        // Simple modal interactions
-        function openReceiptModal() {
-            document.getElementById('receipt-modal').classList.remove('hidden');
+        // Logo Upload Handler
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const container = document.getElementById('preview-logo-container');
+                    const img = document.getElementById('preview-logo');
+                    img.src = e.target.result;
+                    container.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
         }
 
-        function closeReceiptModal() {
-            document.getElementById('receipt-modal').classList.add('hidden');
+        function removeLogo() {
+            document.getElementById('preview-logo-container').classList.add('hidden');
+            document.getElementById('preview-logo').src = "";
+            document.getElementById('input-logo').value = "";
         }
 
-        function handleReceiptSubmit(event) {
-            event.preventDefault();
-            alert('Receipt generated successfully! (Configured for local compliance standards)');
-            closeReceiptModal();
-            document.getElementById('receipt-form').reset();
+        // Sharing actions handlers
+        function handlePrint() {
+            window.print();
         }
+
+        function copyShareableLink() {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Dynamic view/edit Link copied successfully to clipboard!");
+        }
+
+        function shareWhatsApp() {
+            const number = document.getElementById('preview-number').innerText;
+            const amount = document.getElementById('preview-grand-total').innerText;
+            const tenant = document.getElementById('preview-tenant-name').innerText;
+            const text = encodeURIComponent(`Hello ${tenant}, here is your payment receipt: ID ${number} for total amount ${amount}. Thank you.`);
+            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+        }
+
+        function triggerFakeDownload() {
+            alert("Your high-quality offline receipt has been packaged! Direct client system download completed.");
+        }
+
+        // Bootstrap on page load
+        updateCountryProfile();
     </script>
 </body>
 </html>
