@@ -3,338 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProReceipt | Modern Landlord & Tenant Receipt Generator</title>
+    <title>ProReceipt | Receipt Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: { colors: { primary: '#2563eb', secondary: '#1e40af', dark: '#0f172a', light: '#f8fafc' } }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        .receipt-shadow { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1); }
-        @media print {
-            body * { visibility: hidden; }
-            #receipt-preview, #receipt-preview * { visibility: visible; }
-            #receipt-preview { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
-            .no-print { display: none !important; }
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased">
+<body class="bg-slate-50 text-slate-900">
 
-    <!-- Navbar -->
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-file-invoice-dollar text-primary text-2xl"></i>
-                <span class="font-bold text-xl tracking-tight text-dark">ProReceipt</span>
+    <div class="max-w-6xl mx-auto p-6">
+        <!-- Plans Section -->
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <!-- Guest -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h2 class="text-xl font-bold mb-4">Guest / No signup</h2>
+                <ul class="space-y-2 text-sm text-slate-600 mb-6">
+                    <li>• Limited to 3 receipts per month</li>
+                    <li>• Download, Print, Copy link for sharing on WhatsApp, etc</li>
+                </ul>
             </div>
-            <div class="flex items-center gap-4">
-                <button class="text-slate-500 hover:text-dark font-medium text-sm transition">Sign In</button>
-                <button class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">Sign Up</button>
+            <!-- Pro -->
+            <div class="bg-slate-900 text-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-xl font-bold mb-4">Pro Unlimited</h2>
+                <ul class="space-y-2 text-sm text-slate-300 mb-6">
+                    <li>• Unlimited receipts</li>
+                    <li>• Complete saved history</li>
+                    <li>• Tenant/Property Records & Quick Duplication active</li>
+                    <li>• Add Logo</li>
+                    <li>• Download, Print, Copy link for sharing on WhatsApp, etc</li>
+                </ul>
             </div>
         </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Workspace -->
-        <div class="grid lg:grid-cols-12 gap-8">
+        <!-- Generator Section -->
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+            <select id="country-select" class="w-full p-3 border rounded mb-6"></select>
             
-            <!-- Left Panel: Input Form -->
-            <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm h-fit no-print">
-                <h2 class="text-xl font-bold text-dark mb-6 flex items-center gap-2">
-                    <i class="fa-solid fa-pen-to-square text-primary"></i> Receipt Details
-                </h2>
-
-                <form id="receipt-form" class="space-y-5">
-                    <!-- Localization -->
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Localization</h3>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Country</label>
-                            <select id="country-select" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none"></select>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Default Language</label>
-                                <input type="text" id="language-display" readonly class="w-full rounded-lg border-slate-200 border p-2.5 text-sm bg-slate-100 text-slate-500 cursor-not-allowed">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Payment Method</label>
-                                <select id="payment-method-select" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none"></select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Property & People -->
-                    <div class="space-y-4">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Parties</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Landlord / Company</label>
-                                <input type="text" id="in-landlord" value="John Doe Properties" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Tenant Name</label>
-                                <input type="text" id="in-tenant" value="Jane Smith" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Property Address</label>
-                            <input type="text" id="in-address" value="123 Main St, Apt 4B, City" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
-                        </div>
-                    </div>
-
-                    <!-- Financials -->
-                    <div class="space-y-4">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Financials</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Rent Amount</label>
-                                <div class="relative">
-                                    <span class="absolute left-3 top-2.5 text-slate-400 text-sm font-medium input-symbol">$</span>
-                                    <input type="number" id="in-amount" value="1500" class="w-full rounded-lg border-slate-300 border p-2.5 pl-8 text-sm focus:ring-2 focus:ring-primary outline-none">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Payment Date</label>
-                                <input type="date" id="in-date" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Period (From)</label>
-                                <input type="date" id="in-period-from" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Period (To)</label>
-                                <input type="date" id="in-period-to" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Late Fees / Extras</label>
-                                <div class="relative">
-                                    <span class="absolute left-3 top-2.5 text-slate-400 text-sm font-medium input-symbol">$</span>
-                                    <input type="number" id="in-fees" value="0" class="w-full rounded-lg border-slate-300 border p-2.5 pl-8 text-sm focus:ring-2 focus:ring-primary outline-none">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+            <div id="receipt-preview" class="p-8 border border-slate-300 bg-white max-w-2xl mx-auto">
+                <h1 class="text-2xl font-bold mb-4">RENT RECEIPT</h1>
+                <div id="receipt-content" class="space-y-2">
+                    <p>Date: <span id="out-date"></span></p>
+                    <p>Country: <span id="out-country"></span></p>
+                    <p>Payment Method: <span id="out-payment"></span></p>
+                </div>
             </div>
 
-            <!-- Right Panel: Live Preview & Actions -->
-            <div class="lg:col-span-7 flex flex-col gap-6">
-                
-                <!-- Action Bar -->
-                <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-wrap gap-3 justify-center md:justify-between items-center no-print">
-                    <span class="text-sm font-medium text-slate-500 hidden md:block">Share & Export</span>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="window.print()" class="flex items-center gap-2 bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg text-sm font-medium transition w-full sm:w-auto">
-                            <i class="fa-solid fa-print"></i> Print / Save PDF
-                        </button>
-                    </div>
-                </div>
-
-                <!-- The Receipt Visual -->
-                <div id="receipt-preview" class="bg-white rounded-none md:rounded-lg receipt-shadow p-8 md:p-12 aspect-[1/1.414] border border-slate-200 flex flex-col relative max-w-[800px] mx-auto w-full">
-                    
-                    <!-- Watermark -->
-                    <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none no-print">
-                        <h1 class="text-6xl font-black rotate-[-45deg]">PRORECEIPT</h1>
-                    </div>
-
-                    <!-- Receipt Header -->
-                    <div class="flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-6">
-                        <div>
-                            <h1 class="text-3xl font-black text-slate-900 tracking-tight uppercase">Rent Receipt</h1>
-                            <p class="text-slate-500 text-sm mt-1">Receipt No: <span class="font-bold text-slate-800">#PR-<span id="out-receipt-no">10492</span></span></p>
-                        </div>
-                        <div class="text-right">
-                            <h2 class="text-xl font-bold text-slate-800" id="out-landlord">John Doe Properties</h2>
-                        </div>
-                    </div>
-
-                    <!-- Receipt Meta -->
-                    <div class="flex justify-between mb-8">
-                        <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Received From</p>
-                            <p class="text-lg font-bold text-slate-800" id="out-tenant">Jane Smith</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Date</p>
-                            <p class="text-lg font-bold text-slate-800" id="out-date">Oct 24, 2024</p>
-                        </div>
-                    </div>
-
-                    <!-- Property Details -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-5 mb-8">
-                        <div class="grid grid-cols-2 gap-6">
-                            <div>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Property Address</p>
-                                <p class="text-sm font-medium text-slate-800" id="out-address">123 Main St, Apt 4B, City</p>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Rental Period</p>
-                                <p class="text-sm font-medium text-slate-800"><span id="out-period-from">Nov 01, 2024</span> - <span id="out-period-to">Nov 30, 2024</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Financial Table -->
-                    <table class="w-full text-left mb-8 border-collapse">
-                        <thead>
-                            <tr class="border-b-2 border-slate-800">
-                                <th class="py-3 text-sm font-bold text-slate-800 uppercase tracking-wider">Description</th>
-                                <th class="py-3 text-sm font-bold text-slate-800 uppercase tracking-wider text-right">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-slate-700 text-sm">
-                            <tr class="border-b border-slate-200">
-                                <td class="py-4">Rent Payment</td>
-                                <td class="py-4 text-right font-medium"><span class="out-symbol">$</span><span id="out-amount">1,500.00</span></td>
-                            </tr>
-                            <tr class="border-b border-slate-200">
-                                <td class="py-4 text-slate-500">Late Fees / Utility Charges</td>
-                                <td class="py-4 text-right font-medium text-slate-500"><span class="out-symbol">$</span><span id="out-fees">0.00</span></td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td class="py-4 text-right font-bold text-slate-800 text-lg">Total Received</td>
-                                <td class="py-4 text-right font-black text-slate-900 text-xl text-primary border-b-4 border-primary inline-block w-full"><span class="out-symbol">$</span><span id="out-total">1,500.00</span></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-
-                    <!-- Payment Info & Signatures -->
-                    <div class="mt-auto grid grid-cols-2 gap-8 items-end">
-                        <div class="space-y-3">
-                            <div>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Payment Method</p>
-                                <p class="text-sm font-bold text-slate-800" id="out-payment-method">Zelle</p>
-                            </div>
-                        </div>
-                        <div class="text-right flex flex-col items-end">
-                            <div class="w-48 border-b border-slate-800 h-12 mb-2"></div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Authorized Signature</p>
-                        </div>
-                    </div>
-                </div>
+            <!-- Bottom Sharing Links -->
+            <div class="flex flex-wrap gap-4 mt-8 justify-center border-t pt-8">
+                <button onclick="shareWhatsApp()" class="px-4 py-2 bg-green-600 text-white rounded">WhatsApp</button>
+                <button onclick="copyLink()" class="px-4 py-2 bg-slate-600 text-white rounded">Copy Link</button>
+                <button onclick="downloadPDF()" class="px-4 py-2 bg-slate-800 text-white rounded">Download</button>
+                <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded">Print/Save PDF</button>
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
         const countryData = {
-            "USA": { lang: "English", symbol: "$", payments: ["Credit Card", "Bank Transfer", "Zelle", "Cash"] },
-            "Canada": { lang: "English/French", symbol: "$", payments: ["Interac e-Transfer", "Credit Card", "Cash"] },
-            "UK": { lang: "English", symbol: "£", payments: ["BACS Transfer", "Direct Debit", "Cash"] },
-            "France": { lang: "French", symbol: "€", payments: ["Carte Bancaire", "SEPA Transfer", "Cash"] },
-            "Germany": { lang: "German", symbol: "€", payments: ["SEPA Überweisung", "Giropay", "Cash"] },
-            "Italy": { lang: "Italian", symbol: "€", payments: ["Bonifico Bancario", "Satispay", "Cash"] },
-            "Brazil": { lang: "Portuguese", symbol: "R$", payments: ["Pix", "Boleto", "Cash"] },
-            "Indonesia": { lang: "Indonesian", symbol: "Rp", payments: ["Bank Transfer", "GoPay", "Cash"] },
-            "Malaysia": { lang: "Malay", symbol: "RM", payments: ["DuitNow", "Bank Transfer", "Cash"] },
-            "India": { lang: "English/Hindi", symbol: "₹", payments: ["UPI", "NEFT/RTGS", "Cash"] },
-            "China": { lang: "Mandarin", symbol: "¥", payments: ["WeChat Pay", "Alipay", "Cash"] },
-            "Japan": { lang: "Japanese", symbol: "¥", payments: ["Bank Transfer", "PayPay", "Cash"] },
-            "Kenya": { lang: "English/Swahili", symbol: "KSh", payments: ["M-Pesa", "Bank Transfer", "Cash"] },
-            "Tanzania": { lang: "Swahili", symbol: "TSh", payments: ["M-Pesa", "Tigo Pesa", "Cash"] },
-            "South Africa": { lang: "English", symbol: "R", payments: ["EFT", "SnapScan", "Cash"] },
-            "Nigeria": { lang: "English", symbol: "₦", payments: ["Bank Transfer", "POS", "Cash"] },
-            "Ghana": { lang: "English", symbol: "GH₵", payments: ["Mobile Money", "Cash"] },
-            "Mexico": { lang: "Spanish", symbol: "$", payments: ["SPEI Transfer", "Efectivo"] },
-            "Yemen": { lang: "Arabic", symbol: "﷼", payments: ["Bank Transfer", "Cash"] },
-            "Turkiye": { lang: "Turkish", symbol: "₺", payments: ["EFT", "Cash"] },
-            "Belgium": { lang: "Dutch/French", symbol: "€", payments: ["Bancontact", "Cash"] },
-            "Bangladesh": { lang: "Bengali", symbol: "৳", payments: ["bKash", "Cash"] },
-            "Pakistan": { lang: "Urdu", symbol: "₨", payments: ["EasyPaisa", "Cash"] },
-            "Egypt": { lang: "Arabic", symbol: "E£", payments: ["InstaPay", "Cash"] },
-            "South Korea": { lang: "Korean", symbol: "₩", payments: ["KakaoPay", "Cash"] },
-            "Thailand": { lang: "Thai", symbol: "฿", payments: ["PromptPay", "Cash"] },
-            "Singapore": { lang: "English", symbol: "S$", payments: ["PayNow", "Cash"] },
-            "Kuwait": { lang: "Arabic", symbol: "KD", payments: ["K-Net", "Cash"] },
-            "Bahrain": { lang: "Arabic", symbol: "BD", payments: ["BenefitPay", "Cash"] },
-            "UAE": { lang: "English/Arabic", symbol: "AED", payments: ["Bank Transfer", "Cash"] },
-            "Oman": { lang: "Arabic", symbol: "OMR", payments: ["Bank Transfer", "Cash"] },
-            "Saudi Arabia": { lang: "Arabic", symbol: "SAR", payments: ["STC Pay", "Cash"] },
-            "Qatar": { lang: "Arabic", symbol: "QAR", payments: ["Bank Transfer", "Cash"] },
-            "Ethiopia": { lang: "Amharic", symbol: "Br", payments: ["Telebirr", "Cash"] },
-            "Poland": { lang: "Polish", symbol: "zł", payments: ["BLIK", "Cash"] },
-            "Portugal": { lang: "Portuguese", symbol: "€", payments: ["MB Way", "Cash"] },
-            "Spain": { lang: "Spanish", symbol: "€", payments: ["Bizum", "Cash"] },
-            "Netherlands": { lang: "Dutch", symbol: "€", payments: ["iDEAL", "Cash"] },
-            "Norway": { lang: "Norwegian", symbol: "kr", payments: ["Vipps", "Cash"] },
-            "Albania": { lang: "Albanian", symbol: "L", payments: ["Bank Transfer", "Cash"] }
+            "USA": "English", "UK": "English", "Canada": "English", "Mexico": "Spanish", "Kenya": "English",
+            "Tanzania": "Swahili", "Yemen": "Arabic", "Turkiye": "Turkish", "Belgium": "Dutch/French",
+            "France": "French", "Germany": "German", "Italy": "Italian", "India": "Hindi/English",
+            "Indonesia": "Indonesian", "Malaysia": "Malay", "Bangladesh": "Bengali", "Pakistan": "Urdu",
+            "Ghana": "English", "Nigeria": "English", "Egypt": "Arabic", "China": "Mandarin",
+            "Japan": "Japanese", "South Korea": "Korean", "Thailand": "Thai", "Singapore": "English",
+            "Kuwait": "Arabic", "Bahrain": "Arabic", "UAE": "Arabic", "Oman": "Arabic",
+            "Saudi Arabia": "Arabic", "Qatar": "Arabic", "South Africa": "English", "Ethiopia": "Amharic",
+            "Poland": "Polish", "Portugal": "Portuguese", "Spain": "Spanish", "Netherlands": "Dutch",
+            "Norway": "Norwegian", "Albania": "Albanian", "Brazil": "Portuguese", "Albania (2)": "Albanian"
         };
 
-        // Initialize defaults
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('in-date').value = today;
-        document.getElementById('out-receipt-no').innerText = Math.floor(10000 + Math.random() * 90000);
+        const order = ["USA", "Canada", "UK", "France", "Germany", "Italy", "Brazil", "Indonesia", "Malaysia", "India", "China", "Japan", "Kenya", "Tanzania", "South Africa", "Nigeria", "Ghana"];
+        const allCountries = [...new Set([...order, ...Object.keys(countryData)])];
 
-        // Populate Country Dropdown
-        const countrySelect = document.getElementById("country-select");
-        Object.keys(countryData).forEach(country => {
-            countrySelect.add(new Option(country, country));
-        });
+        const select = document.getElementById('country-select');
+        allCountries.forEach(c => select.add(new Option(c, c)));
 
-        // Real-time Update Logic
-        function updatePreview() {
-            // Text Inputs
-            document.getElementById('out-landlord').innerText = document.getElementById('in-landlord').value || 'Landlord Name';
-            document.getElementById('out-tenant').innerText = document.getElementById('in-tenant').value || 'Tenant Name';
-            document.getElementById('out-address').innerText = document.getElementById('in-address').value || 'Property Address';
-            
-            // Dates
-            document.getElementById('out-date').innerText = document.getElementById('in-date').value || 'Date';
-            document.getElementById('out-period-from').innerText = document.getElementById('in-period-from').value || 'Start Date';
-            document.getElementById('out-period-to').innerText = document.getElementById('in-period-to').value || 'End Date';
-
-            // Financials
-            const amount = parseFloat(document.getElementById('in-amount').value) || 0;
-            const fees = parseFloat(document.getElementById('in-fees').value) || 0;
-            
-            document.getElementById('out-amount').innerText = amount.toFixed(2);
-            document.getElementById('out-fees').innerText = fees.toFixed(2);
-            document.getElementById('out-total').innerText = (amount + fees).toFixed(2);
-
-            // Localization Updates
-            const currentCountry = countrySelect.value;
-            const data = countryData[currentCountry];
-            
-            document.getElementById('language-display').value = data.lang;
-            document.getElementById('out-payment-method').innerText = document.getElementById('payment-method-select').value;
-            
-            // Update currency symbols across the page
-            document.querySelectorAll('.input-symbol, .out-symbol').forEach(el => el.innerText = data.symbol);
+        function update() {
+            document.getElementById('out-country').innerText = select.value;
+            document.getElementById('out-date').innerText = new Date().toLocaleDateString();
         }
+        select.addEventListener('change', update);
+        update();
 
-        // Handle Country Change (Updates payments dropdown)
-        countrySelect.addEventListener('change', () => {
-            const payments = countryData[countrySelect.value].payments;
-            const paySelect = document.getElementById('payment-method-select');
-            paySelect.innerHTML = '';
-            payments.forEach(p => paySelect.add(new Option(p, p)));
-            updatePreview();
-        });
-
-        // Attach listeners to all inputs
-        document.querySelectorAll('input, select').forEach(input => {
-            input.addEventListener('input', updatePreview);
-        });
-
-        // Trigger initial setup
-        countrySelect.dispatchEvent(new Event('change'));
-        updatePreview();
+        function shareWhatsApp() { window.open('https://wa.me/?text=Check%20out%20my%20receipt'); }
+        function copyLink() { navigator.clipboard.writeText(window.location.href); alert('Copied!'); }
+        function downloadPDF() { html2pdf().from(document.getElementById('receipt-preview')).save(); }
     </script>
 </body>
 </html>
