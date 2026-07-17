@@ -3,1124 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Rent Receipt Generator</title>
+    <title>Property & Receipt Manager - Regional Settings</title>
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-hover: #1d4ed8;
-            --success-color: #16a34a;
-            --whatsapp-color: #25d366;
-            --whatsapp-hover: #128c7e;
-            --text-main: #1f2937;
-            --bg-light: #f3f4f6;
-            --border-color: #d1d5db;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-light);
-            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f5f7fb;
+            color: #333;
+            margin: 0;
             padding: 20px;
         }
-
         .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 30px;
-        }
-
-        @media (max-width: 1100px) {
-            .container { grid-template-columns: 1fr; }
-        }
-
-        .form-section {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Tier Control Panel Styling */
-        .account-cta-box {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid #cbd5e1;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 5px;
-        }
-
-        .account-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #cbd5e1;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .account-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #0f172a;
-        }
-
-        .tier-badge {
-            background-color: #475569;
-            color: white;
-            padding: 2px 10px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .tier-badge.pro {
-            background-color: #eab308;
-            color: #451a03;
-        }
-
-        .tier-selection-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .tier-card {
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .tier-card:hover {
-            border-color: #cbd5e1;
-        }
-
-        .tier-card.active {
-            border-color: var(--primary-color);
-            background-color: #eff6ff;
-            box-shadow: 0 0 0 1px var(--primary-color);
-        }
-
-        .tier-card-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .tier-radio {
-            width: 16px;
-            height: 16px;
-            accent-color: var(--primary-color);
-            cursor: pointer;
-        }
-
-        .tier-card-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #1e293b;
-        }
-
-        .tier-card-features {
-            list-style-type: none;
-            padding-left: 26px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .tier-card-features li {
-            font-size: 0.8rem;
-            color: #475569;
-            position: relative;
-        }
-
-        .tier-card-features li::before {
-            content: "✓";
-            color: var(--success-color);
-            position: absolute;
-            left: -16px;
-            font-weight: bold;
-        }
-
-        .tier-card.active .tier-card-features li {
-            color: #1e40af;
-        }
-
-        .usage-tracker {
-            font-size: 0.8rem;
-            color: #475569;
-            margin-top: 10px;
-            padding: 8px 12px;
+            max-width: 600px;
+            margin: 40px auto;
             background: #fff;
-            border-radius: 4px;
-            border: 1px solid #cbd5e1;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-
         h2 {
-            font-size: 1.5rem;
-            color: #111827;
-            border-bottom: 2px solid var(--bg-light);
-            padding-bottom: 10px;
+            margin-top: 0;
+            color: #1a202c;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 12px;
         }
-
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-
-        label {
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.95rem;
-            outline: none;
-            background-color: white;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        /* Logo upload container */
-        .logo-upload-container {
-            border: 1px dashed var(--border-color);
-            padding: 12px;
-            border-radius: 6px;
-            background-color: #f9fafb;
-            margin-bottom: 5px;
-        }
-        
-        .logo-disabled-mask {
-            font-size: 0.8rem;
-            color: #ef4444;
-            font-weight: 600;
-            margin-top: 5px;
-        }
-
-        .action-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .btn-print {
-            background-color: var(--success-color);
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .btn-action {
-            background-color: #4b5563;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .whatsapp-footer-bar {
-            margin-top: 15px;
-            text-align: center;
-            border-top: 1px solid #cbd5e1;
-            padding-top: 15px;
-        }
-
-        .btn-whatsapp-share {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background-color: var(--whatsapp-color);
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: background-color 0.2s;
-        }
-
-        .btn-whatsapp-share:hover {
-            background-color: var(--whatsapp-hover);
-        }
-
-        /* Preview area */
-        .preview-section {
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 20px;
-            height: fit-content;
-        }
-
-        .receipt-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 3px solid #374151;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-            gap: 20px;
-        }
-
-        .logo-preview-box {
-            max-width: 100px;
-            max-height: 70px;
-            object-fit: contain;
-            display: none;
-        }
-
-        .receipt-title {
-            font-size: 1.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #111827;
-        }
-
-        .receipt-meta { text-align: right; font-size: 0.9rem; }
-
-        .receipt-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 28px;
-        }
-
-        .data-block h4 {
-            font-size: 0.825rem;
-            text-transform: uppercase;
-            color: #6b7280;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        .data-block p { 
-            font-size: 1.05rem; 
-            font-weight: 600; 
-            margin-bottom: 6px;
-        }
-        
-        .data-block span { 
-            font-size: 0.85rem; 
-            color: #4b5563; 
-            display: block; 
-            margin-top: 4px;
-        }
-
-        .amount-box {
-            background-color: #f9fafb;
-            border: 2px dashed var(--border-color);
-            padding: 18px;
-            text-align: center;
-            border-radius: 6px;
-            margin-bottom: 25px;
-        }
-
-        .amount-box span {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .legal-declaration {
-            font-size: 0.75rem;
-            color: #4b5563;
-            line-height: 1.4;
-            background: #f9fafb;
-            border-left: 3px solid #9ca3af;
-            padding: 8px 12px;
+        .form-group {
             margin-bottom: 20px;
         }
-
-        .notes-display-box {
-            font-size: 0.825rem;
-            color: #374151;
-            background: #fdfdfd;
-            border: 1px dashed var(--border-color);
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 25px;
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
         }
-
-        .signature-area {
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+        select:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        }
+        .payment-list {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 15px;
+            min-height: 50px;
+        }
+        .payment-badge {
+            display: inline-block;
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 4px;
+            border: 1px solid #bee3f8;
+        }
+        .whatsapp-container {
             margin-top: 30px;
-            display: flex;
-            justify-content: space-between;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
-            font-size: 0.9rem;
-            color: #4b5563;
+            padding-top: 20px;
+            border-top: 2px solid #edf2f7;
+            text-align: center;
         }
-
-        .rtl-layout {
-            direction: rtl !important;
-            text-align: right !important;
+        .btn {
+            background-color: #25d366;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+            text-decoration: none;
         }
-        .rtl-layout .receipt-meta { text-align: left !important; }
-
-        @media print {
-            body { background: white; padding: 0; }
-            .form-section, .account-cta-box, button, .action-row, .whatsapp-footer-bar { display: none !important; }
-            .preview-section { box-shadow: none; padding: 0; width: 100%; }
+        .btn:hover {
+            background-color: #1ebd56;
+        }
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 12px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 14px;
+        }
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+        @keyframes fadeout {
+            from { bottom: 30px; opacity: 1; }
+            to { bottom: 0; opacity: 0; }
         }
     </style>
-    <script>
-        // Database with Country metadata and Default Native languages matching ISO-3166-1
-        const database = {
-            US: { name: "United States", currency: "USD", symbol: "$", locale: "en-US", defaultLang: "en" },
-            CA: { name: "Canada", currency: "CAD", symbol: "CA$", locale: "en-CA", defaultLang: "en" },
-            GB: { name: "United Kingdom", currency: "GBP", symbol: "£", locale: "en-GB", defaultLang: "en" },
-            FR: { name: "France", currency: "EUR", symbol: "€", locale: "fr-FR", defaultLang: "fr" },
-            DE: { name: "Germany", currency: "EUR", symbol: "€", locale: "de-DE", defaultLang: "de" },
-            AU: { name: "Australia", currency: "AUD", symbol: "A$", locale: "en-AU", defaultLang: "en" },
-            BR: { name: "Brazil", currency: "BRL", symbol: "R$", locale: "pt-BR", defaultLang: "pt" },
-            ID: { name: "Indonesia", currency: "IDR", symbol: "Rp", locale: "id-ID", defaultLang: "id" },
-            MY: { name: "Malaysia", currency: "MYR", symbol: "RM", locale: "ms-MY", defaultLang: "ms" },
-            // Remaining Countries follow
-            EU: { name: "Eurozone", currency: "EUR", symbol: "€", locale: "de-DE", defaultLang: "de" },
-            KE: { name: "Kenya", currency: "KES", symbol: "KSh", locale: "en-KE", defaultLang: "en" },
-            TZ: { name: "Tanzania", currency: "TZS", symbol: "TSh", locale: "sw-TZ", defaultLang: "sw" },
-            ET: { name: "Ethiopia", currency: "ETB", symbol: "Br", locale: "am-ET", defaultLang: "am" },
-            IN: { name: "India", currency: "INR", symbol: "₹", locale: "en-IN", defaultLang: "hi" },
-            JP: { name: "Japan", currency: "JPY", symbol: "¥", locale: "ja-JP", defaultLang: "ja" },
-            MX: { name: "Mexico", currency: "MXN", symbol: "$", locale: "es-MX", defaultLang: "es" },
-            AR: { name: "Saudi Arabia", currency: "SAR", symbol: "ر.س", locale: "ar-SA", defaultLang: "ar" }
-        };
-
-        const translationMatrix = {
-            en: {
-                receipt: "Rent Receipt", country: "Country", receiptNum: "Receipt #", date: "Date",
-                receivedFrom: "Received From (Tenant)", paidTo: "Paid To (Landlord/Agent)",
-                premises: "Premises Address", totalPaid: "Total Paid Amount", paymentMethod: "Payment Method",
-                status: "Status", cleared: "PAID & CLEARED", signature: "Authorized Signature", thankYou: "Thank you for your payment!",
-                period: "Rental Period", paymentType: "Payment Type", notes: "Notes",
-                declaration: "The landlord hereby acknowledges receiving the payment described above for the specified premises."
-            },
-            sw: {
-                receipt: "Risiti ya Kodi", country: "Nchi", receiptNum: "Risiti #", date: "Tarehe",
-                receivedFrom: "Imepokelewa Kutoka (Mpangaji)", paidTo: "Imelipwa Kwa (Mwenye Nyumba/Wakala)",
-                premises: "Anwani ya Nyumba", totalPaid: "Kiasi Kilicholipwa", paymentMethod: "Njia ya Malipo",
-                status: "Hali", cleared: "IMELIPWA & KUKAMILIKA", signature: "Saini Iliyoidhinishwa", thankYou: "Asante kwa malipo yako!",
-                period: "Muda wa Kodi", paymentType: "Aina ya Malipo", notes: "Maelezo",
-                declaration: "Mwenye nyumba anathibitisha kupokea malipo yaliyotajwa hapo juu kwa ajili ya nyumba iliyotajwa."
-            },
-            am: {
-                receipt: "የቤት ኪራይ ደረሰኝ", country: "ሀገር", receiptNum: "የደረሰኝ ቁጥር #", date: "ቀን",
-                receivedFrom: "ከአከራይ የተቀበለው (ተከራይ)", paidTo: "የተከፈለለት (አከራይ/ወኪል)",
-                premises: "የቤት አድራሻ", totalPaid: "ጠቅላላ የተከፈለ መጠን", paymentMethod: "የክፍያ ዘዴ",
-                status: "ሁኔታ", cleared: "ተከፍሎ ያለቀ", signature: "የተፈቀደ ፊርማ", thankYou: "ስለ ክፍያዎ እናመሰግናለን!",
-                period: "የኪራይ ጊዜ", paymentType: "የክፍያ ዓይነት", notes: "ማስታወሻዎች",
-                declaration: "አከራዩ ለተጠቀሰው ቦታ ከላይ የተገለጸውን ክፍያ መቀበሉን ያረጋግጣል።"
-            },
-            es: {
-                receipt: "Recibo de Alquiler", country: "País", receiptNum: "Recibo #", date: "Fecha",
-                receivedFrom: "Recibido de (Inquilino)", paidTo: "Pagado a (Propietario/Agente)",
-                premises: "Dirección de la Propiedad", totalPaid: "Monto Total Pagado", paymentMethod: "Método de Pago",
-                status: "Estado", cleared: "PAGADO Y LIQUIDADO", signature: "Firma Autorizada", thankYou: "¡Gracias por su pago!",
-                period: "Período de Alquiler", paymentType: "Tipo de Pago", notes: "Notas",
-                declaration: "El propietario reconoce haber recibido el pago descrito anteriormente para los locales especificados."
-            },
-            fr: {
-                receipt: "Quittance de Loyer", country: "Pays", receiptNum: "Quittance n°", date: "Date",
-                receivedFrom: "Reçu de (Locataire)", paidTo: "Payé à (Propriétaire/Agent)",
-                premises: "Adresse des Locaux", totalPaid: "Montant Total Payé", paymentMethod: "Mode de Paiement",
-                status: "Statut", cleared: "PAYÉ & ACQUITTÉ", signature: "Signature Autorisée", thankYou: "Merci pour votre paiement!",
-                period: "Période de Loyer", paymentType: "Type de Paiement", notes: "Notes",
-                declaration: "Le propriétaire reconnaît par la presente avoir reçu le paiement décrit ci-dessus choisi pour les locaux spécifiés."
-            },
-            de: {
-                receipt: "Mietquittung", country: "Land", receiptNum: "Quittungsnr.", date: "Datum",
-                receivedFrom: "Erhalten von (Mieter)", paidTo: "Bezahlt an (Vermieter/Agent)",
-                premises: "Mietobjekt Adresse", totalPaid: "Gesamtbetrag Bezahlt", paymentMethod: "Zahlungsmethode",
-                status: "Status", cleared: "BEZAHLT & AUSGEGLICHEN", signature: "Autorisierte Unterschrift", thankYou: "Vielen Dank für Ihre Zahlung!",
-                period: "Mietzeitraum", paymentType: "Zahlungsart", notes: "Notizen",
-                declaration: "Der Vermieter bestätigt hiermit den Erhalt der oben beschriebenen Zahlung für das angegebene Mietobjekt."
-            },
-            it: {
-                receipt: "Ricevuta d'Affitto", country: "Paese", receiptNum: "Ricevuta n.", date: "Data",
-                receivedFrom: "Ricevuto da (Inquilino)", paidTo: "Pagato a (Proprietario/Agente)",
-                premises: "Indirizzo dell'Immobile", totalPaid: "Importo Totale Pagato", paymentMethod: "Metodo di Pagamento",
-                status: "Stato", cleared: "PAGATO & SALDATO", signature: "Firma Autorizzata", thankYou: "Grazie per il vostro pagamento!",
-                period: "Periodo di Locazione", paymentType: "Tipo di Pagamento", notes: "Note",
-                declaration: "Il proprietario con la presente conferma di haver ricevuto il pagamento sopra descritto per l'immobile specificato."
-            },
-            pt: {
-                receipt: "Recibo de Aluguel", country: "País", receiptNum: "Recibo nº", date: "Data",
-                receivedFrom: "Recebido de (Inquilino)", paidTo: "Pago a (Senhorio/Agente)",
-                premises: "Endereço do Imóvel", totalPaid: "Valor Total Pago", paymentMethod: "Método de Pago",
-                status: "Estado", cleared: "PAGO & QUITADO", signature: "Assinatura Autorizada", thankYou: "Obrigado pelo seu pagamento!",
-                period: "Período de Aluguel", paymentType: "Tipo de Pago", notes: "Notas",
-                declaration: "O senhorio reconhece, por este meio, ter recebido o pagamento acima descrito para o imóvel especificado."
-            },
-            ar: {
-                receipt: "إيصال استلام إيجار", country: "البلد", receiptNum: "رقم الإيصال", date: "التاريخ",
-                receivedFrom: "المستلم من (المستأجر)", paidTo: "المدفوع لـ (المالك/الوكيل)",
-                premises: "عنوان العقار", totalPaid: "إجمالي المبلغ المدفوع", paymentMethod: "طريقة الدفع",
-                status: "الحالة", cleared: "تم الدفع والتسوية", signature: "التوقيع المعتمد", thankYou: "شكراً لتعاملكم معنا!",
-                period: "فترة الإيجار", paymentType: "نوع الدفع", notes: "ملاحظات",
-                declaration: "يقر المالك بموجب هذا باستلام الدفعة الموضحة أعلاه للعقار المحدد."
-            },
-            ms: {
-                receipt: "Resit Sewa", country: "Negara", receiptNum: "Resit #", date: "Tarikh",
-                receivedFrom: "Diterima Daripada (Penyewa)", paidTo: "Dibayar Kepada (Tuan Rumah/Ejen)",
-                premises: "Alamat Premis", totalPaid: "Jumlah Keseluruhan Dibayar", paymentMethod: "Cara Pembayaran",
-                status: "Status", cleared: "TELAH DIBAYAR & SELESAI", signature: "Tandatangan Sah", thankYou: "Terima kasih atas pembayaran anda!",
-                period: "Tempoh Sewaan", paymentType: "Jenis Bayaran", notes: "Nota",
-                declaration: "Tuan rumah dengan ini mengakui penerimaan bayaran yang dinyatakan di atas bagi premis yang dinyatakan."
-            },
-            id: {
-                receipt: "Kuitansi Sewa", country: "Negara", receiptNum: "Kuitansi #", date: "Tanggal",
-                receivedFrom: "Diterima Dari (Penyewa)", paidTo: "Dibayarkan Kepada (Pemilik/Agen)",
-                premises: "Alamat Properti", totalPaid: "Jumlah Total Ditransfer", paymentMethod: "Metode Pembayaran",
-                status: "Status", cleared: "LUNAS & SELESAI", signature: "Tanda Tangan Sah", thankYou: "Terima kasih atas pembayaran Anda!",
-                period: "Periode Sewa", paymentType: "Jenis Pembayaran", notes: "Catatan",
-                declaration: "Pemilik dengan ini menyatakan telah menerima pembayaran yang dijelaskan di atas untuk properti yang ditentukan."
-            },
-            hi: {
-                receipt: "किराया रसीद", country: "देश", receiptNum: "रसीद संख्या", date: "दिनांक",
-                receivedFrom: "किराएदार से प्राप्त", paidTo: "मकान मालिक/एजेंट को भुगतान",
-                premises: "संपत्ति का पता", totalPaid: "कुल भुगतान राशि", paymentMethod: "भुगतान का प्रकार",
-                status: "स्थिति", cleared: "भुगतान पूरा हुआ", signature: "अधिकृत हस्ताक्षर", thankYou: "भुगतान के लिए धन्यवाद!",
-                period: "किราए की अवधि", paymentType: "भुगतान का प्रकार", notes: "टिप्पणी",
-                declaration: "मकान मालिक एतद्द्वारा निर्दिष्ट संपत्ति के लिए ऊपर वर्णित भुगतान प्राप्त करना स्वीकार करता है।"
-            },
-            pl: {
-                receipt: "Potwierdzenie Wynajmu", country: "Kraj", receiptNum: "Dowód nr", date: "Data",
-                receivedFrom: "Otrzymano od (Najemca)", paidTo: "Wpłacono do (Właściciel/Agent)",
-                premises: "Adres Lokalu", totalPaid: "Całkowita Kwota", paymentMethod: "Metoda Płatności",
-                status: "Status", cleared: "ZAPŁACONO", signature: "Upoważniony Podpis", thankYou: "Dziękujemy za wpłatę!",
-                period: "Okres Wynajmu", paymentType: "Rodzaj Płatności", notes: "Uwagi",
-                declaration: "Właściciel niniejszym potwierdza otrzymanie wyżej opisanej płatności za określony lokal."
-            },
-            ja: {
-                receipt: "家賃領収書", country: "国名", receiptNum: "領収書番号", date: "発行日",
-                receivedFrom: "お支払者 (借主)", paidTo: "受取人 (貸主/代理人)",
-                premises: "物件所在地", totalPaid: "領収金額", paymentMethod: "お支払方法",
-                status: "状態", cleared: "領収済", signature: "正当な署名", thankYou: "ご利用ありがとうございました。",
-                period: "賃貸期間", paymentType: "支払種別", notes: "備考",
-                declaration: "貸主は、指定された物件に対する上記の支払いの受領をここに認めます。"
-            },
-            sv: {
-                receipt: "Hyreskvitto", country: "Land", receiptNum: "Kvitto nr", date: "Datum",
-                receivedFrom: "Mottaget från (Hyresgäst)", paidTo: "Betalat till (Hyresvärd/Ombud)",
-                premises: "Fastighetsadress", totalPaid: "Totalbelopp Betalat", paymentMethod: "Betalningsmetod",
-                status: "Status", cleared: "BETALD & KLARERAD", signature: "Auktoriserad Signatur", thankYou: "Tack för din betalning!",
-                period: "Hyresperiod", paymentType: "Betalningstyp", notes: "Anteckningar",
-                declaration: "Hyresvärden intygar härmed mottagandet av ovan beskrivna betalning för den angivna fastigheten."
-            },
-            zh: {
-                receipt: "租金收据", country: "国家", receiptNum: "收据编号", date: "日期",
-                receivedFrom: "付款人 (租客)", paidTo: "收款人 (房东/代理人)",
-                premises: "物业地址", totalPaid: "实收总额", paymentMethod: "付款方式",
-                status: "状态", cleared: "款项已结清", signature: "授权签字", thankYou: "感谢您的付款！",
-                period: "租赁周期", paymentType: "款项类型", notes: "备注",
-                declaration: "房东特此确认收到上述针对指定物业的款项。"
-            },
-            vi: {
-                receipt: "Hóa Đơn Thu Tiền Thuê Nhà", country: "Quốc gia", receiptNum: "Hóa đơn số", date: "Ngày phát hành",
-                receivedFrom: "Khách thuê (Người nộp tiền)", paidTo: "Chủ nhà / Đại lý nhận tiền",
-                premises: "Địa chỉ nhà cho thuê", totalPaid: "Tổng số tiền đã nộp", paymentMethod: "Hình thức thanh toán",
-                status: "Trạng thái", cleared: "ĐÃ THANH TOÁN ĐỦ", signature: "Chữ ký người đại diện", thankYou: "Xin chân thành cảm ơn quý khách!",
-                period: "Thời hạn thuê", paymentType: "Khoản thanh toán cho", notes: "Ghi chú",
-                declaration: "Chủ nhà xác nhận đã nhận đủ số tiền được liệt kê ở trên cho phần diện tích nhà thuê được chỉ định."
-            },
-            nl: {
-                receipt: "Huurkwitantie", country: "Land", receiptNum: "Kwitancenummer", date: "Datum",
-                receivedFrom: "Ontvangen van (Huurder)", paidTo: "Betaald aan (Verhuurder/Agent)",
-                premises: "Adres van het Gehuurde", totalPaid: "Totaal Betaald Bedrag", paymentMethod: "Betaalwijze",
-                status: "Status", cleared: "BETAALD & VOLDAAN", signature: "Handtekening Verhuurder", thankYou: "Hartelijk dank voor uw betaling!",
-                period: "Huurperiode", paymentType: "Type Betaling", notes: "Opmerkingen",
-                declaration: "De verhuurder verklaart hierbij de hierboven vermelde betaling te hebben ontvangen voor het betreffende gehuurde."
-            },
-            th: {
-                receipt: "ใบเสร็จรับเงินค่าเช่า", country: "ประเทศ", receiptNum: "เลขที่ใบเสร็จ", date: "วันที่ออกใบเสร็จ",
-                receivedFrom: "ได้รับเงินจาก (ผู้เช่า)", paidTo: "ชำระให้แก่ (ผู้ให้เช่า/ตัวแทน)",
-                premises: "สถานที่เช่า", totalPaid: "จำนวนเงินที่ชำระ", paymentMethod: "วิธีการชำระเงิน",
-                status: "สถานะ", cleared: "ชำระเงินเรียบร้อยแล้ว", signature: "ลายมือชื่อผู้รับเงิน", thankYou: "ขอบคุณสำหรับการชำระเงิน!",
-                period: "ระยะเวลาค่าเช่า", paymentType: "ประเภทการชำระเงิน", notes: "หมายเหตุเพิ่มเติม",
-                declaration: "ผู้ให้เช่าขอรับรองว่าได้รับเงินจำนวนดังกล่าวข้างต้นสำหรับสถานที่เช่าที่ระบุไว้เสร็จสิ้นแล้ว"
-            }
-        };
-
-        const countriesUsingCheque = ['uk', 'au', 'ca', 'nz', 'za', 'ie', 'my', 'sg', 'pk', 'in', 'bd', 'ke', 'tz', 'ng', 'gh'];
-
-        let currentTier = 'guest';
-        let generatedCount = 1;
-        const maxFreeGenerations = 3;
-
-        function setTier(tier) {
-            currentTier = tier;
-            const cardGuest = document.getElementById('cardTierGuest');
-            const cardPro = document.getElementById('cardTierPro');
-            const badge = document.getElementById('tierBadge');
-            
-            const logoInput = document.getElementById('logoFileInput');
-            const logoDisabledWarning = document.getElementById('logoDisabledWarning');
-
-            if (tier === 'pro') {
-                cardPro.classList.add('active');
-                cardGuest.classList.remove('active');
-                document.getElementById('radioPro').checked = true;
-                badge.textContent = "Pro Access";
-                badge.classList.add('pro');
-                document.getElementById('usageDisplay').style.display = 'none';
-                
-                // Enable logo control elements
-                logoInput.disabled = false;
-                logoDisabledWarning.style.display = "none";
-            } else {
-                cardGuest.classList.add('active');
-                cardPro.classList.remove('active');
-                document.getElementById('radioGuest').checked = true;
-                badge.textContent = "Guests / No sign up";
-                badge.classList.remove('pro');
-                document.getElementById('usageDisplay').style.display = 'block';
-                updateUsageDisplay();
-
-                // Disable logo controls, clear selected file, & hide preview image
-                logoInput.disabled = true;
-                logoInput.value = "";
-                document.getElementById('previewLogo').style.display = "none";
-                logoDisabledWarning.style.display = "block";
-            }
-        }
-
-        function handleLogoUpload(event) {
-            if (currentTier !== 'pro') return;
-            const file = event.target.files[0];
-            const logoImg = document.getElementById('previewLogo');
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    logoImg.src = e.target.result;
-                    logoImg.style.display = "block";
-                };
-                reader.readAsDataURL(file);
-            } else {
-                logoImg.style.display = "none";
-            }
-        }
-
-        function updateUsageDisplay() {
-            const usageText = document.getElementById('usageDisplay');
-            if (generatedCount > maxFreeGenerations) {
-                usageText.innerHTML = `Free tier cap exhausted: <strong style="color:#ef4444;">${generatedCount} / ${maxFreeGenerations} generated. Please upgrade.</strong>`;
-            } else {
-                usageText.innerHTML = `Free tier cap: <strong style="color:#eab308;">${generatedCount} / ${maxFreeGenerations} receipts generated this month</strong>`;
-            }
-        }
-
-        function handleCountryChange() {
-            const countryCode = document.getElementById('countrySelect').value;
-            const countryData = database[countryCode] || { name: "Global", currency: "USD", symbol: "$", locale: "en-US", defaultLang: "en" };
-
-            // Update display fields
-            document.getElementById('prevCountry').textContent = countryData.name;
-            document.getElementById('prevSymbol').textContent = countryData.symbol;
-            document.getElementById('prevCurrency').textContent = countryData.currency;
-
-            // Populate Payment Methods based on selected country logic
-            const methodSelect = document.getElementById('paymentMethod');
-            methodSelect.innerHTML = ''; // Reset options
-
-            const defaultMethods = ['Bank Transfer', 'Credit Card', 'Cash', 'Mobile Money'];
-            if (countriesUsingCheque.includes(countryCode.toLowerCase())) {
-                defaultMethods.push('Cheque');
-            }
-
-            defaultMethods.forEach(method => {
-                const opt = document.createElement('option');
-                opt.value = method;
-                opt.textContent = method;
-                methodSelect.appendChild(opt);
-            });
-
-            // Automatically switch translation dropdown values to match national language profile
-            document.getElementById('langSelect').value = countryData.defaultLang;
-            handleLanguageChange();
-        }
-
-        function handleLanguageChange() {
-            const lang = document.getElementById('langSelect').value;
-            const matrix = translationMatrix[lang] || translationMatrix['en'];
-
-            // Apply global RTL rules for Arabic language compatibility
-            const printArea = document.getElementById('printArea');
-            if (lang === 'ar') {
-                printArea.classList.add('rtl-layout');
-            } else {
-                printArea.classList.remove('rtl-layout');
-            }
-
-            // Translate Static UI Titles on Preview Panel
-            document.getElementById('lblReceipt').textContent = matrix.receipt;
-            document.getElementById('lblCountryTag').textContent = matrix.country;
-            document.getElementById('lblNumTag').textContent = matrix.receiptNum;
-            document.getElementById('lblDateTag').textContent = matrix.date;
-            document.getElementById('lblReceivedFrom').textContent = matrix.receivedFrom;
-            document.getElementById('lblPaidTo').textContent = matrix.paidTo;
-            document.getElementById('lblPremises').textContent = matrix.premises;
-            document.getElementById('lblPeriod').textContent = matrix.period;
-            document.getElementById('lblTotalPaid').textContent = matrix.totalPaid;
-            document.getElementById('lblMethodTag').textContent = matrix.paymentMethod;
-            document.getElementById('lblPaymentType').textContent = matrix.paymentType;
-            document.getElementById('lblStatusTag').textContent = matrix.status;
-            document.getElementById('lblStatusText').textContent = matrix.cleared;
-            document.getElementById('lblSigTag').textContent = matrix.signature;
-            document.getElementById('lblThankYouText').textContent = matrix.thankYou;
-            document.getElementById('lblDeclaration').textContent = matrix.declaration;
-
-            updatePreview();
-        }
-
-        function getWhatsAppMessage() {
-            const receiptNum = document.getElementById('receiptNum').value;
-            const tenantName = document.getElementById('tenantName').value;
-            const landlordName = document.getElementById('landlordName').value;
-            const amount = document.getElementById('rentAmount').value;
-            const countryCode = document.getElementById('countrySelect').value;
-            const countryData = database[countryCode] || { symbol: "$" };
-            
-            return encodeURIComponent(
-                `Hi ${tenantName}, here is your rent receipt from ${landlordName}.\n` +
-                `Receipt No: ${receiptNum}\n` +
-                `Amount Paid: ${countryData.symbol}${amount}\n` +
-                `Thank you!`
-            );
-        }
-
-        function updateWhatsAppLink() {
-            const link = document.getElementById('whatsAppShareLink');
-            const message = getWhatsAppMessage();
-            link.href = `https://wa.me/?text=${message}`;
-        }
-
-        function updatePreview() {
-            const countryCode = document.getElementById('countrySelect').value;
-            const countryData = database[countryCode] || { locale: "en-US" };
-
-            // Update Text Inputs
-            document.getElementById('prevNum').textContent = document.getElementById('receiptNum').value || '---';
-            document.getElementById('prevTenant').textContent = document.getElementById('tenantName').value || '---';
-            document.getElementById('prevTenantEmail').textContent = document.getElementById('tenantEmail').value;
-            document.getElementById('prevTenantPhone').textContent = document.getElementById('tenantPhone').value;
-            
-            document.getElementById('prevLandlord').textContent = document.getElementById('landlordName').value || '---';
-            document.getElementById('prevLandlordEmail').textContent = document.getElementById('landlordEmail').value;
-            document.getElementById('prevLandlordPhone').textContent = document.getElementById('landlordPhone').value;
-
-            document.getElementById('prevAddress').textContent = document.getElementById('propAddress').value || '---';
-            const unit = document.getElementById('unitNum').value;
-            document.getElementById('prevUnit').textContent = unit ? `, ${unit}` : '';
-
-            // Handle Payment Details
-            document.getElementById('prevMethod').textContent = document.getElementById('paymentMethod').value || '---';
-            document.getElementById('prevType').textContent = document.getElementById('paymentTypeSelect').value;
-
-            // Optional notes display
-            const notesText = document.getElementById('receiptNotes').value;
-            const notesBox = document.getElementById('prevNotesBox');
-            if (notesText.trim() !== "") {
-                notesBox.textContent = notesText;
-                notesBox.style.display = "block";
-            } else {
-                notesBox.style.display = "none";
-            }
-
-            // Dates Formatter
-            const dateInput = document.getElementById('receiptDate').value;
-            const startInput = document.getElementById('periodStart').value;
-            const endInput = document.getElementById('periodEnd').value;
-
-            const formatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-
-            document.getElementById('prevDate').textContent = dateInput ? new Date(dateInput).toLocaleDateString(countryData.locale, formatOptions) : 'MM/DD/YYYY';
-            document.getElementById('prevPeriodStart').textContent = startInput ? new Date(startInput).toLocaleDateString(countryData.locale, formatOptions) : 'MM/DD/YYYY';
-            document.getElementById('prevPeriodEnd').textContent = endInput ? new Date(endInput).toLocaleDateString(countryData.locale, formatOptions) : 'MM/DD/YYYY';
-
-            // Amount Parser
-            const rawAmt = parseFloat(document.getElementById('rentAmount').value) || 0;
-            document.getElementById('prevAmount').textContent = rawAmt.toLocaleString(countryData.locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-            updateWhatsAppLink();
-        }
-
-        function triggerPrintAndCount() {
-            if (currentTier === 'guest' && generatedCount >= maxFreeGenerations) {
-                alert("You have reached your free receipt generation cap. Please sign up or upgrade to Pro!");
-                return;
-            }
-            window.print();
-            if (currentTier === 'guest') {
-                generatedCount++;
-                updateUsageDisplay();
-            }
-        }
-
-        function copyShareLink() {
-            const shareText = decodeURIComponent(getWhatsAppMessage());
-            navigator.clipboard.writeText(shareText).then(() => {
-                alert("🔗 Receipt summary details copied to clipboard! Ready to paste into your chats.");
-            }).catch(err => {
-                alert("Failed to copy link automatically.");
-            });
-        }
-
-        function emailReceipt() {
-            const email = document.getElementById('tenantEmail').value;
-            if (email) {
-                alert(`✉️ Receipt link queued for delivery to: ${email}`);
-            } else {
-                alert("Please enter a valid Tenant Email first.");
-            }
-        }
-
-        // Run Initializers
-        window.addEventListener('DOMContentLoaded', () => {
-            // Set Default Dates
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('receiptDate').value = today;
-            
-            // Trigger baseline render
-            handleCountryChange();
-            handleLanguageChange();
-        });
-    </script>
 </head>
 <body>
 
 <div class="container">
-    
-    <!-- LEFT CONTROL PANEL -->
-    <div class="form-section">
-        <h2>Rent Receipt Generator</h2>
+    <h2>Regional & Payment Configuration</h2>
 
-        <div class="account-cta-box" id="accountAppBox">
-            <div class="account-header">
-                <span class="account-title" id="tierDisplay">Select Plan</span>
-                <span class="tier-badge" id="tierBadge">Guests / No sign up</span>
-            </div>
+    <!-- Country Dropdown -->
+    <div class="form-group">
+        <label for="countrySelect">Select Country</label>
+        <select id="countrySelect" onchange="handleCountryChange()">
+            <!-- Existing Countries -->
+            <option value="KE">Kenya</option>
+            <option value="TZ">Tanzania</option>
+            <option value="ET">Ethiopia</option>
+            <!-- Requested Additional Countries -->
+            <option value="ES">Spain</option>
+            <option value="BE">Belgium</option>
+            <option value="NL">Netherlands</option>
+            <option value="OM">Oman</option>
+            <option value="AE">UAE</option>
+            <option value="EG">Egypt</option>
+            <option value="TR">Turkiye</option>
+            <option value="YE">Yemen</option>
+            <option value="CN">China</option>
+            <option value="KR">South Korea</option>
+            <option value="BD">Bangladesh</option>
+            <option value="PL">Poland</option>
+            <option value="PK">Pakistan</option>
+            <option value="PH">Philippines</option>
+            <option value="SG">Singapore</option>
+        </select>
+    </div>
 
-            <div class="tier-selection-container">
-                <!-- Guest Tier Card -->
-                <div class="tier-card active" id="cardTierGuest" onclick="setTier('guest')">
-                    <div class="tier-card-header">
-                        <input type="radio" id="radioGuest" name="tier_select" class="tier-radio" checked>
-                        <span class="tier-card-title">Guest / No Sign Up</span>
-                    </div>
-                    <ul class="tier-card-features">
-                        <li>Limited to 3 receipts per month</li>
-                        <li>Download, Print, Copy link for sharing on WhatsApp, etc.</li>
-                    </ul>
-                </div>
+    <!-- Default Language Output -->
+    <div class="form-group">
+        <label for="langInput">Default Native Language</label>
+        <input type="text" id="langInput" readonly>
+    </div>
 
-                <!-- Pro Tier Card -->
-                <div class="tier-card" id="cardTierPro" onclick="setTier('pro')">
-                    <div class="tier-card-header">
-                        <input type="radio" id="radioPro" name="tier_select" class="tier-radio">
-                        <span class="tier-card-title">Pro Unlimited ($45/Yr)</span>
-                    </div>
-                    <ul class="tier-card-features">
-                        <li>Unlimited receipts</li>
-                        <li>Complete saved history</li>
-                        <li>Tenant/Property Records &amp; Quick Duplication active</li>
-                        <li>Add your Logo</li>
-                        <li>Download, Print, Copy link for sharing on WhatsApp, etc.</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="usage-tracker" id="usageDisplay">
-                Free tier cap: <strong style="color:#eab308;">1 / 3 receipts generated this month</strong>
-            </div>
-        </div>
-        
-        <div class="row" style="background-color: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color);">
-            <div class="form-group">
-                <label for="countrySelect" style="color: #1e40af;">Select Country</label>
-                <select id="countrySelect" onchange="handleCountryChange()">
-                    <!-- Top Ordered Countries -->
-                    <option value="US" selected>United States (USD - $)</option>
-                    <option value="CA">Canada (CAD - CA$)</option>
-                    <option value="GB">United Kingdom (GBP - £)</option>
-                    <option value="FR">France (EUR - €)</option>
-                    <option value="DE">Germany (EUR - €)</option>
-                    <option value="AU">Australia (AUD - A$)</option>
-                    <option value="BR">Brazil (BRL - R$)</option>
-                    <option value="ID">Indonesia (IDR - Rp)</option>
-                    <option value="MY">Malaysia (MYR - RM)</option>
-                    
-                    <!-- Remaining Countries -->
-                    <option value="EU">Eurozone (EUR - €)</option>
-                    <option value="KE">Kenya (KES - KSh)</option>
-                    <option value="TZ">Tanzania (TZS - TSh)</option>
-                    <option value="ET">Ethiopia (ETB - Br)</option>
-                    <option value="IN">India (INR - ₹)</option>
-                    <option value="JP">Japan (JPY - ¥)</option>
-                    <option value="MX">Mexico (MXN - $)</option>
-                    <option value="AR">Saudi Arabia (SAR - ر.س)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="langSelect" style="color: #1e40af;">Select language</label>
-                <select id="langSelect" onchange="handleLanguageChange()">
-                    <option value="en" selected>English</option>
-                    <option value="sw">Kiswahili (Swahili)</option>
-                    <option value="am">አማርኛ (Amharic)</option>
-                    <option value="es">Español (Spanish)</option>
-                    <option value="fr">Français (French)</option>
-                    <option value="de">Deutsch (German)</option>
-                    <option value="it">Italiano (Italian)</option>
-                    <option value="pt">Português (Portuguese)</option>
-                    <option value="ar">العربية (Arabic)</option>
-                    <option value="ms">Bahasa Melayu (Malay)</option>
-                    <option value="id">Bahasa Indonesia (Indonesian)</option>
-                    <option value="hi">हिन्दी (Hindi)</option>
-                    <option value="pl">Polski (Polish)</option>
-                    <option value="ja">日本語 (Japanese)</option>
-                    <option value="sv">Svenska (Swedish)</option>
-                    <option value="zh">中文 (Chinese)</option>
-                    <option value="vi">Tiếng Việt (Vietnamese)</option>
-                    <option value="nl">Nederlands (Dutch)</option>
-                    <option value="th">ไทย (Thai)</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Logo Upload Field (Pro Feature Control Panel) -->
-        <div class="logo-upload-container">
-            <label for="logoFileInput" style="font-size:0.8rem; display:block; margin-bottom:5px;">Landlord Logo (Pro Feature)</label>
-            <input type="file" id="logoFileInput" accept="image/*" onchange="handleLogoUpload(event)" disabled>
-            <p id="logoDisabledWarning" class="logo-disabled-mask">⚠️ Subscriptions to Pro Unlimited are required to upload a logo.</p>
-        </div>
-        
-        <div class="row">
-            <div class="form-group">
-                <label for="receiptNum">Receipt Number</label>
-                <input type="text" id="receiptNum" value="REC-1001" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label for="receiptDate">Date Issued</label>
-                <input type="date" id="receiptDate" onchange="updatePreview()">
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="form-group">
-                <label for="landlordName">Landlord / Agent Name</label>
-                <input type="text" id="landlordName" value="Apex Properties Ltd" placeholder="John Doe or Agency LLC" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label for="landlordPhone">Landlord/Agent Phone</label>
-                <input type="tel" id="landlordPhone" value="+254 700 000 000" placeholder="Phone Number" oninput="updatePreview()">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="landlordEmail">Landlord/Agent Email</label>
-            <input type="email" id="landlordEmail" value="billing@apexproperties.com" placeholder="landlord@email.com" oninput="updatePreview()">
-        </div>
-
-        <div class="row">
-            <div class="form-group">
-                <label for="tenantName">Tenant Full Name</label>
-                <input type="text" id="tenantName" value="Sarah Jenkins" placeholder="Jane Smith" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label for="tenantPhone">Tenant Phone Number</label>
-                <input type="tel" id="tenantPhone" value="+254 711 111 111" placeholder="Phone Number" oninput="updatePreview()">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="tenantEmail">Tenant Email</label>
-            <input type="email" id="tenantEmail" value="s.jenkins@domain.com" placeholder="tenant@email.com" oninput="updatePreview()">
-        </div>
-
-        <div class="row">
-            <div class="form-group">
-                <label for="periodStart">Billing Period Start</label>
-                <input type="date" id="periodStart" value="2026-07-01" onchange="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label for="periodEnd">Billing Period End</label>
-                <input type="date" id="periodEnd" value="2026-07-31" onchange="updatePreview()">
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="form-group">
-                <label for="propAddress">Property Street Address</label>
-                <input type="text" id="propAddress" value="452 Oakridge Lane" placeholder="Property Location Address" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label for="unitNum">Unit / Apt / Suite #</label>
-                <input type="text" id="unitNum" value="Apt 4B" placeholder="e.g., Apt 4B" oninput="updatePreview()">
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="form-group">
-                <label for="paymentTypeSelect">Payment Allocation Type</label>
-                <select id="paymentTypeSelect" onchange="updatePreview()">
-                    <option value="Rent" selected>Rent</option>
-                    <option value="Partial Payment">Partial Payment</option>
-                    <option value="Security deposit">Security Deposit</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="paymentMethod">Payment Method</label>
-                <select id="paymentMethod" onchange="updatePreview()">
-                    <!-- Populated via Script based on Country selection -->
-                </select>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="form-group" style="grid-column: span 2;">
-                <label for="rentAmount">Amount Paid</label>
-                <input type="number" id="rentAmount" placeholder="0.00" value="1200" oninput="updatePreview()">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="receiptNotes">Optional Special Notes / Balance Due</label>
-            <textarea id="receiptNotes" rows="2" placeholder="Enter any specific terms, remaining balance, or updates here..." oninput="updatePreview()"></textarea>
-        </div>
-
-        <div class="action-row">
-            <button class="btn-print" onclick="triggerPrintAndCount()">Print / Save PDF</button>
-            <button class="btn-action" onclick="copyShareLink()">🔗 Copy Link</button>
-            <button class="btn-action" onclick="emailReceipt()">✉️ Email</button>
-        </div>
-
-        <!-- WhatsApp Link Footer Bar -->
-        <div class="whatsapp-footer-bar">
-            <a href="https://wa.me/?text=" id="whatsAppShareLink" target="_blank" class="btn-whatsapp-share">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.964 9.964 0 0 0 1.333 4.993L2 22l5.13-1.347a9.945 9.945 0 0 0 4.88 1.277h.005c5.505 0 9.989-4.478 9.99-9.984 0-2.667-1.037-5.176-2.923-7.062C17.198 3.037 14.686 2 12.012 2zm5.727 14.047c-.246.696-1.42 1.353-1.95 1.408-.48.05-1.096.084-3.23-.797-2.73-1.127-4.48-3.905-4.617-4.087-.135-.18-1.1-1.46-1.1-2.785 0-1.325.69-1.977.935-2.25.247-.272.544-.34.726-.34.18 0 .363.001.52.008.164.007.385-.063.602.46.223.535.76 1.854.825 1.988.066.134.11.29.02.47-.09.18-.135.29-.27.45l-.41.488c-.135.152-.278.318-.12.593.158.272.7 1.15 1.5 1.86.1.09.186.136.273.136.262 0 .422-.24.58-.45.148-.198.312-.423.498-.5.186-.076.37-.038.556.038.185.076 1.176.554 1.378.656.2.102.336.152.386.237.05.084.05.49-.196 1.186z"/>
-                </svg>
-                Share Current Receipt on WhatsApp
-            </a>
+    <!-- Available Payment Options List -->
+    <div class="form-group">
+        <label>Available Local Payment Options</label>
+        <div id="paymentOptionsContainer" class="payment-list">
+            <!-- Badges will render here dynamically -->
         </div>
     </div>
 
-    <!-- RIGHT PREVIEW CANVAS PANEL -->
-    <div class="preview-section" id="printArea">
-        <div class="receipt-header-row">
-            <div>
-                <h1 class="receipt-title" id="lblReceipt">Rent Receipt</h1>
-                <p style="font-size:0.85rem; color:#6b7280;"><span id="lblCountryTag">Country</span>: <span id="prevCountry">Global</span></p>
-            </div>
-            <!-- Live Logo Container inside receipt body -->
-            <img id="previewLogo" class="logo-preview-box" alt="Landlord Logo">
-            
-            <div class="receipt-meta">
-                <p><strong><span id="lblNumTag">Receipt #</span>:</strong> <span id="prevNum">REC-1001</span></p>
-                <p><strong><span id="lblDateTag">Date</span>:</strong> <span id="prevDate">MM/DD/YYYY</span></p>
-            </div>
-        </div>
-
-        <div class="receipt-grid">
-            <div class="data-block">
-                <h4 id="lblReceivedFrom">Received From (Tenant)</h4>
-                <p id="prevTenant">---</p>
-                <span id="prevTenantEmail"></span>
-                <span id="prevTenantPhone" style="font-size: 0.85rem; color:#4b5563;"></span>
-            </div>
-            <div class="data-block">
-                <h4 id="lblPaidTo">Paid To (Landlord/Agent)</h4>
-                <p id="prevLandlord">---</p>
-                <span id="prevLandlordEmail"></span>
-                <span id="prevLandlordPhone" style="font-size: 0.85rem; color:#4b5563;"></span>
-            </div>
-        </div>
-
-        <div class="receipt-grid" style="margin-bottom: 25px;">
-            <div class="data-block">
-                <h4 id="lblPremises">Premises Address</h4>
-                <p><span id="prevAddress">---</span><span id="prevUnit" style="display:inline; font-weight: inherit; color: inherit;"></span></p>
-            </div>
-            <div class="data-block">
-                <h4 id="lblPeriod">Rental Period</h4>
-                <p><span id="prevPeriodStart">MM/DD/YYYY</span> - <span id="prevPeriodEnd">MM/DD/YYYY</span></p>
-            </div>
-        </div>
-
-        <div class="amount-box">
-            <h4 id="lblTotalPaid">Total Paid Amount</h4>
-            <span><span id="prevSymbol">$</span><span id="prevAmount">1,200.00</span> <span id="prevCurrency">USD</span></span>
-        </div>
-
-        <div class="receipt-grid" style="margin-bottom: 20px;">
-            <div class="data-block">
-                <h4 id="lblMethodTag">Payment Method</h4>
-                <p id="prevMethod">---</p>
-            </div>
-            <div class="data-block">
-                <h4 id="lblPaymentType">Payment Type</h4>
-                <p id="prevType" style="font-weight: bold; color: var(--primary-color);">Rent</p>
-            </div>
-        </div>
-
-        <div id="prevNotesBox" class="notes-display-box" style="display: none;"></div>
-
-        <div class="legal-declaration" id="lblDeclaration">
-            The landlord hereby acknowledges receiving the payment described above for the specified premises.
-        </div>
-
-        <div style="text-align: center; margin: 15px 0; font-weight: 700; color: var(--success-color); font-size: 1.1rem;" id="lblStatusText">
-            PAID &amp; CLEARED
-        </div>
-
-        <div class="signature-area">
-            <div>
-                <span style="font-weight: bold; color: var(--success-color);" id="lblThankYouText">Thank you for your payment!</span>
-            </div>
-            <div style="text-align: center; min-width: 180px;">
-                <div style="border-bottom: 1px solid var(--border-color); height: 35px; margin-bottom: 5px;"></div>
-                <span id="lblSigTag" style="font-size: 0.8rem; font-weight: 600;">Authorized Signature</span>
-            </div>
-        </div>
+    <!-- WhatsApp Share Section -->
+    <div class="whatsapp-container">
+        <button class="btn" onclick="copyAndOpenWhatsApp()">
+            Share Application via WhatsApp
+        </button>
     </div>
 </div>
+
+<!-- Toast notification for link copied feedback -->
+<div id="toast" class="toast">Link copied to clipboard! Opening WhatsApp...</div>
+
+<script>
+    // System Data Map containing default language and localized payment networks
+    const regionalDatabase = {
+        KE: { lang: "Kiswahili / English", payments: ["M-Pesa", "Airtel Money", "Equity EazzyPay", "Credit/Debit Card"] },
+        TZ: { lang: "Kiswahili", payments: ["M-Pesa", "Tigo Pesa", "Airtel Money", "HaloPesa", "Credit/Debit Card"] },
+        ET: { lang: "Amharic", payments: ["Telebirr", "CBE Birr", "Awash Birr", "Coopay-Ebirr", "Credit/Debit Card"] },
+        ES: { lang: "Español", payments: ["Bizum", "Credit/Debit Card"] },
+        BE: { lang: "Nederlands / Français", payments: ["Bancontact", "Payconiq", "Credit/Debit Card"] },
+        NL: { lang: "Nederlands", payments: ["iDEAL", "Tikkie", "Credit/Debit Card"] },
+        OM: { lang: "العربية (Arabic)", payments: ["OmanNet", "NBO Mobile Wallet", "Credit/Debit Card"] },
+        AE: { lang: "العربية (Arabic)", payments: ["Careem Pay", "e& money", "Al Ansari Exchange", "Credit/Debit Card"] },
+        EG: { lang: "العربية (Arabic)", payments: ["Fawry", "InstaPay", "Vodafone Cash", "Credit/Debit Card"] },
+        TR: { lang: "Türkçe", payments: ["Troy", "Papara", "BKM Express", "Credit/Debit Card"] },
+        YE: { lang: "العربية (Arabic)", payments: ["Yemen Wallet", "Kuraimi Pocket", "Cash on Delivery"] },
+        CN: { lang: "简体中文 (Simplified Chinese)", payments: ["Alipay", "WeChat Pay", "UnionPay"] },
+        KR: { lang: "한국어 (Korean)", payments: ["KakaoPay", "Naver Pay", "Toss", "KB Kookmin Card"] },
+        BD: { lang: "বাংলা (Bengali)", payments: ["bKash", "Nagad", "Rocket", "Credit/Debit Card"] },
+        PL: { lang: "Polski", payments: ["BLIK", "Przelewy24 (P24)", "Credit/Debit Card"] },
+        PK: { lang: "اردو (Urdu)", payments: ["Easypaisa", "JazzCash", "Nayapay", "Raast"] },
+        PH: { lang: "Tagalog", payments: ["GCash", "Maya", "GrabPay", "Credit/Debit Card"] },
+        SG: { lang: "English", payments: ["PayNow", "GrabPay", "NETS", "Credit/Debit Card"] }
+    };
+
+    // Update Form Inputs Dynamically based on dropdown choice
+    function handleCountryChange() {
+        const countryCode = document.getElementById("countrySelect").value;
+        const data = regionalDatabase[countryCode];
+
+        if (data) {
+            // Set Native Language
+            document.getElementById("langInput").value = data.lang;
+
+            // Clear and Render Payment Badges
+            const container = document.getElementById("paymentOptionsContainer");
+            container.innerHTML = "";
+            data.payments.forEach(option => {
+                const badge = document.createElement("span");
+                badge.className = "payment-badge";
+                badge.innerText = option;
+                container.appendChild(badge);
+            });
+        }
+    }
+
+    // Direct Copy to Clipboard and Native Device WhatsApp App Hook
+    function copyAndOpenWhatsApp() {
+        const shareLink = "https://your-property-app-link.com/download";
+        const messageText = "Check out this Receipt and Property Management App: " + shareLink;
+
+        // Clipboard Copy Utility with Modern API & Legacy Fallback
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(messageText).then(proceedToWhatsApp).catch(err => {
+                fallbackCopy(messageText);
+            });
+        } else {
+            fallbackCopy(messageText);
+        }
+    }
+
+    function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";  // Avoid scrolling down
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            proceedToWhatsApp();
+        } catch (err) {
+            console.error('Copy fallback failed', err);
+        }
+        document.body.removeChild(textArea);
+    }
+
+    function proceedToWhatsApp() {
+        // Show Success Toast UI
+        const toast = document.getElementById("toast");
+        toast.className = "toast show";
+        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+
+        // Standard WhatsApp URI scheme to force-open local App installation with shared string
+        const shareLink = "https://your-property-app-link.com/download";
+        const cleanMessage = encodeURIComponent("Check out this Receipt and Property Management App: " + shareLink);
+        
+        // This structural protocol launches local native apps on mobile/desktop cleanly
+        window.location.href = "whatsapp://send?text=" + cleanMessage;
+    }
+
+    // Initialize layout on page load
+    window.onload = handleCountryChange;
+</script>
 
 </body>
 </html>
