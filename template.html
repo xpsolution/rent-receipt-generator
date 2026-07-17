@@ -224,7 +224,7 @@
 
     // Force strict clipboard copy before opening the external URL scheme
     function copyAndOpenWhatsApp() {
-        const shareLink = "https://your-property-app-link.com/download";
+        const shareLink = window.location.href; // Dynamically grabs your live site's URL
         const messageText = "Check out this Receipt and Property Management App: " + shareLink;
         
         const btn = document.getElementById("whatsappBtn");
@@ -260,8 +260,8 @@
         if (success) {
             handleSuccessfulCopy(btn, originalText, text);
         } else {
-            // If copying completely fails, we redirect anyway to avoid broken UX
-            window.location.href = "whatsapp://send?text=" + encodeURIComponent(text);
+            // Safe fallback redirect using official web endpoint
+            window.location.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(text);
         }
     }
 
@@ -279,8 +279,8 @@
             btn.style.backgroundColor = "#25d366";
             toast.className = "toast";
             
-            // Redirect to Native WhatsApp App
-            window.location.href = "whatsapp://send?text=" + encodeURIComponent(text);
+            // Redirect using modern, universal API endpoint
+            window.location.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(text);
         }, 1200);
     }
 
