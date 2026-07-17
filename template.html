@@ -84,9 +84,12 @@
             cursor: pointer;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             transition: background-color 0.2s;
             text-decoration: none;
+            width: 100%;
+            box-sizing: border-box;
         }
         .btn:hover {
             background-color: #1ebd56;
@@ -94,21 +97,22 @@
         .toast {
             visibility: hidden;
             min-width: 250px;
-            background-color: #333;
+            background-color: #2d3748;
             color: #fff;
             text-align: center;
-            border-radius: 4px;
-            padding: 12px;
+            border-radius: 6px;
+            padding: 16px;
             position: fixed;
             z-index: 1000;
             left: 50%;
             bottom: 30px;
             transform: translateX(-50%);
             font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
         .toast.show {
             visibility: visible;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 3.5s;
         }
         @keyframes fadein {
             from { bottom: 0; opacity: 0; }
@@ -129,7 +133,7 @@
     <div class="form-group">
         <label for="countrySelect">Select Country</label>
         <select id="countrySelect" onchange="handleCountryChange()">
-            <!-- Existing Countries -->
+            <!-- Core Countries -->
             <option value="KE">Kenya</option>
             <option value="TZ">Tanzania</option>
             <option value="ET">Ethiopia</option>
@@ -162,20 +166,20 @@
     <div class="form-group">
         <label>Available Local Payment Options</label>
         <div id="paymentOptionsContainer" class="payment-list">
-            <!-- Badges will render here dynamically -->
+            <!-- Badges render here dynamically -->
         </div>
     </div>
 
     <!-- WhatsApp Share Section -->
     <div class="whatsapp-container">
-        <button class="btn" onclick="copyAndOpenWhatsApp()">
+        <button id="whatsappBtn" class="btn" onclick="copyAndOpenWhatsApp()">
             Share Application via WhatsApp
         </button>
     </div>
 </div>
 
-<!-- Toast notification for link copied feedback -->
-<div id="toast" class="toast">Link copied to clipboard! Opening WhatsApp...</div>
+<!-- Toast notification for user confirmation -->
+<div id="toast" class="toast">✔ Link copied successfully! Opening WhatsApp...</div>
 
 <script>
     // System Data Map containing default language and localized payment networks
@@ -200,16 +204,13 @@
         SG: { lang: "English", payments: ["PayNow", "GrabPay", "NETS", "Credit/Debit Card"] }
     };
 
-    // Update Form Inputs Dynamically based on dropdown choice
     function handleCountryChange() {
         const countryCode = document.getElementById("countrySelect").value;
         const data = regionalDatabase[countryCode];
 
         if (data) {
-            // Set Native Language
             document.getElementById("langInput").value = data.lang;
 
-            // Clear and Render Payment Badges
             const container = document.getElementById("paymentOptionsContainer");
             container.innerHTML = "";
             data.payments.forEach(option => {
@@ -221,52 +222,68 @@
         }
     }
 
-    // Direct Copy to Clipboard and Native Device WhatsApp App Hook
+    // Force strict clipboard copy before opening the external URL scheme
     function copyAndOpenWhatsApp() {
         const shareLink = "https://your-property-app-link.com/download";
         const messageText = "Check out this Receipt and Property Management App: " + shareLink;
+        
+        const btn = document.getElementById("whatsappBtn");
+        const originalText = btn.innerText;
 
-        // Clipboard Copy Utility with Modern API & Legacy Fallback
+        // Perform text copy first
         if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(messageText).then(proceedToWhatsApp).catch(err => {
-                fallbackCopy(messageText);
-            });
+            navigator.clipboard.writeText(messageText)
+                .then(() => handleSuccessfulCopy(btn, originalText, messageText))
+                .catch(() => fallbackCopy(messageText, btn, originalText));
         } else {
-            fallbackCopy(messageText);
+            fallbackCopy(messageText, btn, originalText);
         }
     }
 
-    function fallbackCopy(text) {
+    function fallbackCopy(text, btn, originalText) {
         const textArea = document.createElement("textarea");
         textArea.value = text;
-        textArea.style.position = "fixed";  // Avoid scrolling down
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
+        
+        let success = false;
         try {
-            document.execCommand('copy');
-            proceedToWhatsApp();
+            success = document.execCommand('copy');
         } catch (err) {
-            console.error('Copy fallback failed', err);
+            console.error(err);
         }
         document.body.removeChild(textArea);
+
+        if (success) {
+            handleSuccessfulCopy(btn, originalText, text);
+        } else {
+            // If copying completely fails, we redirect anyway to avoid broken UX
+            window.location.href = "whatsapp://send?text=" + encodeURIComponent(text);
+        }
     }
 
-    function proceedToWhatsApp() {
-        // Show Success Toast UI
+    function handleSuccessfulCopy(btn, originalText, text) {
+        // UI confirmation feedback
+        btn.innerText = "✓ Copied Link!";
+        btn.style.backgroundColor = "#128C7E";
+        
         const toast = document.getElementById("toast");
         toast.className = "toast show";
-        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
 
-        // Standard WhatsApp URI scheme to force-open local App installation with shared string
-        const shareLink = "https://your-property-app-link.com/download";
-        const cleanMessage = encodeURIComponent("Check out this Receipt and Property Management App: " + shareLink);
-        
-        // This structural protocol launches local native apps on mobile/desktop cleanly
-        window.location.href = "whatsapp://send?text=" + cleanMessage;
+        // Delay the redirect to WhatsApp to give the system time to finalize the clipboard write
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.backgroundColor = "#25d366";
+            toast.className = "toast";
+            
+            // Redirect to Native WhatsApp App
+            window.location.href = "whatsapp://send?text=" + encodeURIComponent(text);
+        }, 1200);
     }
 
-    // Initialize layout on page load
     window.onload = handleCountryChange;
 </script>
 
