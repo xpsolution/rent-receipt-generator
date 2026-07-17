@@ -3,552 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SwiftReceipt - Pro Landlord & Tenant Receipt Generator</title>
-    <!-- Tailwind CSS -->
+    <title>ProReceipt | Modern Landlord & Tenant Receipt Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Print Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: { colors: { primary: '#2563eb', secondary: '#1e40af', dark: '#0f172a', light: '#f8fafc' } }
+            }
+        }
+    </script>
     <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .receipt-shadow { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1); }
         @media print {
-            body * {
-                visibility: hidden;
-            }
-            #printable-receipt-card, #printable-receipt-card * {
-                visibility: visible;
-            }
-            #printable-receipt-card {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                border: none !important;
-                box-shadow: none !important;
-            }
-            .no-print {
-                display: none !important;
-            }
+            body * { visibility: hidden; }
+            #receipt-preview, #receipt-preview * { visibility: visible; }
+            #receipt-preview { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
+            .no-print { display: none !important; }
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
+<body class="bg-slate-50 text-slate-800 antialiased">
 
-    <!-- Top Sticky Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-sm">
-                    <i data-lucide="receipt" class="w-6 h-6"></i>
-                </div>
-                <span class="text-xl font-bold tracking-tight text-slate-900">Swift<span class="text-indigo-600">Receipt</span></span>
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-file-invoice-dollar text-primary text-2xl"></i>
+                <span class="font-bold text-xl tracking-tight text-dark">ProReceipt</span>
             </div>
-            
-            <!-- Dynamic Country Selector -->
-            <div class="flex items-center space-x-2">
-                <label for="country-select" class="hidden md:inline text-xs font-semibold uppercase tracking-wider text-slate-400">Region:</label>
-                <select id="country-select" onchange="updateCountryProfile()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold py-2 px-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
-                    <!-- Configured in JS sequence order -->
-                </select>
+            <div class="flex items-center gap-4">
+                <button class="text-slate-500 hover:text-dark font-medium text-sm transition">Sign In</button>
+                <button class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">Sign Up</button>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Main Workspace Grid -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <!-- Left Column: Settings and Input Form -->
-        <div class="w-full lg:w-7/12 space-y-6 no-print">
+        <!-- Workspace -->
+        <div class="grid lg:grid-cols-12 gap-8">
             
-            <!-- Tier Strategy Comparison Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Guest Tier Card -->
-                <div class="bg-white border-2 border-indigo-100 rounded-2xl p-5 relative overflow-hidden shadow-sm">
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">Guest / No Signup</span>
-                        <span class="text-xs text-indigo-600 font-semibold flex items-center gap-1">
-                            <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Active
-                        </span>
-                    </div>
-                    <ul class="space-y-2 text-xs text-slate-500">
-                        <li class="flex items-center gap-2 font-medium text-slate-700">
-                            <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Max 3 receipts per month
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Download & Print PDFs
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Copy sharing link for WhatsApp
-                        </li>
-                    </ul>
-                </div>
+            <!-- Left Panel: Input Form -->
+            <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm h-fit no-print">
+                <h2 class="text-xl font-bold text-dark mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-primary"></i> Receipt Details
+                </h2>
 
-                <!-- Pro Tier Card -->
-                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-5 relative overflow-hidden shadow-md">
-                    <div class="absolute -right-6 -bottom-6 opacity-10">
-                        <i data-lucide="crown" class="w-24 h-24"></i>
-                    </div>
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="bg-amber-400 text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Pro Unlimited</span>
-                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1 rounded-lg transition">Upgrade</button>
-                    </div>
-                    <ul class="space-y-2 text-xs text-slate-300">
-                        <li class="flex items-center gap-2 font-semibold text-white">
-                            <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> Unlimited receipt issuance
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> Save tenant & property history
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> Custom logos & easy replication
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Receipt Input Customizer Form -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <h2 class="font-bold text-lg text-slate-900 flex items-center gap-2">
-                        <i data-lucide="sliders-horizontal" class="w-5 h-5 text-indigo-600"></i> Receipt Customizer
-                    </h2>
-                    <span class="text-xs text-slate-400">Changes reflect instantly</span>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Receipt Title</label>
-                        <input type="text" id="input-title" oninput="liveUpdate()" value="Rental Payment Receipt" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:bg-white transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Receipt #</label>
-                        <input type="text" id="input-number" oninput="liveUpdate()" value="REC-2026-0091" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:bg-white transition">
-                    </div>
-                </div>
-
-                <!-- Custom Logo Upload Slot -->
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Logo</label>
-                    <div class="flex items-center space-x-4">
-                        <label class="cursor-pointer flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 transition">
-                            <i data-lucide="upload" class="w-4 h-4"></i>
-                            <span>Upload PNG/JPG</span>
-                            <input type="file" id="input-logo" accept="image/*" onchange="handleLogoUpload(event)" class="hidden">
-                        </label>
-                        <button onclick="removeLogo()" class="text-xs font-semibold text-rose-600 hover:text-rose-700">Remove</button>
-                    </div>
-                </div>
-
-                <!-- Landlord & Tenant Core Setup -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
-                    <div class="space-y-3">
-                        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-1.5"><i data-lucide="user-check" class="w-4 h-4 text-slate-500"></i> Issuer / Landlord</h3>
+                <form id="receipt-form" class="space-y-5">
+                    <!-- Localization -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Localization</h3>
                         <div>
-                            <input type="text" id="input-landlord-name" oninput="liveUpdate()" placeholder="Company or Landlord Name" value="Apex Properties Ltd" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm mb-2 focus:outline-none focus:border-indigo-500 transition">
-                            <textarea id="input-landlord-address" oninput="liveUpdate()" rows="2" placeholder="Address, Email or Phone" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">PO Box 45012, Head Office</textarea>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Country</label>
+                            <select id="country-select" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none"></select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Default Language</label>
+                                <input type="text" id="language-display" readonly class="w-full rounded-lg border-slate-200 border p-2.5 text-sm bg-slate-100 text-slate-500 cursor-not-allowed">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Payment Method</label>
+                                <select id="payment-method-select" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none"></select>
+                            </div>
                         </div>
                     </div>
-                    <div class="space-y-3">
-                        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4 text-slate-500"></i> Receiver / Tenant</h3>
+
+                    <!-- Property & People -->
+                    <div class="space-y-4">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Parties</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Landlord / Company</label>
+                                <input type="text" id="in-landlord" value="John Doe Properties" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Tenant Name</label>
+                                <input type="text" id="in-tenant" value="Jane Smith" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
+                            </div>
+                        </div>
                         <div>
-                            <input type="text" id="input-tenant-name" oninput="liveUpdate()" placeholder="Tenant Name" value="John Doe" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm mb-2 focus:outline-none focus:border-indigo-500 transition">
-                            <input type="text" id="input-property-unit" oninput="liveUpdate()" placeholder="Property Name / Unit #" value="Apartment 4B, Hillcrest Complex" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Property Address</label>
+                            <input type="text" id="in-address" value="123 Main St, Apt 4B, City" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
                         </div>
                     </div>
-                </div>
 
-                <!-- Financial Particulars -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Base Rent / Price</label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-2.5 text-slate-400 text-sm font-semibold" id="currency-prefix">$</span>
-                            <input type="number" id="input-amount" oninput="liveUpdate()" value="1200" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Utilities / Extras</label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-2.5 text-slate-400 text-sm font-semibold" id="currency-prefix-extra">$</span>
-                            <input type="number" id="input-extras" oninput="liveUpdate()" value="75" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">VAT / Local Tax (%)</label>
-                        <input type="number" id="input-tax-rate" oninput="liveUpdate()" value="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                    </div>
-                </div>
-
-                <!-- Dynamic Dropdowns for Localization -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Payment Method</label>
-                        <select id="input-payment-method" onchange="liveUpdate()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition cursor-pointer">
-                            <!-- Populated dynamically via selected country profile -->
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Transaction Ref (Optional)</label>
-                        <input type="text" id="input-tx-ref" oninput="liveUpdate()" placeholder="TXN-90234-A" value="TXN-88203-A" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                    </div>
-                </div>
-
-                <!-- Dates & Metadata -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Payment Date</label>
-                        <input type="date" id="input-date" onchange="liveUpdate()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Rental Period covered</label>
-                        <input type="text" id="input-period" oninput="liveUpdate()" placeholder="e.g. June 2026" value="June 2026" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                    </div>
-                </div>
-
-                <!-- Additional Internal Notes -->
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">Receipt Memo / Notes</label>
-                    <textarea id="input-notes" oninput="liveUpdate()" rows="2" placeholder="Thank you for your business!" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">Rent paid in full for the specified rental term. Utilities include basic water access and maintenance.</textarea>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Column: Interactive Live Preview & Sharing Hub -->
-        <div class="w-full lg:w-5/12 space-y-6">
-            
-            <div class="sticky top-20 space-y-6">
-                <!-- Outer Card styling -->
-                <div id="printable-receipt-card" class="bg-white rounded-2xl border border-slate-200 shadow-lg p-6 relative overflow-hidden flex flex-col justify-between min-h-[550px]">
-                    <!-- Visual Receipt Header Ribbon -->
-                    <div class="absolute top-0 left-0 right-0 h-1.5 bg-indigo-600"></div>
-                    
-                    <!-- Content area -->
-                    <div class="space-y-6">
-                        <!-- Top header of the receipt -->
-                        <div class="flex justify-between items-start pt-2">
-                            <div class="space-y-1">
-                                <div id="preview-logo-container" class="h-10 max-w-[120px] mb-2 hidden flex items-center">
-                                    <img id="preview-logo" src="" alt="Custom Logo" class="max-h-full max-w-full object-contain">
+                    <!-- Financials -->
+                    <div class="space-y-4">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Financials</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Rent Amount</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2.5 text-slate-400 text-sm font-medium input-symbol">$</span>
+                                    <input type="number" id="in-amount" value="1500" class="w-full rounded-lg border-slate-300 border p-2.5 pl-8 text-sm focus:ring-2 focus:ring-primary outline-none">
                                 </div>
-                                <h2 id="preview-title" class="text-xl font-black text-slate-900 tracking-tight">Rental Payment Receipt</h2>
-                                <p class="text-xs text-slate-400" id="preview-number-container">Receipt ID: <span id="preview-number" class="font-bold text-slate-700">REC-2026-0091</span></p>
-                            </div>
-                            <div class="text-right text-xs text-slate-400">
-                                <p class="font-semibold text-slate-800" id="preview-lang-badge">Language: English</p>
-                                <p id="preview-date">July 17, 2026</p>
-                            </div>
-                        </div>
-
-                        <!-- Parties Metadata Block -->
-                        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl text-xs">
-                            <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">From (Landlord)</p>
-                                <p class="font-bold text-slate-800" id="preview-landlord-name">Apex Properties Ltd</p>
-                                <p class="text-slate-500 whitespace-pre-line mt-0.5 leading-relaxed" id="preview-landlord-address">PO Box 45012, Head Office</p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">To (Tenant)</p>
-                                <p class="font-bold text-slate-800" id="preview-tenant-name">John Doe</p>
-                                <p class="text-slate-500 mt-0.5 leading-relaxed" id="preview-property-unit">Apartment 4B, Hillcrest Complex</p>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Payment Date</label>
+                                <input type="date" id="in-date" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
                             </div>
                         </div>
-
-                        <!-- Main Financial Summary Table -->
-                        <div class="space-y-2.5">
-                            <div class="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider pb-1 border-b border-slate-100">
-                                <span>Description Particulars</span>
-                                <span>Total</span>
-                            </div>
-                            <div class="flex justify-between text-sm text-slate-700">
-                                <span id="desc-base">Base Accommodation Rent (June 2026)</span>
-                                <span class="font-semibold" id="preview-base-amount">$1,200.00</span>
-                            </div>
-                            <div class="flex justify-between text-sm text-slate-700">
-                                <span>Utility Fees & Incidentals</span>
-                                <span class="font-semibold" id="preview-extras-amount">$75.00</span>
-                            </div>
-                            <div id="tax-line-container" class="flex justify-between text-sm text-slate-700 hidden">
-                                <span>Calculated Local Tax (<span id="tax-rate-badge">0</span>%)</span>
-                                <span class="font-semibold" id="preview-tax-amount">$0.00</span>
-                            </div>
-                            
-                            <!-- Large Total Amount block -->
-                            <div class="flex justify-between items-center bg-indigo-50/50 p-4 rounded-xl mt-4 border border-indigo-100/50">
-                                <span class="text-sm font-bold text-slate-900">Total Cleared Payment</span>
-                                <span class="text-2xl font-black text-indigo-600" id="preview-grand-total">$1,275.00</span>
-                            </div>
-                        </div>
-
-                        <!-- Bottom Compliance Metas -->
-                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100 text-xs">
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Method of Payment</p>
-                                <p class="font-bold text-slate-800 flex items-center gap-1" id="preview-payment-method">
-                                    <i data-lucide="wallet" class="w-3.5 h-3.5 text-indigo-500"></i> Cash
-                                </p>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Period (From)</label>
+                                <input type="date" id="in-period-from" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Reference String</p>
-                                <p class="font-bold text-slate-700" id="preview-tx-ref">TXN-88203-A</p>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Period (To)</label>
+                                <input type="date" id="in-period-to" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-primary outline-none">
                             </div>
                         </div>
-
-                        <!-- Notes Block -->
-                        <div class="bg-amber-50/40 p-3.5 rounded-xl border border-amber-100/50 text-xs text-amber-900" id="notes-container">
-                            <p class="font-semibold mb-1">Receipt Terms & Terms:</p>
-                            <p id="preview-notes" class="leading-relaxed">Rent paid in full for the specified rental term. Utilities include basic water access and maintenance.</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Late Fees / Extras</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2.5 text-slate-400 text-sm font-medium input-symbol">$</span>
+                                    <input type="number" id="in-fees" value="0" class="w-full rounded-lg border-slate-300 border p-2.5 pl-8 text-sm focus:ring-2 focus:ring-primary outline-none">
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Watermark signature / Verification seal -->
-                    <div class="flex items-center justify-between text-[10px] text-slate-400 border-t border-dashed border-slate-100 pt-4 mt-6">
-                        <div class="flex items-center gap-1">
-                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
-                            <span>Verified Digital Signature Receipt</span>
-                        </div>
-                        <div class="font-semibold tracking-wider uppercase text-slate-300">UnityProp System</div>
-                    </div>
-                </div>
-
-                <!-- Web Actions and Direct Exporting Row -->
-                <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-sm no-print">
-                    <h4 class="font-bold text-sm text-slate-900 mb-2">Export & Share Receipt</h4>
-                    
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="handlePrint()" class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-xl text-sm font-bold shadow-sm transition">
-                            <i data-lucide="printer" class="w-4 h-4"></i> Print/Save PDF
-                        </button>
-                        <button onclick="copyShareableLink()" class="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 py-3 px-4 rounded-xl text-sm font-bold transition">
-                            <i data-lucide="link" class="w-4 h-4"></i> Copy Link
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="shareWhatsApp()" class="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl text-sm font-bold shadow-sm transition">
-                            <i data-lucide="message-square" class="w-4 h-4"></i> Send on WhatsApp
-                        </button>
-                        <button onclick="triggerFakeDownload()" class="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white py-3 px-4 rounded-xl text-sm font-bold shadow-sm transition">
-                            <i data-lucide="download" class="w-4 h-4"></i> Download File
-                        </button>
-                    </div>
-                </div>
-
+                </form>
             </div>
 
-        </div>
+            <!-- Right Panel: Live Preview & Actions -->
+            <div class="lg:col-span-7 flex flex-col gap-6">
+                
+                <!-- Action Bar -->
+                <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-wrap gap-3 justify-center md:justify-between items-center no-print">
+                    <span class="text-sm font-medium text-slate-500 hidden md:block">Share & Export</span>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="window.print()" class="flex items-center gap-2 bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg text-sm font-medium transition w-full sm:w-auto">
+                            <i class="fa-solid fa-print"></i> Print / Save PDF
+                        </button>
+                    </div>
+                </div>
 
+                <!-- The Receipt Visual -->
+                <div id="receipt-preview" class="bg-white rounded-none md:rounded-lg receipt-shadow p-8 md:p-12 aspect-[1/1.414] border border-slate-200 flex flex-col relative max-w-[800px] mx-auto w-full">
+                    
+                    <!-- Watermark -->
+                    <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none no-print">
+                        <h1 class="text-6xl font-black rotate-[-45deg]">PRORECEIPT</h1>
+                    </div>
+
+                    <!-- Receipt Header -->
+                    <div class="flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-6">
+                        <div>
+                            <h1 class="text-3xl font-black text-slate-900 tracking-tight uppercase">Rent Receipt</h1>
+                            <p class="text-slate-500 text-sm mt-1">Receipt No: <span class="font-bold text-slate-800">#PR-<span id="out-receipt-no">10492</span></span></p>
+                        </div>
+                        <div class="text-right">
+                            <h2 class="text-xl font-bold text-slate-800" id="out-landlord">John Doe Properties</h2>
+                        </div>
+                    </div>
+
+                    <!-- Receipt Meta -->
+                    <div class="flex justify-between mb-8">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Received From</p>
+                            <p class="text-lg font-bold text-slate-800" id="out-tenant">Jane Smith</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Date</p>
+                            <p class="text-lg font-bold text-slate-800" id="out-date">Oct 24, 2024</p>
+                        </div>
+                    </div>
+
+                    <!-- Property Details -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-5 mb-8">
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Property Address</p>
+                                <p class="text-sm font-medium text-slate-800" id="out-address">123 Main St, Apt 4B, City</p>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Rental Period</p>
+                                <p class="text-sm font-medium text-slate-800"><span id="out-period-from">Nov 01, 2024</span> - <span id="out-period-to">Nov 30, 2024</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Table -->
+                    <table class="w-full text-left mb-8 border-collapse">
+                        <thead>
+                            <tr class="border-b-2 border-slate-800">
+                                <th class="py-3 text-sm font-bold text-slate-800 uppercase tracking-wider">Description</th>
+                                <th class="py-3 text-sm font-bold text-slate-800 uppercase tracking-wider text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-700 text-sm">
+                            <tr class="border-b border-slate-200">
+                                <td class="py-4">Rent Payment</td>
+                                <td class="py-4 text-right font-medium"><span class="out-symbol">$</span><span id="out-amount">1,500.00</span></td>
+                            </tr>
+                            <tr class="border-b border-slate-200">
+                                <td class="py-4 text-slate-500">Late Fees / Utility Charges</td>
+                                <td class="py-4 text-right font-medium text-slate-500"><span class="out-symbol">$</span><span id="out-fees">0.00</span></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td class="py-4 text-right font-bold text-slate-800 text-lg">Total Received</td>
+                                <td class="py-4 text-right font-black text-slate-900 text-xl text-primary border-b-4 border-primary inline-block w-full"><span class="out-symbol">$</span><span id="out-total">1,500.00</span></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <!-- Payment Info & Signatures -->
+                    <div class="mt-auto grid grid-cols-2 gap-8 items-end">
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Payment Method</p>
+                                <p class="text-sm font-bold text-slate-800" id="out-payment-method">Zelle</p>
+                            </div>
+                        </div>
+                        <div class="text-right flex flex-col items-end">
+                            <div class="w-48 border-b border-slate-800 h-12 mb-2"></div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Authorized Signature</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <!-- Global Footer -->
-    <footer class="bg-white border-t border-slate-200 py-6 mt-12 no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-            <div>&copy; 2026 SwiftReceipt Engine. Built for zero-latency, high-performance offline generation.</div>
-            <div class="flex space-x-6">
-                <a href="#" class="hover:text-slate-600 transition">KRA / TRA Compliance Guidelines</a>
-                <a href="#" class="hover:text-slate-600 transition">Developer Sandbox API</a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Interactive JS Core Logic -->
     <script>
-        // Set standard baseline date
-        document.getElementById('input-date').valueAsDate = new Date();
+        const countryData = {
+            "USA": { lang: "English", symbol: "$", payments: ["Credit Card", "Bank Transfer", "Zelle", "Cash"] },
+            "Canada": { lang: "English/French", symbol: "$", payments: ["Interac e-Transfer", "Credit Card", "Cash"] },
+            "UK": { lang: "English", symbol: "£", payments: ["BACS Transfer", "Direct Debit", "Cash"] },
+            "France": { lang: "French", symbol: "€", payments: ["Carte Bancaire", "SEPA Transfer", "Cash"] },
+            "Germany": { lang: "German", symbol: "€", payments: ["SEPA Überweisung", "Giropay", "Cash"] },
+            "Italy": { lang: "Italian", symbol: "€", payments: ["Bonifico Bancario", "Satispay", "Cash"] },
+            "Brazil": { lang: "Portuguese", symbol: "R$", payments: ["Pix", "Boleto", "Cash"] },
+            "Indonesia": { lang: "Indonesian", symbol: "Rp", payments: ["Bank Transfer", "GoPay", "Cash"] },
+            "Malaysia": { lang: "Malay", symbol: "RM", payments: ["DuitNow", "Bank Transfer", "Cash"] },
+            "India": { lang: "English/Hindi", symbol: "₹", payments: ["UPI", "NEFT/RTGS", "Cash"] },
+            "China": { lang: "Mandarin", symbol: "¥", payments: ["WeChat Pay", "Alipay", "Cash"] },
+            "Japan": { lang: "Japanese", symbol: "¥", payments: ["Bank Transfer", "PayPay", "Cash"] },
+            "Kenya": { lang: "English/Swahili", symbol: "KSh", payments: ["M-Pesa", "Bank Transfer", "Cash"] },
+            "Tanzania": { lang: "Swahili", symbol: "TSh", payments: ["M-Pesa", "Tigo Pesa", "Cash"] },
+            "South Africa": { lang: "English", symbol: "R", payments: ["EFT", "SnapScan", "Cash"] },
+            "Nigeria": { lang: "English", symbol: "₦", payments: ["Bank Transfer", "POS", "Cash"] },
+            "Ghana": { lang: "English", symbol: "GH₵", payments: ["Mobile Money", "Cash"] },
+            "Mexico": { lang: "Spanish", symbol: "$", payments: ["SPEI Transfer", "Efectivo"] },
+            "Yemen": { lang: "Arabic", symbol: "﷼", payments: ["Bank Transfer", "Cash"] },
+            "Turkiye": { lang: "Turkish", symbol: "₺", payments: ["EFT", "Cash"] },
+            "Belgium": { lang: "Dutch/French", symbol: "€", payments: ["Bancontact", "Cash"] },
+            "Bangladesh": { lang: "Bengali", symbol: "৳", payments: ["bKash", "Cash"] },
+            "Pakistan": { lang: "Urdu", symbol: "₨", payments: ["EasyPaisa", "Cash"] },
+            "Egypt": { lang: "Arabic", symbol: "E£", payments: ["InstaPay", "Cash"] },
+            "South Korea": { lang: "Korean", symbol: "₩", payments: ["KakaoPay", "Cash"] },
+            "Thailand": { lang: "Thai", symbol: "฿", payments: ["PromptPay", "Cash"] },
+            "Singapore": { lang: "English", symbol: "S$", payments: ["PayNow", "Cash"] },
+            "Kuwait": { lang: "Arabic", symbol: "KD", payments: ["K-Net", "Cash"] },
+            "Bahrain": { lang: "Arabic", symbol: "BD", payments: ["BenefitPay", "Cash"] },
+            "UAE": { lang: "English/Arabic", symbol: "AED", payments: ["Bank Transfer", "Cash"] },
+            "Oman": { lang: "Arabic", symbol: "OMR", payments: ["Bank Transfer", "Cash"] },
+            "Saudi Arabia": { lang: "Arabic", symbol: "SAR", payments: ["STC Pay", "Cash"] },
+            "Qatar": { lang: "Arabic", symbol: "QAR", payments: ["Bank Transfer", "Cash"] },
+            "Ethiopia": { lang: "Amharic", symbol: "Br", payments: ["Telebirr", "Cash"] },
+            "Poland": { lang: "Polish", symbol: "zł", payments: ["BLIK", "Cash"] },
+            "Portugal": { lang: "Portuguese", symbol: "€", payments: ["MB Way", "Cash"] },
+            "Spain": { lang: "Spanish", symbol: "€", payments: ["Bizum", "Cash"] },
+            "Netherlands": { lang: "Dutch", symbol: "€", payments: ["iDEAL", "Cash"] },
+            "Norway": { lang: "Norwegian", symbol: "kr", payments: ["Vipps", "Cash"] },
+            "Albania": { lang: "Albanian", symbol: "L", payments: ["Bank Transfer", "Cash"] }
+        };
 
-        // High Fidelity Dictionary configuration for all requested countries with specific currencies and regional localized payments
-        const countryProfiles = [
-            { id: "US", name: "USA", language: "English", symbol: "$", paymentMethods: ["Credit/Debit Card", "ACH Direct Deposit", "Paper Check", "Zelle", "Venmo", "Cash"] },
-            { id: "CA", name: "Canada", language: "English/French", symbol: "$", paymentMethods: ["Interac e-Transfer", "Credit/Debit Card", "Bank Draft", "Cash"] },
-            { id: "UK", name: "UK", language: "English", symbol: "£", paymentMethods: ["BACS Transfer", "Direct Debit", "CHAPS Payment", "Credit/Debit Card", "Cash"] },
-            { id: "FR", name: "France", language: "French", symbol: "€", paymentMethods: ["SEPA Direct Debit", "Carte Bancaire", "Virement Bancaire", "Chèque", "Cash"] },
-            { id: "DE", name: "Germany", language: "German", symbol: "€", paymentMethods: ["SEPA Überweisung", "Giropay", "Sofort", "Lastschrift", "Cash"] },
-            { id: "IT", name: "Italy", language: "Italian", symbol: "€", paymentMethods: ["Bonifico Bancario", "Postepay", "Bancomat Pay", "SEPA Debit", "Cash"] },
-            { id: "BR", name: "Brazil", language: "Portuguese", symbol: "R$", paymentMethods: ["Pix Instant Payment", "Boleto Bancário", "Cartão de Crédito", "Doc/Ted Bank Transfer"] },
-            { id: "ID", name: "Indonesia", language: "Indonesian", symbol: "Rp", paymentMethods: ["GoPay", "OVO", "Dana", "Virtual Account Transfer", "LinkAja", "Cash"] },
-            { id: "MY", name: "Malaysia", language: "Malay/English", symbol: "RM", paymentMethods: ["DuitNow", "Touch 'n Go eWallet", "FPX Bank Transfer", "Boost", "GrabPay"] },
-            { id: "IN", name: "India", language: "Hindi/English", symbol: "₹", paymentMethods: ["UPI (GPay / PhonePe)", "IMPS/NEFT Bank Transfer", "RuPay Card", "NetBanking", "Cash"] },
-            { id: "CN", name: "China", language: "Chinese", symbol: "¥", paymentMethods: ["Alipay", "WeChat Pay", "UnionPay SecurePay", "Digital Yuan (e-CNY)", "Bank Transfer"] },
-            { id: "JP", name: "Japan", language: "Japanese", symbol: "¥", paymentMethods: ["Conbini (Store Payment)", "Line Pay", "PayPay", "Bank Furikomi", "Suica/Pasmo"] },
-            { id: "KE", name: "Kenya", language: "Swahili/English", symbol: "KES", paymentMethods: ["M-Pesa Express", "Airtel Money", "Equity Equitel", "PesaLink Transfer", "Bank Transfer"] },
-            { id: "TZ", name: "Tanzania", language: "Swahili/English", symbol: "TZS", paymentMethods: ["M-Pesa (Vodacom)", "Tigo Pesa", "Airtel Money", "HaloPesa", "NMB/CRDB Bank", "Cash"] },
-            { id: "ZA", name: "South Africa", language: "English/Afrikaans", symbol: "R", paymentMethods: ["EFT Secure", "Ozow Instant Transfer", "PayFast", "Credit/Debit Card", "Cash"] },
-            { id: "NG", name: "Nigeria", language: "English", symbol: "₦", paymentMethods: ["Bank App Transfer", "USSD Code", "OPay Wallet", "Moniepoint", "Flutterwave Link", "Cash"] },
-            { id: "GH", name: "Ghana", language: "English", symbol: "GH₵", paymentMethods: ["MTN Mobile Money", "Telecel Cash", "AirtelTigo Money", "ExpressPay", "Cash"] },
-            // Remaining alphabetical ordered countries
-            { id: "AL", name: "Albania", language: "Albanian", symbol: "Lek", paymentMethods: ["Bank Transfer", "Cash Payment", "EasyPay"] },
-            { id: "BH", name: "Bahrain", language: "Arabic/English", symbol: "BD", paymentMethods: ["BenefitPay", "Benefit Credit", "Bank Wire"] },
-            { id: "BD", name: "Bangladesh", language: "Bengali", symbol: "৳", paymentMethods: ["bKash", "Nagad", "Rocket", "Bank Transfer"] },
-            { id: "BE", name: "Belgium", language: "Dutch/French", symbol: "€", paymentMethods: ["Bancontact", "SEPA Debit", "Payconiq"] },
-            { id: "EG", name: "Egypt", language: "Arabic", symbol: "EGP", paymentMethods: ["Fawry Pay", "InstaPay", "Vodafone Cash", "Bank Transfer"] },
-            { id: "ET", name: "Ethiopia", language: "Amharic/English", symbol: "ETB", paymentMethods: ["Telebirr", "CBE Birr", "Commercial Bank Transfer", "Cash"] },
-            { id: "KR", name: "South Korea", language: "Korean", symbol: "₩", paymentMethods: ["KakaoPay", "Toss Pay", "Naver Pay", "KB Bank Transfer"] },
-            { id: "KW", name: "Kuwait", language: "Arabic/English", symbol: "KD", paymentMethods: ["KNET Payment Gateway", "Credit Card", "Bank Transfer"] },
-            { id: "MX", name: "Mexico", language: "Spanish", symbol: "$", paymentMethods: ["SPEI Bank Transfer", "OXXO Pay", "CoDi Payment", "Card"] },
-            { id: "NL", name: "Netherlands", language: "Dutch", symbol: "€", paymentMethods: ["iDEAL", "SEPA Transfer", "Credit Card"] },
-            { id: "NO", name: "Norway", language: "Norwegian", symbol: "kr", paymentMethods: ["Vipps Transfer", "Bank BankID", "Credit Card"] },
-            { id: "OM", name: "Oman", language: "Arabic/English", symbol: "OMR", paymentMethods: ["Thawani Pay", "Pocket eWallet", "Bank Transfer"] },
-            { id: "PK", name: "Pakistan", language: "Urdu/English", symbol: "Rs", paymentMethods: ["EasyPaisa", "JazzCash", "Nayapay", "Raast Transfer", "Cash"] },
-            { id: "PL", name: "Poland", language: "Polish", symbol: "zł", paymentMethods: ["BLIK Mobile", "Przelewy24", "PKO Transfer"] },
-            { id: "PT", name: "Portugal", language: "Portuguese", symbol: "€", paymentMethods: ["Multibanco", "MB Way", "SEPA Direct Debit"] },
-            { id: "QA", name: "Qatar", language: "Arabic/English", symbol: "QR", paymentMethods: ["QPay Wallet", "Ooredoo Money", "Bank Transfer"] },
-            { id: "SA", name: "Saudi Arabia", language: "Arabic", symbol: "SAR", paymentMethods: ["MADA Card", "STC Pay", "Apple Pay", "Bank Transfer"] },
-            { id: "SG", name: "Singapore", language: "English/Mandarin", symbol: "S$", paymentMethods: ["PayNow", "GrabPay", "DBS/POSB Transfer", "NETS Card"] },
-            { id: "ES", name: "Spain", language: "Spanish", symbol: "€", paymentMethods: ["Bizum", "SEPA Debit", "Tarjeta de Crédito"] },
-            { id: "TH", name: "Thailand", language: "Thai", symbol: "฿", paymentMethods: ["PromptPay QR", "TrueMoney Wallet", "Kasikorn Transfer"] },
-            { id: "TR", name: "Turkiye", language: "Turkish", symbol: "₺", paymentMethods: ["BKM Express", "Papara", "Bank EFT Transfer"] },
-            { id: "AE", name: "UAE", language: "Arabic/English", symbol: "AED", paymentMethods: ["e& money", "Careem Pay", "Direct Bank Wire", "Apple Pay"] },
-            { id: "YE", name: "Yemen", language: "Arabic", symbol: "YR", paymentMethods: ["Kuraimi Express", "CAC Bank Wallet", "Cash"] }
-        ];
+        // Initialize defaults
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('in-date').value = today;
+        document.getElementById('out-receipt-no').innerText = Math.floor(10000 + Math.random() * 90000);
 
-        // Populate Country Dropdown on startup
-        const dropdown = document.getElementById('country-select');
-        countryProfiles.forEach(c => {
-            const option = document.createElement('option');
-            option.value = c.id;
-            option.textContent = `${c.name} (${c.language})`;
-            dropdown.appendChild(option);
+        // Populate Country Dropdown
+        const countrySelect = document.getElementById("country-select");
+        Object.keys(countryData).forEach(country => {
+            countrySelect.add(new Option(country, country));
         });
 
-        // Initialize Lucide Icons
-        lucide.createIcons();
-
-        // Handle Active changes
-        function updateCountryProfile() {
-            const selectedId = dropdown.value;
-            const profile = countryProfiles.find(c => c.id === selectedId);
-            if (!profile) return;
-
-            // Update local state currency symbol references
-            document.getElementById('currency-prefix').innerText = profile.symbol;
-            document.getElementById('currency-prefix-extra').innerText = profile.symbol;
-            document.getElementById('modal-currency-prefix') ? document.getElementById('modal-currency-prefix').innerText = profile.symbol : null;
-            document.getElementById('preview-lang-badge').innerText = `Language: ${profile.language}`;
-
-            // Populate localized payment methods dynamic select
-            const methodSelect = document.getElementById('input-payment-method');
-            methodSelect.innerHTML = '';
-            profile.paymentMethods.forEach(method => {
-                const opt = document.createElement('option');
-                opt.value = method;
-                opt.textContent = method;
-                methodSelect.appendChild(opt);
-            });
-
-            liveUpdate();
-        }
-
-        // Live Preview Renderer Core Engine
-        function liveUpdate() {
-            const selectedId = dropdown.value;
-            const profile = countryProfiles.find(c => c.id === selectedId);
-            const symbol = profile ? profile.symbol : "$";
-
-            const title = document.getElementById('input-title').value;
-            const number = document.getElementById('input-number').value;
-            const landlordName = document.getElementById('input-landlord-name').value;
-            const landlordAddress = document.getElementById('input-landlord-address').value;
-            const tenantName = document.getElementById('input-tenant-name').value;
-            const propertyUnit = document.getElementById('input-property-unit').value;
-            const notes = document.getElementById('input-notes').value;
-            const period = document.getElementById('input-period').value;
-
-            // Financial parsing
-            const baseAmount = parseFloat(document.getElementById('input-amount').value) || 0;
-            const extrasAmount = parseFloat(document.getElementById('input-extras').value) || 0;
-            const taxRate = parseFloat(document.getElementById('input-tax-rate').value) || 0;
-
-            const subtotal = baseAmount + extrasAmount;
-            const calculatedTax = (subtotal * (taxRate / 100));
-            const grandTotal = subtotal + calculatedTax;
-
-            // Formatted Date conversion
-            const rawDate = document.getElementById('input-date').value;
-            let formattedDate = "N/A";
-            if (rawDate) {
-                const d = new Date(rawDate);
-                formattedDate = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            }
-
-            // Sync with elements
-            document.getElementById('preview-title').innerText = title;
-            document.getElementById('preview-number').innerText = number;
-            document.getElementById('preview-date').innerText = formattedDate;
-            document.getElementById('preview-landlord-name').innerText = landlordName;
-            document.getElementById('preview-landlord-address').innerText = landlordAddress;
-            document.getElementById('preview-tenant-name').innerText = tenantName;
-            document.getElementById('preview-property-unit').innerText = propertyUnit;
-            document.getElementById('preview-notes').innerText = notes;
+        // Real-time Update Logic
+        function updatePreview() {
+            // Text Inputs
+            document.getElementById('out-landlord').innerText = document.getElementById('in-landlord').value || 'Landlord Name';
+            document.getElementById('out-tenant').innerText = document.getElementById('in-tenant').value || 'Tenant Name';
+            document.getElementById('out-address').innerText = document.getElementById('in-address').value || 'Property Address';
             
-            // Sync items row
-            document.getElementById('desc-base').innerText = `Base Accommodation Rent (${period})`;
-            document.getElementById('preview-base-amount').innerText = `${symbol} ${baseAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            document.getElementById('preview-extras-amount').innerText = `${symbol} ${extrasAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            // Dates
+            document.getElementById('out-date').innerText = document.getElementById('in-date').value || 'Date';
+            document.getElementById('out-period-from').innerText = document.getElementById('in-period-from').value || 'Start Date';
+            document.getElementById('out-period-to').innerText = document.getElementById('in-period-to').value || 'End Date';
 
-            // Handle optional Taxes display reactively
-            const taxLine = document.getElementById('tax-line-container');
-            if (taxRate > 0) {
-                taxLine.classList.remove('hidden');
-                document.getElementById('tax-rate-badge').innerText = taxRate;
-                document.getElementById('preview-tax-amount').innerText = `${symbol} ${calculatedTax.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            } else {
-                taxLine.classList.add('hidden');
-            }
+            // Financials
+            const amount = parseFloat(document.getElementById('in-amount').value) || 0;
+            const fees = parseFloat(document.getElementById('in-fees').value) || 0;
+            
+            document.getElementById('out-amount').innerText = amount.toFixed(2);
+            document.getElementById('out-fees').innerText = fees.toFixed(2);
+            document.getElementById('out-total').innerText = (amount + fees).toFixed(2);
 
-            document.getElementById('preview-grand-total').innerText = `${symbol} ${grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-
-            const paymentMethod = document.getElementById('input-payment-method').value;
-            const txRef = document.getElementById('input-tx-ref').value;
-            document.getElementById('preview-payment-method').innerHTML = `<i data-lucide="wallet" class="w-3.5 h-3.5 text-indigo-500"></i> ${paymentMethod}`;
-            document.getElementById('preview-tx-ref').innerText = txRef || "N/A";
-
-            // Re-render dynamically generated Lucide Icons inside updated markup
-            lucide.createIcons();
+            // Localization Updates
+            const currentCountry = countrySelect.value;
+            const data = countryData[currentCountry];
+            
+            document.getElementById('language-display').value = data.lang;
+            document.getElementById('out-payment-method').innerText = document.getElementById('payment-method-select').value;
+            
+            // Update currency symbols across the page
+            document.querySelectorAll('.input-symbol, .out-symbol').forEach(el => el.innerText = data.symbol);
         }
 
-        // Logo Upload Handler
-        function handleLogoUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const container = document.getElementById('preview-logo-container');
-                    const img = document.getElementById('preview-logo');
-                    img.src = e.target.result;
-                    container.classList.remove('hidden');
-                }
-                reader.readAsDataURL(file);
-            }
-        }
+        // Handle Country Change (Updates payments dropdown)
+        countrySelect.addEventListener('change', () => {
+            const payments = countryData[countrySelect.value].payments;
+            const paySelect = document.getElementById('payment-method-select');
+            paySelect.innerHTML = '';
+            payments.forEach(p => paySelect.add(new Option(p, p)));
+            updatePreview();
+        });
 
-        function removeLogo() {
-            document.getElementById('preview-logo-container').classList.add('hidden');
-            document.getElementById('preview-logo').src = "";
-            document.getElementById('input-logo').value = "";
-        }
+        // Attach listeners to all inputs
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', updatePreview);
+        });
 
-        // Sharing actions handlers
-        function handlePrint() {
-            window.print();
-        }
-
-        function copyShareableLink() {
-            navigator.clipboard.writeText(window.location.href);
-            alert("Dynamic view/edit Link copied successfully to clipboard!");
-        }
-
-        function shareWhatsApp() {
-            const number = document.getElementById('preview-number').innerText;
-            const amount = document.getElementById('preview-grand-total').innerText;
-            const tenant = document.getElementById('preview-tenant-name').innerText;
-            const text = encodeURIComponent(`Hello ${tenant}, here is your payment receipt: ID ${number} for total amount ${amount}. Thank you.`);
-            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-        }
-
-        function triggerFakeDownload() {
-            alert("Your high-quality offline receipt has been packaged! Direct client system download completed.");
-        }
-
-        // Bootstrap on page load
-        updateCountryProfile();
+        // Trigger initial setup
+        countrySelect.dispatchEvent(new Event('change'));
+        updatePreview();
     </script>
 </body>
 </html>
