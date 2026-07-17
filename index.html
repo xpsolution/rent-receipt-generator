@@ -3,90 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProReceipt | Receipt Generator</title>
+    <title>ProReceipt | Professional Receipt Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .feature-card { transition: transform 0.2s; }
+        .feature-card:hover { transform: translateY(-5px); }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
 
-    <div class="max-w-6xl mx-auto p-6">
-        <!-- Plans Section -->
-        <div class="grid md:grid-cols-2 gap-8 mb-12">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 py-6">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h1 class="text-3xl font-extrabold text-slate-900">ProReceipt Generator</h1>
+            <p class="text-slate-500 mt-2">Professional Landlord & Tenant Solutions</p>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-12">
+        
+        <!-- Subscription Tiers -->
+        <div class="grid md:grid-cols-2 gap-8 mb-16">
             <!-- Guest -->
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <h2 class="text-xl font-bold mb-4">Guest / No signup</h2>
-                <ul class="space-y-2 text-sm text-slate-600 mb-6">
-                    <li>• Limited to 3 receipts per month</li>
-                    <li>• Download, Print, Copy link for sharing on WhatsApp, etc</li>
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm feature-card">
+                <h2 class="text-2xl font-bold mb-6 text-slate-800">Guest / No signup</h2>
+                <ul class="space-y-4 text-slate-600 mb-8">
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-blue-600"></i> Limited to 3 receipts per month</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-blue-600"></i> Download, Print, Copy link for sharing on WhatsApp, etc</li>
                 </ul>
             </div>
             <!-- Pro -->
-            <div class="bg-slate-900 text-white p-6 rounded-xl shadow-lg">
-                <h2 class="text-xl font-bold mb-4">Pro Unlimited</h2>
-                <ul class="space-y-2 text-sm text-slate-300 mb-6">
-                    <li>• Unlimited receipts</li>
-                    <li>• Complete saved history</li>
-                    <li>• Tenant/Property Records & Quick Duplication active</li>
-                    <li>• Add Logo</li>
-                    <li>• Download, Print, Copy link for sharing on WhatsApp, etc</li>
+            <div class="bg-slate-900 p-8 rounded-2xl shadow-xl feature-card text-white">
+                <h2 class="text-2xl font-bold mb-6 text-white">Pro Unlimited</h2>
+                <ul class="space-y-4 text-slate-300 mb-8">
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-star text-yellow-400"></i> Unlimited receipts</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-star text-yellow-400"></i> Complete saved history</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-star text-yellow-400"></i> Tenant/Property Records & Quick Duplication active</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-star text-yellow-400"></i> Add Logo</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-star text-yellow-400"></i> Download, Print, Copy link for sharing on WhatsApp, etc</li>
                 </ul>
             </div>
         </div>
 
-        <!-- Generator Section -->
-        <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
-            <select id="country-select" class="w-full p-3 border rounded mb-6"></select>
-            
-            <div id="receipt-preview" class="p-8 border border-slate-300 bg-white max-w-2xl mx-auto">
-                <h1 class="text-2xl font-bold mb-4">RENT RECEIPT</h1>
-                <div id="receipt-content" class="space-y-2">
-                    <p>Date: <span id="out-date"></span></p>
-                    <p>Country: <span id="out-country"></span></p>
-                    <p>Payment Method: <span id="out-payment"></span></p>
+        <!-- Generator UI -->
+        <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <h3 class="text-xl font-bold mb-6">Create New Receipt</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <label class="block font-semibold mb-2">Select Country & Language</label>
+                    <select id="country-select" class="w-full p-4 border border-slate-300 rounded-lg bg-slate-50"></select>
+                    <p id="lang-display" class="mt-2 text-sm text-slate-500"></p>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-2">Payment Method</label>
+                    <select id="payment-select" class="w-full p-4 border border-slate-300 rounded-lg bg-slate-50"></select>
                 </div>
             </div>
 
-            <!-- Bottom Sharing Links -->
-            <div class="flex flex-wrap gap-4 mt-8 justify-center border-t pt-8">
-                <button onclick="shareWhatsApp()" class="px-4 py-2 bg-green-600 text-white rounded">WhatsApp</button>
-                <button onclick="copyLink()" class="px-4 py-2 bg-slate-600 text-white rounded">Copy Link</button>
-                <button onclick="downloadPDF()" class="px-4 py-2 bg-slate-800 text-white rounded">Download</button>
-                <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded">Print/Save PDF</button>
+            <!-- Sharing Footer -->
+            <div class="mt-12 flex flex-wrap gap-4 pt-8 border-t border-slate-100 justify-center">
+                <button class="bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+                <button class="bg-slate-200 text-slate-800 px-6 py-3 rounded-lg font-bold flex items-center gap-2"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                <button class="bg-slate-800 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"><i class="fa-solid fa-download"></i> Download</button>
+                <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"><i class="fa-solid fa-print"></i> Print/Save PDF</button>
             </div>
         </div>
     </div>
 
     <script>
-        const countryData = {
-            "USA": "English", "UK": "English", "Canada": "English", "Mexico": "Spanish", "Kenya": "English",
-            "Tanzania": "Swahili", "Yemen": "Arabic", "Turkiye": "Turkish", "Belgium": "Dutch/French",
-            "France": "French", "Germany": "German", "Italy": "Italian", "India": "Hindi/English",
-            "Indonesia": "Indonesian", "Malaysia": "Malay", "Bangladesh": "Bengali", "Pakistan": "Urdu",
-            "Ghana": "English", "Nigeria": "English", "Egypt": "Arabic", "China": "Mandarin",
-            "Japan": "Japanese", "South Korea": "Korean", "Thailand": "Thai", "Singapore": "English",
-            "Kuwait": "Arabic", "Bahrain": "Arabic", "UAE": "Arabic", "Oman": "Arabic",
-            "Saudi Arabia": "Arabic", "Qatar": "Arabic", "South Africa": "English", "Ethiopia": "Amharic",
-            "Poland": "Polish", "Portugal": "Portuguese", "Spain": "Spanish", "Netherlands": "Dutch",
-            "Norway": "Norwegian", "Albania": "Albanian", "Brazil": "Portuguese", "Albania (2)": "Albanian"
-        };
-
-        const order = ["USA", "Canada", "UK", "France", "Germany", "Italy", "Brazil", "Indonesia", "Malaysia", "India", "China", "Japan", "Kenya", "Tanzania", "South Africa", "Nigeria", "Ghana"];
-        const allCountries = [...new Set([...order, ...Object.keys(countryData)])];
+        const data = [
+            { name: "USA", lang: "English", payments: ["Credit Card", "ACH", "Zelle", "Venmo", "Cash"] },
+            { name: "Canada", lang: "English/French", payments: ["Interac", "Credit Card", "Cash"] },
+            { name: "UK", lang: "English", payments: ["BACS", "Direct Debit", "Cash"] },
+            { name: "France", lang: "French", payments: ["Carte Bancaire", "SEPA", "Cash"] },
+            { name: "Germany", lang: "German", payments: ["SEPA", "Giropay", "Cash"] },
+            { name: "Italy", lang: "Italian", payments: ["Bonifico", "Satispay", "Cash"] },
+            { name: "Brazil", lang: "Portuguese", payments: ["Pix", "Boleto", "Cash"] },
+            { name: "Indonesia", lang: "Indonesian", payments: ["Bank Transfer", "GoPay", "Cash"] },
+            { name: "Malaysia", lang: "Malay", payments: ["DuitNow", "FPX", "Cash"] },
+            { name: "India", lang: "Hindi/English", payments: ["UPI", "NEFT", "Cash"] },
+            { name: "China", lang: "Mandarin", payments: ["Alipay", "WeChat", "Cash"] },
+            { name: "Japan", lang: "Japanese", payments: ["Bank Transfer", "PayPay", "Cash"] },
+            { name: "Kenya", lang: "English/Swahili", payments: ["M-Pesa", "Airtel Money", "Cash"] },
+            { name: "Tanzania", lang: "Swahili", payments: ["M-Pesa", "Tigo Pesa", "Cash"] },
+            { name: "South Africa", lang: "English", payments: ["EFT", "SnapScan", "Cash"] },
+            { name: "Nigeria", lang: "English", payments: ["Bank Transfer", "USSD", "Cash"] },
+            { name: "Ghana", lang: "English", payments: ["Mobile Money", "Cash"] },
+            { name: "Mexico", lang: "Spanish", payments: ["SPEI", "OXXO", "Cash"] },
+            { name: "Yemen", lang: "Arabic", payments: ["Bank Transfer", "Cash"] },
+            { name: "Turkiye", lang: "Turkish", payments: ["EFT", "Cash"] },
+            { name: "Belgium", lang: "Dutch/French", payments: ["Bancontact", "Cash"] },
+            { name: "Bangladesh", lang: "Bengali", payments: ["bKash", "Nagad", "Cash"] },
+            { name: "Pakistan", lang: "Urdu", payments: ["EasyPaisa", "JazzCash", "Cash"] },
+            { name: "Egypt", lang: "Arabic", payments: ["Fawry", "InstaPay", "Cash"] },
+            { name: "South Korea", lang: "Korean", payments: ["KakaoPay", "Toss", "Cash"] },
+            { name: "Thailand", lang: "Thai", payments: ["PromptPay", "TrueMoney", "Cash"] },
+            { name: "Singapore", lang: "English/Malay/Mandarin", payments: ["PayNow", "GIRO", "Cash"] },
+            { name: "Kuwait", lang: "Arabic", payments: ["K-Net", "Cash"] },
+            { name: "Bahrain", lang: "Arabic", payments: ["BenefitPay", "Cash"] },
+            { name: "UAE", lang: "Arabic/English", payments: ["Bank Transfer", "Apple Pay", "Cash"] },
+            { name: "Oman", lang: "Arabic", payments: ["Bank Transfer", "Cash"] },
+            { name: "Saudi Arabia", lang: "Arabic", payments: ["Mada", "STC Pay", "Cash"] },
+            { name: "Qatar", lang: "Arabic", payments: ["Bank Transfer", "Cash"] },
+            { name: "Ethiopia", lang: "Amharic", payments: ["Telebirr", "Cash"] },
+            { name: "Poland", lang: "Polish", payments: ["BLIK", "Cash"] },
+            { name: "Portugal", lang: "Portuguese", payments: ["MB Way", "Cash"] },
+            { name: "Spain", lang: "Spanish", payments: ["Bizum", "Cash"] },
+            { name: "Netherlands", lang: "Dutch", payments: ["iDEAL", "Cash"] },
+            { name: "Norway", lang: "Norwegian", payments: ["Vipps", "Cash"] },
+            { name: "Albania", lang: "Albanian", payments: ["Bank Transfer", "Cash"] }
+        ];
 
         const select = document.getElementById('country-select');
-        allCountries.forEach(c => select.add(new Option(c, c)));
+        const paySelect = document.getElementById('payment-select');
+        
+        data.forEach(item => {
+            select.add(new Option(item.name, item.name));
+        });
 
-        function update() {
-            document.getElementById('out-country').innerText = select.value;
-            document.getElementById('out-date').innerText = new Date().toLocaleDateString();
-        }
-        select.addEventListener('change', update);
-        update();
-
-        function shareWhatsApp() { window.open('https://wa.me/?text=Check%20out%20my%20receipt'); }
-        function copyLink() { navigator.clipboard.writeText(window.location.href); alert('Copied!'); }
-        function downloadPDF() { html2pdf().from(document.getElementById('receipt-preview')).save(); }
+        select.addEventListener('change', (e) => {
+            const country = data.find(c => c.name === e.target.value);
+            document.getElementById('lang-display').innerText = `Default Language: ${country.lang}`;
+            paySelect.innerHTML = '';
+            country.payments.forEach(p => paySelect.add(new Option(p, p)));
+        });
+        
+        select.dispatchEvent(new Event('change'));
     </script>
 </body>
 </html>
