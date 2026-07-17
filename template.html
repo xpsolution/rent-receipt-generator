@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property & Rent Receipt Generator</title>
+    <title>PropReceipt Pro - Property & Rent Receipt Generator</title>
     <style>
         :root {
             --primary: #2b6cb0;
@@ -14,6 +14,7 @@
             --card-bg: #ffffff;
             --text: #2d3748;
             --border: #e2e8f0;
+            --accent: #ed8936;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -23,14 +24,100 @@
             padding: 20px;
             line-height: 1.5;
         }
+        /* Premium Header & Logo */
+        .app-header {
+            max-width: 1200px;
+            margin: 0 auto 24px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary), #4299e1);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 6px rgba(66, 153, 225, 0.3);
+        }
+        .logo-text h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #1a202c;
+            letter-spacing: -0.5px;
+        }
+        .logo-text span {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Pro vs Guest Badging */
+        .auth-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .badge-guest {
+            background-color: #feebc8;
+            color: #c05621;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid #fbd38d;
+        }
+        .badge-pro {
+            background: linear-gradient(135deg, #d69e2e, #ecc94b);
+            color: #744210;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid #ecc94b;
+            display: none;
+        }
+        .btn-upgrade {
+            background-color: var(--accent);
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-upgrade:hover {
+            background-color: #dd6b20;
+        }
+
+        /* App Layout Grid */
         .app-container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: 1fr;
             gap: 24px;
         }
-        @media(min-width: 768px) {
+        @media(min-width: 992px) {
             .app-container {
                 grid-template-columns: 1.2fr 1fr;
             }
@@ -39,25 +126,41 @@
             background: var(--card-bg);
             padding: 24px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border);
         }
         h2 {
             margin-top: 0;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: #1a202c;
             border-bottom: 2px solid var(--border);
             padding-bottom: 12px;
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        @media(min-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .full-width {
+                grid-column: span 2;
+            }
         }
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 4px;
         }
         label {
             display: block;
             font-weight: 600;
             margin-bottom: 6px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #4a5568;
         }
         select, input, textarea {
@@ -75,6 +178,8 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
         }
+
+        /* Payment Indicator Badges */
         .payment-list {
             background-color: #f8fafc;
             border: 1px solid var(--border);
@@ -90,19 +195,32 @@
             color: #2b6cb0;
             padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
+            font-size: 0.8rem;
+            font-weight: 600;
             border: 1px solid #bee3f8;
+        }
+
+        /* Action Buttons */
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        @media(min-width: 600px) {
+            .btn-row {
+                grid-template-columns: 1fr 1fr;
+            }
         }
         .btn {
             width: 100%;
             padding: 12px;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.95rem;
+            font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
             border: none;
-            transition: background-color 0.15s ease;
+            transition: all 0.15s ease;
             text-align: center;
             display: inline-flex;
             align-items: center;
@@ -120,43 +238,77 @@
         .btn-whatsapp {
             background-color: var(--success);
             color: white;
-            margin-top: 12px;
         }
         .btn-whatsapp:hover {
             background-color: var(--success-hover);
         }
+
+        /* Guest Usage Bar */
+        .usage-container {
+            margin-top: 16px;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e0;
+        }
+        .usage-text {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #718096;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .usage-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .usage-fill {
+            height: 100%;
+            width: 40%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
         /* Preview Paper Styles */
         .receipt-preview {
             background: #fff;
             border: 1px solid #cbd5e0;
-            padding: 30px;
+            padding: 40px;
             border-radius: 4px;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
             font-family: 'Courier New', Courier, monospace;
             color: #000;
+            position: relative;
         }
         .receipt-header {
             text-align: center;
             border-bottom: 2px dashed #000;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
         }
         .receipt-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
         }
         .receipt-total {
             border-top: 2px dashed #000;
             border-bottom: 2px dashed #000;
-            padding: 8px 0;
+            padding: 12px 0;
             font-weight: bold;
-            font-size: 1.1rem;
-            margin-top: 15px;
+            font-size: 1.25rem;
+            margin-top: 20px;
         }
+
+        /* Popups / Toast */
         .toast {
             visibility: hidden;
-            min-width: 250px;
+            min-width: 280px;
             background-color: #2d3748;
             color: #fff;
             text-align: center;
@@ -168,94 +320,190 @@
             bottom: 30px;
             transform: translateX(-50%);
             font-size: 14px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         .toast.show {
             visibility: visible;
             animation: fadein 0.5s, fadeout 0.5s 3.5s;
         }
+
+        /* Simulated Pro Upgrade Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        .modal h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #1a202c;
+        }
+        .modal p {
+            color: #4a5568;
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+        .pricing-grid {
+            background: #ebf8ff;
+            border: 2px solid #bee3f8;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
         @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
         @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
     </style>
 </head>
 <body>
 
+<!-- Global Header with Logo -->
+<div class="app-header">
+    <div class="logo-container">
+        <div class="logo-icon">P</div>
+        <div class="logo-text">
+            <h1>PropReceipt</h1>
+            <span>Property & Rent Portal</span>
+        </div>
+    </div>
+    <div class="auth-status">
+        <span id="guestBadge" class="badge-guest">Guest Account</span>
+        <span id="proBadge" class="badge-pro">PRO Partner</span>
+        <button id="upgradeHeaderBtn" class="btn-upgrade" onclick="openUpgradeModal()">Go Pro</button>
+    </div>
+</div>
+
 <div class="app-container">
-    <!-- Form Inputs Card -->
+    <!-- Configuration & Form Inputs -->
     <div class="card">
-        <h2>Receipt Configuration</h2>
+        <h2>
+            <span>Receipt Configuration</span>
+            <span style="font-size: 0.8rem; color: #718096; font-weight: normal;">System Setup</span>
+        </h2>
         
-        <div class="form-group">
-            <label for="countrySelect">Target Country</label>
-            <select id="countrySelect" onchange="handleCountryChange()">
-                <option value="KE">Kenya</option>
-                <option value="TZ">Tanzania</option>
-                <option value="ET">Ethiopia</option>
-                <option value="ES">Spain</option>
-                <option value="BE">Belgium</option>
-                <option value="NL">Netherlands</option>
-                <option value="OM">Oman</option>
-                <option value="AE">UAE</option>
-                <option value="EG">Egypt</option>
-                <option value="TR">Turkiye</option>
-                <option value="YE">Yemen</option>
-                <option value="CN">China</option>
-                <option value="KR">South Korea</option>
-                <option value="BD">Bangladesh</option>
-                <option value="PL">Poland</option>
-                <option value="PK">Pakistan</option>
-                <option value="PH">Philippines</option>
-                <option value="SG">Singapore</option>
-            </select>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="countrySelect">Target Country</label>
+                <select id="countrySelect" onchange="handleCountryChange()">
+                    <option value="KE">Kenya</option>
+                    <option value="TZ">Tanzania</option>
+                    <option value="ET">Ethiopia</option>
+                    <option value="ES">Spain</option>
+                    <option value="BE">Belgium</option>
+                    <option value="NL">Netherlands</option>
+                    <option value="OM">Oman</option>
+                    <option value="AE">UAE</option>
+                    <option value="EG">Egypt</option>
+                    <option value="TR">Turkiye</option>
+                    <option value="YE">Yemen</option>
+                    <option value="CN">China</option>
+                    <option value="KR">South Korea</option>
+                    <option value="BD">Bangladesh</option>
+                    <option value="PL">Poland</option>
+                    <option value="PK">Pakistan</option>
+                    <option value="PH">Philippines</option>
+                    <option value="SG">Singapore</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="langInput">Default Regional Language</label>
+                <input type="text" id="langInput" readonly>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Regional Payment Networks Available</label>
+                <div id="paymentOptionsContainer" class="payment-list"></div>
+            </div>
+
+            <div class="full-width" style="border-top: 1px solid var(--border); margin: 10px 0;"></div>
+
+            <!-- Landlord Information -->
+            <div class="form-group">
+                <label for="landlordName">Landlord / Company Name</label>
+                <input type="text" id="landlordName" value="Blue Heights Properties Ltd" oninput="updateReceipt()">
+            </div>
+
+            <div class="form-group">
+                <label for="receiptNumber">Receipt Number</label>
+                <input type="text" id="receiptNumber" value="REC-2026-008" oninput="updateReceipt()">
+            </div>
+
+            <!-- Tenant Details -->
+            <div class="form-group">
+                <label for="tenantName">Tenant Name</label>
+                <input type="text" id="tenantName" value="John Doe" oninput="updateReceipt()">
+            </div>
+
+            <div class="form-group">
+                <label for="propertyName">Property / Unit Address</label>
+                <input type="text" id="propertyName" value="Apartment 4B, Blue Heights" oninput="updateReceipt()">
+            </div>
+
+            <div class="form-group">
+                <label for="rentAmount">Rent Amount</label>
+                <input type="number" id="rentAmount" value="1200" oninput="updateReceipt()">
+            </div>
+
+            <div class="form-group">
+                <label for="paymentMethod">Payment Method</label>
+                <select id="paymentMethod" onchange="updateReceipt()">
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="langInput">Default Regional Language</label>
-            <input type="text" id="langInput" readonly>
+        <!-- Interactive Guest Limit Bar -->
+        <div class="usage-container" id="guestUsageContainer">
+            <div class="usage-text">
+                <span>Guest Plan Receipt Usage</span>
+                <span id="usageCount">2 of 5 Generated</span>
+            </div>
+            <div class="usage-bar">
+                <div id="usageFill" class="usage-fill" style="width: 40%;"></div>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label>Payment Networks Available</label>
-            <div id="paymentOptionsContainer" class="payment-list"></div>
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="handlePrintReceipt()">Print / Save PDF</button>
+            <button id="whatsappBtn" class="btn btn-whatsapp" onclick="copyAndOpenWhatsApp()">
+                Share via WhatsApp
+            </button>
         </div>
-
-        <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
-
-        <div class="form-group">
-            <label for="tenantName">Tenant Name</label>
-            <input type="text" id="tenantName" value="John Doe" oninput="updateReceipt()">
-        </div>
-
-        <div class="form-group">
-            <label for="propertyName">Property / Unit Address</label>
-            <input type="text" id="propertyName" value="Apartment 4B, Blue Heights" oninput="updateReceipt()">
-        </div>
-
-        <div class="form-group">
-            <label for="rentAmount">Rent Amount</label>
-            <input type="number" id="rentAmount" value="1200" oninput="updateReceipt()">
-        </div>
-
-        <div class="form-group">
-            <label for="paymentMethod">Select Payment Method</label>
-            <select id="paymentMethod" onchange="updateReceipt()">
-                <!-- Options populated dynamically based on country selection -->
-            </select>
-        </div>
-
-        <button class="btn btn-primary" onclick="window.print()">Print / Download PDF</button>
-        <button id="whatsappBtn" class="btn btn-whatsapp" onclick="copyAndOpenWhatsApp()">
-            Share Application via WhatsApp
-        </button>
     </div>
 
     <!-- Live Print Preview Paper -->
     <div>
-        <h2 style="margin-left: 10px;">Live Receipt Preview</h2>
+        <h2>Live Receipt Preview</h2>
         <div class="receipt-preview" id="receiptPaper">
             <div class="receipt-header">
-                <h3 style="margin: 0 0 5px 0;">RENT RECEIPT</h3>
-                <span id="receiptDate"></span>
+                <h3 id="previewLandlord" style="margin: 0 0 5px 0; text-transform: uppercase; font-size: 1.15rem;">Blue Heights Properties Ltd</h3>
+                <span style="font-size: 0.8rem; letter-spacing: 1px;">OFFICIAL RENT RECEIPT</span>
+            </div>
+            
+            <div class="receipt-row">
+                <span>Receipt No:</span>
+                <strong id="previewNo">REC-2026-008</strong>
+            </div>
+            <div class="receipt-row">
+                <span>Date Issued:</span>
+                <strong id="receiptDate"></strong>
             </div>
             <div class="receipt-row">
                 <span>Tenant:</span>
@@ -270,24 +518,41 @@
                 <strong id="previewMethod">M-Pesa</strong>
             </div>
             <div class="receipt-row">
-                <span>Country:</span>
+                <span>Country Location:</span>
                 <strong id="previewCountry">Kenya</strong>
             </div>
+            
             <div class="receipt-total receipt-row">
                 <span>Total Received:</span>
                 <span id="previewTotal">KES 1,200.00</span>
             </div>
-            <p style="text-align: center; font-size: 0.8rem; margin-top: 20px; font-style: italic;">
-                Thank you for your payment!
+            
+            <p style="text-align: center; font-size: 0.8rem; margin-top: 30px; font-style: italic;">
+                Thank you for choosing PropReceipt Pro!
             </p>
         </div>
     </div>
 </div>
 
-<div id="toast" class="toast">✔ Link copied successfully! Opening WhatsApp...</div>
+<div id="toast" class="toast">✔ Receipt Link copied! Opening WhatsApp...</div>
+
+<!-- Go Pro Upgrade Modal -->
+<div id="upgradeModal" class="modal-overlay">
+    <div class="modal">
+        <h3>Upgrade to PropReceipt PRO</h3>
+        <p>Unlock unlimited receipts, premium custom PDF layouts, SMS notifications, and automatic tenant tracking.</p>
+        <div class="pricing-grid">
+            <h4 style="margin: 0; font-size: 1.25rem; color: #2b6cb0;">Pro Plan</h4>
+            <div style="font-size: 1.8rem; font-weight: 800; margin: 10px 0;">$9.99<span style="font-size: 1rem; font-weight: normal;"> / month</span></div>
+            <p style="margin: 0; font-size: 0.8rem;">Billed monthly. Cancel anytime.</p>
+        </div>
+        <button class="btn btn-primary" onclick="completeProUpgrade()">Upgrade Now</button>
+        <button class="btn" style="background: none; color: #718096; margin-top: 8px;" onclick="closeUpgradeModal()">Keep Free Tier</button>
+    </div>
+</div>
 
 <script>
-    // Database of localized country languages, ISO currencies, and payment choices
+    // System database of countries, language contexts, and payment systems
     const regionalDatabase = {
         KE: { lang: "Kiswahili / English", currency: "KES", payments: ["M-Pesa", "Airtel Money", "Equity EazzyPay", "Credit/Debit Card"] },
         TZ: { lang: "Kiswahili", currency: "TZS", payments: ["M-Pesa", "Tigo Pesa", "Airtel Money", "HaloPesa", "Credit/Debit Card"] },
@@ -309,6 +574,9 @@
         SG: { lang: "English", currency: "SGD", payments: ["PayNow", "GrabPay", "NETS", "Credit/Debit Card"] }
     };
 
+    let receiptsCreated = 2;
+    let isPro = false;
+
     function handleCountryChange() {
         const select = document.getElementById("countrySelect");
         const countryCode = select.value;
@@ -318,22 +586,20 @@
         if (data) {
             document.getElementById("langInput").value = data.lang;
 
-            // Update badge indicators
+            // Generate layout badges
             const badgeContainer = document.getElementById("paymentOptionsContainer");
             badgeContainer.innerHTML = "";
             
-            // Re-populate select dropdown for transaction mode
+            // Re-populate select element
             const methodSelect = document.getElementById("paymentMethod");
             methodSelect.innerHTML = "";
 
             data.payments.forEach(option => {
-                // Render badge lists
                 const badge = document.createElement("span");
                 badge.className = "payment-badge";
                 badge.innerText = option;
                 badgeContainer.appendChild(badge);
 
-                // Render option choices
                 const opt = document.createElement("option");
                 opt.value = option;
                 opt.innerText = option;
@@ -350,30 +616,66 @@
         const countryName = countrySelect.options[countrySelect.selectedIndex].text;
         const data = regionalDatabase[countryCode];
 
-        // Format dates
+        // System date execution
         const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById("receiptDate").innerText = new Date().toLocaleDateString("en-US", dateOptions);
 
         // Map textual values
+        document.getElementById("previewLandlord").innerText = document.getElementById("landlordName").value || "PropReceipt Pro Co.";
+        document.getElementById("previewNo").innerText = document.getElementById("receiptNumber").value || "REC-2026-000";
         document.getElementById("previewTenant").innerText = document.getElementById("tenantName").value || "N/A";
         document.getElementById("previewProperty").innerText = document.getElementById("propertyName").value || "N/A";
         document.getElementById("previewMethod").innerText = document.getElementById("paymentMethod").value || "N/A";
         document.getElementById("previewCountry").innerText = countryName;
 
-        // Display regionalized monetary settings
+        // Render localized currency
         const rawAmount = parseFloat(document.getElementById("rentAmount").value) || 0;
         const formattedAmount = rawAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById("previewTotal").innerText = `${data.currency} ${formattedAmount}`;
     }
 
+    // Modal Operations
+    function openUpgradeModal() {
+        document.getElementById("upgradeModal").style.display = "flex";
+    }
+    function closeUpgradeModal() {
+        document.getElementById("upgradeModal").style.display = "none";
+    }
+    function completeProUpgrade() {
+        isPro = true;
+        document.getElementById("guestBadge").style.display = "none";
+        document.getElementById("proBadge").style.display = "inline-block";
+        document.getElementById("upgradeHeaderBtn").style.display = "none";
+        document.getElementById("guestUsageContainer").style.display = "none";
+        closeUpgradeModal();
+        alert("🎉 Thank you! You have successfully upgraded to PropReceipt PRO.");
+    }
+
+    // Receipt limits logic
+    function handlePrintReceipt() {
+        if (!isPro && receiptsCreated >= 5) {
+            alert("⚠️ You've reached your free guest limit of 5 receipts! Please upgrade to Pro to print or export unlimited copies.");
+            openUpgradeModal();
+            return;
+        }
+
+        if (!isPro) {
+            receiptsCreated++;
+            const fillPct = (receiptsCreated / 5) * 100;
+            document.getElementById("usageCount").innerText = `${receiptsCreated} of 5 Generated`;
+            document.getElementById("usageFill").style.width = `${fillPct}%`;
+        }
+
+        window.print();
+    }
+
+    // WhatsApp logic
     function copyAndOpenWhatsApp() {
         const shareLink = window.location.href;
-        const messageText = "Check out this Receipt and Property Management App: " + shareLink;
-        
+        const messageText = "Create professional receipts with PropReceipt Pro: " + shareLink;
         const btn = document.getElementById("whatsappBtn");
         const originalText = btn.innerText;
 
-        // Clipboard Copy Utility with Fallback
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(messageText)
                 .then(() => handleSuccessfulCopy(btn, originalText, messageText))
@@ -408,7 +710,7 @@
     }
 
     function handleSuccessfulCopy(btn, originalText, text) {
-        btn.innerText = "✓ Copied Link!";
+        btn.innerText = "✓ Copied!";
         btn.style.backgroundColor = "#128C7E";
         
         const toast = document.getElementById("toast");
@@ -418,13 +720,10 @@
             btn.innerText = originalText;
             btn.style.backgroundColor = "#25d366";
             toast.className = "toast";
-            
-            // WhatsApp API execution
             window.location.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(text);
         }, 1200);
     }
 
-    // Initialize layout configurations
     window.onload = function() {
         handleCountryChange();
     };
