@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property & Rent Receipt Generator</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --primary-hover: #1d4ed8;
+            --success: #25d366;
+            --success-hover: #128c7e;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        @media(min-width: 768px) {
+            .app-container {
+                grid-template-columns: 1.2fr 1fr;
+            }
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #1a202c;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            background-color: #fff;
+            transition: border-color 0.15s ease;
+        }
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        }
+        .payment-list {
+            background-color: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            min-height: 48px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .payment-badge {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid #bee3f8;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.15s ease;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-sizing: border-box;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        .btn-whatsapp {
+            background-color: var(--success);
+            color: white;
+            margin-top: 12px;
+        }
+        .btn-whatsapp:hover {
+            background-color: var(--success-hover);
+        }
+        /* Preview Paper Styles */
+        .receipt-preview {
+            background: #fff;
+            border: 1px solid #cbd5e0;
+            padding: 30px;
+            border-radius: 4px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            font-family: 'Courier New', Courier, monospace;
+            color: #000;
+        }
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px dashed #000;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .receipt-total {
+            border-top: 2px dashed #000;
+            border-bottom: 2px dashed #000;
+            padding: 8px 0;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 15px;
+        }
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #2d3748;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 3.5s;
+        }
+        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Form Inputs Card -->
+    <div class="card">
+        <h2>Receipt Configuration</h2>
+        
+        <div class="form-group">
+            <label for="countrySelect">Target Country</label>
+            <select id="countrySelect" onchange="handleCountryChange()">
+                <option value="KE">Kenya</option>
+                <option value="TZ">Tanzania</option>
+                <option value="ET">Ethiopia</option>
+                <option value="ES">Spain</option>
+                <option value="BE">Belgium</option>
+                <option value="NL">Netherlands</option>
+                <option value="OM">Oman</option>
+                <option value="AE">UAE</option>
+                <option value="EG">Egypt</option>
+                <option value="TR">Turkiye</option>
+                <option value="YE">Yemen</option>
+                <option value="CN">China</option>
+                <option value="KR">South Korea</option>
+                <option value="BD">Bangladesh</option>
+                <option value="PL">Poland</option>
+                <option value="PK">Pakistan</option>
+                <option value="PH">Philippines</option>
+                <option value="SG">Singapore</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="langInput">Default Regional Language</label>
+            <input type="text" id="langInput" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Payment Networks Available</label>
+            <div id="paymentOptionsContainer" class="payment-list"></div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+
+        <div class="form-group">
+            <label for="tenantName">Tenant Name</label>
+            <input type="text" id="tenantName" value="John Doe" oninput="updateReceipt()">
+        </div>
+
+        <div class="form-group">
+            <label for="propertyName">Property / Unit Address</label>
+            <input type="text" id="propertyName" value="Apartment 4B, Blue Heights" oninput="updateReceipt()">
+        </div>
+
+        <div class="form-group">
+            <label for="rentAmount">Rent Amount</label>
+            <input type="number" id="rentAmount" value="1200" oninput="updateReceipt()">
+        </div>
+
+        <div class="form-group">
+            <label for="paymentMethod">Select Payment Method</label>
+            <select id="paymentMethod" onchange="updateReceipt()">
+                <!-- Options populated dynamically based on country selection -->
+            </select>
+        </div>
+
+        <button class="btn btn-primary" onclick="window.print()">Print / Download PDF</button>
+        <button id="whatsappBtn" class="btn btn-whatsapp" onclick="copyAndOpenWhatsApp()">
+            Share Application via WhatsApp
+        </button>
+    </div>
+
+    <!-- Live Print Preview Paper -->
+    <div>
+        <h2 style="margin-left: 10px;">Live Receipt Preview</h2>
+        <div class="receipt-preview" id="receiptPaper">
+            <div class="receipt-header">
+                <h3 style="margin: 0 0 5px 0;">RENT RECEIPT</h3>
+                <span id="receiptDate"></span>
+            </div>
+            <div class="receipt-row">
+                <span>Tenant:</span>
+                <strong id="previewTenant">John Doe</strong>
+            </div>
+            <div class="receipt-row">
+                <span>Premises:</span>
+                <strong id="previewProperty">Apartment 4B, Blue Heights</strong>
+            </div>
+            <div class="receipt-row">
+                <span>Payment Mode:</span>
+                <strong id="previewMethod">M-Pesa</strong>
+            </div>
+            <div class="receipt-row">
+                <span>Country:</span>
+                <strong id="previewCountry">Kenya</strong>
+            </div>
+            <div class="receipt-total receipt-row">
+                <span>Total Received:</span>
+                <span id="previewTotal">KES 1,200.00</span>
+            </div>
+            <p style="text-align: center; font-size: 0.8rem; margin-top: 20px; font-style: italic;">
+                Thank you for your payment!
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast">✔ Link copied successfully! Opening WhatsApp...</div>
+
+<script>
+    // Database of localized country languages, ISO currencies, and payment choices
+    const regionalDatabase = {
+        KE: { lang: "Kiswahili / English", currency: "KES", payments: ["M-Pesa", "Airtel Money", "Equity EazzyPay", "Credit/Debit Card"] },
+        TZ: { lang: "Kiswahili", currency: "TZS", payments: ["M-Pesa", "Tigo Pesa", "Airtel Money", "HaloPesa", "Credit/Debit Card"] },
+        ET: { lang: "Amharic", currency: "ETB", payments: ["Telebirr", "CBE Birr", "Awash Birr", "Coopay-Ebirr", "Credit/Debit Card"] },
+        ES: { lang: "Español", currency: "EUR", payments: ["Bizum", "Credit/Debit Card"] },
+        BE: { lang: "Nederlands / Français", currency: "EUR", payments: ["Bancontact", "Payconiq", "Credit/Debit Card"] },
+        NL: { lang: "Nederlands", currency: "EUR", payments: ["iDEAL", "Tikkie", "Credit/Debit Card"] },
+        OM: { lang: "العربية (Arabic)", currency: "OMR", payments: ["OmanNet", "NBO Mobile Wallet", "Credit/Debit Card"] },
+        AE: { lang: "العربية (Arabic)", currency: "AED", payments: ["Careem Pay", "e& money", "Al Ansari Exchange", "Credit/Debit Card"] },
+        EG: { lang: "العربية (Arabic)", currency: "EGP", payments: ["Fawry", "InstaPay", "Vodafone Cash", "Credit/Debit Card"] },
+        TR: { lang: "Türkçe", currency: "TRY", payments: ["Troy", "Papara", "BKM Express", "Credit/Debit Card"] },
+        YE: { lang: "العربية (Arabic)", currency: "YER", payments: ["Yemen Wallet", "Kuraimi Pocket", "Cash on Delivery"] },
+        CN: { lang: "简体中文 (Simplified Chinese)", currency: "CNY", payments: ["Alipay", "WeChat Pay", "UnionPay"] },
+        KR: { lang: "한국어 (Korean)", currency: "KRW", payments: ["KakaoPay", "Naver Pay", "Toss", "KB Kookmin Card"] },
+        BD: { lang: "বাংলা (Bengali)", currency: "BDT", payments: ["bKash", "Nagad", "Rocket", "Credit/Debit Card"] },
+        PL: { lang: "Polski", currency: "PLN", payments: ["BLIK", "Przelewy24 (P24)", "Credit/Debit Card"] },
+        PK: { lang: "اردو (Urdu)", currency: "PKR", payments: ["Easypaisa", "JazzCash", "Nayapay", "Raast"] },
+        PH: { lang: "Tagalog", currency: "PHP", payments: ["GCash", "Maya", "GrabPay", "Credit/Debit Card"] },
+        SG: { lang: "English", currency: "SGD", payments: ["PayNow", "GrabPay", "NETS", "Credit/Debit Card"] }
+    };
+
+    function handleCountryChange() {
+        const select = document.getElementById("countrySelect");
+        const countryCode = select.value;
+        const countryName = select.options[select.selectedIndex].text;
+        const data = regionalDatabase[countryCode];
+
+        if (data) {
+            document.getElementById("langInput").value = data.lang;
+
+            // Update badge indicators
+            const badgeContainer = document.getElementById("paymentOptionsContainer");
+            badgeContainer.innerHTML = "";
+            
+            // Re-populate select dropdown for transaction mode
+            const methodSelect = document.getElementById("paymentMethod");
+            methodSelect.innerHTML = "";
+
+            data.payments.forEach(option => {
+                // Render badge lists
+                const badge = document.createElement("span");
+                badge.className = "payment-badge";
+                badge.innerText = option;
+                badgeContainer.appendChild(badge);
+
+                // Render option choices
+                const opt = document.createElement("option");
+                opt.value = option;
+                opt.innerText = option;
+                methodSelect.appendChild(opt);
+            });
+
+            updateReceipt();
+        }
+    }
+
+    function updateReceipt() {
+        const countrySelect = document.getElementById("countrySelect");
+        const countryCode = countrySelect.value;
+        const countryName = countrySelect.options[countrySelect.selectedIndex].text;
+        const data = regionalDatabase[countryCode];
+
+        // Format dates
+        const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById("receiptDate").innerText = new Date().toLocaleDateString("en-US", dateOptions);
+
+        // Map textual values
+        document.getElementById("previewTenant").innerText = document.getElementById("tenantName").value || "N/A";
+        document.getElementById("previewProperty").innerText = document.getElementById("propertyName").value || "N/A";
+        document.getElementById("previewMethod").innerText = document.getElementById("paymentMethod").value || "N/A";
+        document.getElementById("previewCountry").innerText = countryName;
+
+        // Display regionalized monetary settings
+        const rawAmount = parseFloat(document.getElementById("rentAmount").value) || 0;
+        const formattedAmount = rawAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById("previewTotal").innerText = `${data.currency} ${formattedAmount}`;
+    }
+
+    function copyAndOpenWhatsApp() {
+        const shareLink = window.location.href;
+        const messageText = "Check out this Receipt and Property Management App: " + shareLink;
+        
+        const btn = document.getElementById("whatsappBtn");
+        const originalText = btn.innerText;
+
+        // Clipboard Copy Utility with Fallback
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(messageText)
+                .then(() => handleSuccessfulCopy(btn, originalText, messageText))
+                .catch(() => fallbackCopy(messageText, btn, originalText));
+        } else {
+            fallbackCopy(messageText, btn, originalText);
+        }
+    }
+
+    function fallbackCopy(text, btn, originalText) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        let success = false;
+        try {
+            success = document.execCommand('copy');
+        } catch (err) {
+            console.error(err);
+        }
+        document.body.removeChild(textArea);
+
+        if (success) {
+            handleSuccessfulCopy(btn, originalText, text);
+        } else {
+            window.location.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(text);
+        }
+    }
+
+    function handleSuccessfulCopy(btn, originalText, text) {
+        btn.innerText = "✓ Copied Link!";
+        btn.style.backgroundColor = "#128C7E";
+        
+        const toast = document.getElementById("toast");
+        toast.className = "toast show";
+
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.backgroundColor = "#25d366";
+            toast.className = "toast";
+            
+            // WhatsApp API execution
+            window.location.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(text);
+        }, 1200);
+    }
+
+    // Initialize layout configurations
+    window.onload = function() {
+        handleCountryChange();
+    };
+</script>
+
+</body>
+</html>
